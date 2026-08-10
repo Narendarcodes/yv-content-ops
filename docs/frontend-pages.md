@@ -81,3 +81,44 @@ Visibility column below uses these. Suggested stack: **React + Vite + TanStack Q
 - All responses are `{ data: ... }`; errors are `{ error: { code, message, details? } }` — build one shared API client + error-toast helper.
 - Every page below needs a loading skeleton and an auth guard (redirect to `/login` on 401).
 - Rate limit is 100 req / 15 min per IP by default — debounce the notification unread-count poll.
+
+---
+
+## Stitch designs (2026-08-10)
+
+All 23 pages above have been designed in **Google Stitch** using the Aaryajanani design system (driven by the `stitch-design-taste`, `design-taste-frontend`, `impeccable`, and `emil-design-eng` skills).
+
+- **Stitch project**: `projects/6921599624910875253` — "Aaryajanani — Content Operations & Project Memory Platform"
+- **Design system**: `assets/5404831274793666282` — Aaryajanani Design System (LIGHT, deep-teal accent `#0F766E`, Outfit headlines / Geist body / JetBrains Mono labels, ROUND_EIGHT)
+- **Device type**: DESKTOP
+- Machine-readable screen map: `.stitch/metadata.json`
+
+Screen ID map (id → page from the table above):
+
+| Page | Screen ID |
+|---|---|
+| Login (1) | `c610d3c34c7d4b2f83a54df53a03e28e` |
+| Register (2) | `c491c180b23c4bdfaf2dbbdcbeac55a3` |
+| App Shell (3) | `7713bfd1014d46a1b0880a76746fba98` |
+| Notification Center (4) | `713cc404478d4019a9f3b92d1067340a` |
+| Create Organization (5) | `9516e1a92940420a88468b685540be44` |
+| Members & Roles (6) | `9d1050d0a2f54906844bcd8adcfd5aa6` |
+| Project List (7) | `84265cb0c8024c079f5ce9187fcce131` |
+| Create Project modal (8) | `0f228974935946a39ff372fc492169e1` |
+| Project Detail Overview (9) | `b760ed8921bc4525b1e01b7424dee46e` |
+| Versions tab (10) | `84aa845fcc334f348b2d1a96ba0fa18d` |
+| Inputs tab (11) | `2e73af30afc8400d8ec56fb1796902e1` |
+| Comments & Review tab (12) | `368ebd8e91044d00a17466246b2b3a7b` |
+| Activity Feed tab (13) | `bad886b72a274ba193d849d0846be92a` |
+| Publications tab (14) | `bccef7f0215b4f5ea8d49e39c85f0df3` |
+| Metrics tab (15) | `599059b15a7c437a9f2497a1b2593b0d` |
+| Tasks Kanban (16) | `3e90fd42ae974e2bbe59db6957b3b67a` |
+| Brief Editor (17) | `a29fd6a29ea8433184ef30918dd4ce55` |
+| Chat (18) | `11e9fa6bc5074a5e941fdbfac277d407` |
+| Contracts (19) | `4ae242387e444a0a8003778a6886cf01` |
+| Contract Detail (20) | `35a5bb24b78547c48f2a8126a03abfbf` |
+| Invoices (21) | `33da852622c74e2bb7b396b500075c46` |
+| Invoice Detail (22) | `2722831a8fbc4390b6e5d66b66d12cef` |
+| Profile (23) | `07b40c5d7e354588b96f8bb53ab49f0c` |
+
+Plus a generated logo asset: `147f653db54e4dfb8b9b23d969b25524`.
