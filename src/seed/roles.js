@@ -12,12 +12,18 @@ const DEFAULT_ROLES = [
       'project.comment',
       'project.revision',
       'project.view',
+      'task.create',
+      'task.update',
+      'brief.manage',
+      'chat.post',
+      'contract.manage',
+      'invoice.manage',
     ],
     description: 'Creates and works on projects',
   },
   {
     name: 'reviewer',
-    permissions: ['project.view', 'project.comment', 'project.revision', 'project.approve'],
+    permissions: ['project.view', 'project.comment', 'project.revision', 'project.approve', 'task.create', 'task.update', 'chat.post'],
     description: 'Reviews drafts, comments, requests revisions, approves',
   },
   {
@@ -30,7 +36,13 @@ const DEFAULT_ROLES = [
 async function seedDefaultRoles() {
   for (const r of DEFAULT_ROLES) {
     const existing = await Role.findOne({ name: r.name });
-    if (!existing) {
+    if (existing) {
+      // keep in sync: update permissions on existing roles so new capabilities apply
+      if (JSON.stringify(existing.permissions || []) !== JSON.stringify(r.permissions)) {
+        existing.permissions = r.permissions;
+        await existing.save();
+      }
+    } else {
       await Role.create(r);
     }
   }

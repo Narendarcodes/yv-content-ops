@@ -4,6 +4,8 @@ Node.js + Express + MongoDB (Mongoose) backend for the **Aaryajanani** Content O
 
 Implements the MVP per the PRD: JWT auth, org-scoped roles & permissions, a project lifecycle state machine, versioning, inputs, comments, revisions, approvals, notifications, activity history, scheduling/publication, performance metrics, file uploads, Docker, and CI.
 
+Also includes a **Fluit-aligned feature set** for content operations agencies: kanban **tasks**, structured client **briefs**, **review locking & feedback summarization**, project **chat** (channels/threads), client **contracts** with an e-sign lifecycle, and **invoices** with payment tracking.
+
 ## Tech stack
 
 - **Runtime**: Node.js 24 (CommonJS)
@@ -146,6 +148,65 @@ The spec documents every endpoint with request/response schemas, authentication 
 | `POST` | `/projects/:id/metrics` | 🔒 `project.metrics` | Record a metric |
 | `GET` | `/projects/:id/activity` | 🔒 `project.view` | Activity history for the project |
 
+### Tasks — kanban (`/projects/:id/tasks`)
+
+| Method | Path | Permission | Description |
+| --- | --- | --- | --- |
+| `GET` | `/projects/:id/tasks?status=` | 🔒 `project.view` | List tasks (filter by kanban column) |
+| `POST` | `/projects/:id/tasks` | 🔒 `task.create` | Create a task (title, priority, assignee, due date) |
+| `GET` | `/projects/:id/tasks/:taskId` | 🔒 `project.view` | Task detail |
+| `PATCH` | `/projects/:id/tasks/:taskId` | 🔒 `task.update` | Edit a task |
+| `DELETE` | `/projects/:id/tasks/:taskId` | 🔒 `task.update` | Delete a task |
+| `POST` | `/projects/:id/tasks/:taskId/status` | 🔒 `task.update` | Move between `todo → in_progress → in_review → done` (assignee & managers notified) |
+
+### Brief (`/projects/:id/brief`)
+
+| Method | Path | Permission | Description |
+| --- | --- | --- | --- |
+| `GET` | `/projects/:id/brief` | 🔒 `project.view` | Fetch the brief (`exists: false` if none yet) |
+| `PUT` | `/projects/:id/brief` | 🔒 `brief.manage` | Create or update the structured brief (goal, audience, references, deliverables, deadline, brand files) |
+
+### Reviews — summarize & lock (`/projects/:id/reviews`)
+
+| Method | Path | Permission | Description |
+| --- | --- | --- | --- |
+| `POST` | `/projects/:id/reviews/summarize` | 🔒 `project.view` | Summarize unresolved feedback into action items (rule-based, AI-ready) |
+| `POST` | `/projects/:id/reviews/lock` | 🔒 `project.revision` | Lock feedback into the next revision scope; auto-creates a revision request with `source: review_lock` and resolves the comments |
+
+### Chat (`/projects/:id/channels`)
+
+| Method | Path | Permission | Description |
+| --- | --- | --- | --- |
+| `GET` | `/projects/:id/channels` | 🔒 `project.view` | List channels |
+| `POST` | `/projects/:id/channels` | 🔒 `chat.post` | Create a channel or DM |
+| `GET` | `/projects/:id/channels/:channelId/messages?parentId=` | 🔒 `project.view` | List messages (thread filter via `parentId`; top-level excludes replies) |
+| `POST` | `/projects/:id/channels/:channelId/messages` | 🔒 `chat.post` | Post a message or threaded reply |
+
+### Contracts (`/organizations/:id/contracts`) — client agreements
+
+| Method | Path | Permission | Description |
+| --- | --- | --- | --- |
+| `GET` | `/organizations/:id/contracts?status=` | 🔒 `contract.manage` | List contracts |
+| `POST` | `/organizations/:id/contracts` | 🔒 `contract.manage` | Create a contract (draft) |
+| `GET` | `/organizations/:id/contracts/:contractId` | 🔒 `contract.manage` | Contract detail |
+| `PATCH` | `/organizations/:id/contracts/:contractId` | 🔒 `contract.manage` | Edit a draft only |
+| `POST` | `/organizations/:id/contracts/:contractId/send` | 🔒 `contract.manage` | Send for signature (`draft → sent`) |
+| `POST` | `/organizations/:id/contracts/:contractId/view` | 🔒 `contract.manage` | Mark viewed (`sent → viewed`) |
+| `POST` | `/organizations/:id/contracts/:contractId/sign` | 🔒 `contract.manage` | Capture e-signature (`→ signed`, stores signer name/email) |
+
+### Invoices (`/organizations/:id/invoices`) — billing
+
+| Method | Path | Permission | Description |
+| --- | --- | --- | --- |
+| `GET` | `/organizations/:id/invoices/outstanding` | 🔒 `invoice.manage` | Outstanding revenue summary (lazy overdue refresh) |
+| `GET` | `/organizations/:id/invoices?status=` | 🔒 `invoice.manage` | List invoices |
+| `POST` | `/organizations/:id/invoices` | 🔒 `invoice.manage` | Create an invoice (draft) |
+| `GET` | `/organizations/:id/invoices/:invoiceId` | 🔒 `invoice.manage` | Invoice detail |
+| `PATCH` | `/organizations/:id/invoices/:invoiceId` | 🔒 `invoice.manage` | Edit a draft only |
+| `POST` | `/organizations/:id/invoices/:invoiceId/send` | 🔒 `invoice.manage` | Send (`draft → sent`, net-30 default due date) |
+| `POST` | `/organizations/:id/invoices/:invoiceId/pay` | 🔒 `invoice.manage` | Record payment (`→ paid`) |
+| `POST` | `/organizations/:id/invoices/:invoiceId/void` | 🔒 `invoice.manage` | Void an unpaid invoice |
+
 ### Notifications (`/notifications`)
 
 | Method | Path | Description |
@@ -185,9 +246,11 @@ Default roles are seeded on organization creation:
 | Role | Permissions |
 | --- | --- |
 | `admin` | `*` (all) |
-| `editor` | create, transition, assign, upload_version, comment, revision, view |
-| `reviewer` | view, comment, revision, approve |
+| `editor` | create, transition, assign, upload_version, comment, revision, view, **task.create, task.update, brief.manage, chat.post, contract.manage, invoice.manage** |
+| `reviewer` | view, comment, revision, approve, **task.create, task.update, chat.post** |
 | `publisher` | view, schedule, publish, metrics |
+
+Roles are shared by name across organizations and **upserted** on seed, so existing databases pick up new permissions on restart.
 
 ## Project layout
 
@@ -209,7 +272,20 @@ tests/           jest + supertest suites (in-memory MongoDB)
 
 ## Tests
 
-5 suites cover: health, auth, org/authorization, project lifecycle, and a full end-to-end workflow (assignment → inputs → draft → review → revision → approval → schedule → publish → metrics) including notifications and activity history. Tests run against `mongodb-memory-server` (no external DB needed).
+6 suites cover: health, auth, org/authorization, project lifecycle, a full end-to-end workflow (assignment → inputs → draft → review → revision → approval → schedule → publish → metrics) including notifications and activity history, and the Fluit-aligned features (tasks, brief, review lock/summarize, chat, contracts, invoices). Tests run against `mongodb-memory-server` (no external DB needed).
+
+## Feature coverage vs Fluit (fluit.io)
+
+Fluit positions as a one-stop agency hub (Drive, Review, Brief, Tasks, Client CRM, Chats, Intelligence). This backend now covers the core loop — **onboard → contract → brief → tasks → review (lock) → approve → invoice** — with:
+
+- ✅ **Tasks** — kanban columns, assignees, deadlines, auto-notifications
+- ✅ **Brief** — structured creative brief (goal, audience, references, deliverables, deadlines, brand guidelines)
+- ✅ **Review lock + summarize** — feedback locked into a revision scope + action-item summarization
+- ✅ **Chat** — channels, threaded replies, attachments, notifications
+- ✅ **Contracts** — draft → sent → viewed → signed lifecycle with captured signer identity
+- ✅ **Invoices** — draft → sent → paid, overdue detection, outstanding-revenue query
+
+**Deferred (needs third-party infra):** real AI/LLM summarization (rule-based placeholder, `generatedBy: 'rule-based-summarizer'`, designed to be swapped), timestamped video annotations/drawings/voice notes (needs a video player), anonymous client file-request links (needs an unauthenticated upload flow), third-party e-sign (DocuSign/HelloSign) and payment gateways (Stripe) — currently self-attested sign + manual payment status — and a client-facing portal with per-user login lockout.
 
 ## Status
 

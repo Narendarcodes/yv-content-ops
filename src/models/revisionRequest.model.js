@@ -12,6 +12,14 @@ const RevisionRequestSchema = new mongoose.Schema(
       enum: ['requested', 'in_progress', 'submitted', 'resolved'],
       default: 'requested',
     },
+    source: { type: String, enum: ['manual', 'review_lock'], default: 'manual' },
+    scopeItems: [
+      {
+        commentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Comment', default: null },
+        author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+        body: { type: String, default: '' },
+      },
+    ],
     submitter: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     resolvedVersionId: { type: mongoose.Schema.Types.ObjectId, ref: 'ProjectVersion', default: null },
     requestedAt: { type: Date, default: Date.now },

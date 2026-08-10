@@ -8,6 +8,10 @@ const revisionController = require('../controllers/revision.controller');
 const publicationController = require('../controllers/publication.controller');
 const metricsController = require('../controllers/metrics.controller');
 const activityController = require('../controllers/activity.controller');
+const taskController = require('../controllers/task.controller');
+const briefController = require('../controllers/brief.controller');
+const reviewController = require('../controllers/review.controller');
+const chatController = require('../controllers/chat.controller');
 const { authenticate, requirePermission } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
 const {
@@ -25,6 +29,10 @@ const {
   inputSchema,
   inputUpdateSchema,
 } = require('../validators/project.validator');
+const { taskSchema, taskUpdateSchema, taskStatusSchema } = require('../validators/task.validator');
+const { briefSchema } = require('../validators/brief.validator');
+const { reviewLockSchema, reviewSummarizeSchema } = require('../validators/review.validator');
+const { channelSchema, messageSchema } = require('../validators/chat.validator');
 
 // in-memory multer: buffers file in memory, then handed to storage adapter
 const upload = multer({
@@ -70,6 +78,28 @@ router.post('/:id/publications', authenticate, requirePermission('project.publis
 // --- Metrics ---
 router.get('/:id/metrics', authenticate, requirePermission('project.view'), metricsController.list);
 router.post('/:id/metrics', authenticate, requirePermission('project.metrics'), validate(metricSchema), metricsController.record);
+
+// --- Tasks (kanban) ---
+router.get('/:id/tasks', authenticate, requirePermission('project.view'), taskController.list);
+router.post('/:id/tasks', authenticate, requirePermission('task.create'), validate(taskSchema), taskController.create);
+router.get('/:id/tasks/:taskId', authenticate, requirePermission('project.view'), taskController.get);
+router.patch('/:id/tasks/:taskId', authenticate, requirePermission('task.update'), validate(taskUpdateSchema), taskController.update);
+router.delete('/:id/tasks/:taskId', authenticate, requirePermission('task.update'), taskController.remove);
+router.post('/:id/tasks/:taskId/status', authenticate, requirePermission('task.update'), validate(taskStatusSchema), taskController.setStatus);
+
+// --- Brief ---
+router.get('/:id/brief', authenticate, requirePermission('project.view'), briefController.get);
+router.put('/:id/brief', authenticate, requirePermission('brief.manage'), validate(briefSchema), briefController.upsert);
+
+// --- Reviews (feedback lock + summary) ---
+router.post('/:id/reviews/summarize', authenticate, requirePermission('project.view'), validate(reviewSummarizeSchema), reviewController.summarize);
+router.post('/:id/reviews/lock', authenticate, requirePermission('project.revision'), validate(reviewLockSchema), reviewController.lock);
+
+// --- Chat ---
+router.get('/:id/channels', authenticate, requirePermission('project.view'), chatController.listChannels);
+router.post('/:id/channels', authenticate, requirePermission('chat.post'), validate(channelSchema), chatController.createChannel);
+router.get('/:id/channels/:channelId/messages', authenticate, requirePermission('project.view'), chatController.listMessages);
+router.post('/:id/channels/:channelId/messages', authenticate, requirePermission('chat.post'), validate(messageSchema), chatController.postMessage);
 
 // --- Activity ---
 router.get('/:id/activity', authenticate, requirePermission('project.view'), activityController.list);

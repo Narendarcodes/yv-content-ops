@@ -7,6 +7,8 @@ const config = require('./config');
 const healthRouter = require('./routes/health');
 const authRouter = require('./routes/auth');
 const orgRouter = require('./routes/organizations');
+const contractsRouter = require('./routes/contracts');
+const invoicesRouter = require('./routes/invoices');
 const projectsRouter = require('./routes/projects');
 const usersRouter = require('./routes/users');
 const notificationsRouter = require('./routes/notifications');
@@ -43,6 +45,8 @@ if (config.env !== 'test') {
 app.use(`${config.apiPrefix}/health`, healthRouter);
 app.use(`${config.apiPrefix}/auth`, authRouter);
 app.use(`${config.apiPrefix}/organizations`, orgRouter);
+app.use(`${config.apiPrefix}/organizations`, contractsRouter);
+app.use(`${config.apiPrefix}/organizations`, invoicesRouter);
 app.use(`${config.apiPrefix}/projects`, projectsRouter);
 app.use(`${config.apiPrefix}/users`, usersRouter);
 app.use(`${config.apiPrefix}/notifications`, notificationsRouter);
