@@ -1,0 +1,29 @@
+# VCS
+.git
+.gitignore
+
+# Environment & secrets
+.env
+.env.*
+
+# Dependencies (installed inside image)
+node_modules
+
+# Tests & coverage
+tests
+coverage
+jest.config.js
+
+# Local artifacts
+uploads
+*.log
+npm-debug.log*
+
+# Docs
+README.md
+
+# IDE / OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db

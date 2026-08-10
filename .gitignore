@@ -20,6 +20,9 @@ coverage/
 mongodb-memory-server/
 *.tgz
 
+# Uploaded files (local storage adapter)
+uploads/
+
 # OS
 .DS_Store
 Thumbs.db
@@ -28,3 +31,6 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# Personal agent config (junctions to .agents/skills)
+.claude/

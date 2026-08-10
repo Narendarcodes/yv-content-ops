@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "api-security-best-practices": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "skillPath": "skills/api-security-best-practices/SKILL.md",
+      "computedHash": "665caa1fd86a50c5ed9b9a106e715e7891b8a6e1bdb3fd24f1af305c5e0384d4"
+    },
+    "code-review": {
+      "source": "vercel-labs/open-agents",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/code-review/SKILL.md",
+      "computedHash": "76d2970a05d902683713a6e45b7968812030d39ad98f22c63aa09317067906da"
+    }
+  }
+}
