@@ -19,7 +19,9 @@ listeners.setup();
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+// CORS: restrict to configured origins in production (CORS_ORIGIN=comma-separated);
+// defaults to reflecting any origin for development convenience.
+app.use(cors({ origin: config.corsOrigin }));
 app.use(express.json());
 
 // global rate limiting (per IP)

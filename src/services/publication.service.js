@@ -23,9 +23,13 @@ async function scheduleProject({ projectId, scheduledAt, actorId }) {
   return project;
 }
 
-async function listPublications({ projectId }) {
+async function listPublications({ projectId, limit = 100, skip = 0 }) {
   await assertProject(projectId);
-  return Publication.find({ projectId }).sort({ publishedAt: -1 });
+  const [items, total] = await Promise.all([
+    Publication.find({ projectId }).sort({ publishedAt: -1 }).skip(skip).limit(limit),
+    Publication.countDocuments({ projectId }),
+  ]);
+  return { items, total, limit, skip };
 }
 
 async function recordPublication({ projectId, platform, postUrl = '', postId = '', publishedBy }) {

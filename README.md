@@ -66,9 +66,10 @@ JWT_ACCESS_SECRET=... docker compose up --build
 | `API_PREFIX` | `/api/v1` | URL prefix for all routes |
 | `LOG_LEVEL` | `info` | pino log level |
 | `MONGO_URI` | `mongodb://127.0.0.1:27017/cop` | MongoDB connection string |
-| `JWT_ACCESS_SECRET` | `dev_access_secret` | **Change in production.** Signs access tokens |
+| `JWT_ACCESS_SECRET` | `dev_access_secret` | **Required to change in production.** Signs access tokens; the app refuses to start in production with a known default |
 | `JWT_ACCESS_EXPIRES_IN` | `15m` | Access-token lifetime (e.g. `15m`, `1h`) |
 | `JWT_REFRESH_EXPIRES_DAYS` | `7` | Refresh-token lifetime in days (stored hashed) |
+| `CORS_ORIGIN` | *(any origin)* | Comma-separated allowed origins; set in production (e.g. `https://app.example.com`) |
 | `STORAGE_DRIVER` | `local` | Storage adapter (`local` for now) |
 | `STORAGE_LOCAL_DIR` | `./uploads` | Directory for uploaded files (local driver) |
 | `RATE_LIMIT_WINDOW_MS` | `900000` | Global per-IP rate-limit window (15 min) |

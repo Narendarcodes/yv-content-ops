@@ -25,10 +25,10 @@ async function notifyOrgMembersWithPermission({ organizationId, permission, type
   for (const m of memberships) {
     if (allowedNames.has(m.role)) targets.add(m.userId.toString());
   }
-  const results = [];
-  for (const userId of targets) {
-    results.push(await createNotification({ userId, type, projectId, title, body, payload }));
-  }
+  // Insert notifications in parallel instead of N sequential round-trips.
+  const results = await Promise.all(
+    [...targets].map((userId) => createNotification({ userId, type, projectId, title, body, payload }))
+  );
   return results;
 }
 

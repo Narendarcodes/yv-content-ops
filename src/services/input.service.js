@@ -8,11 +8,15 @@ async function assertProject(projectId) {
   return project;
 }
 
-async function listInputs({ projectId, state }) {
+async function listInputs({ projectId, state, limit = 100, skip = 0 }) {
   await assertProject(projectId);
   const q = { projectId };
   if (state) q.state = state;
-  return Input.find(q).sort({ createdAt: 1 }).populate('owner', 'name email');
+  const [items, total] = await Promise.all([
+    Input.find(q).sort({ createdAt: 1 }).skip(skip).limit(limit).populate('owner', 'name email'),
+    Input.countDocuments(q),
+  ]);
+  return { items, total, limit, skip };
 }
 
 async function createInput({ projectId, title, description = '', owner = null, source = '', requestedBy }) {

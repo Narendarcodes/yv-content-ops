@@ -3,8 +3,13 @@ const metricsService = require('../services/metrics.service');
 async function list(req, res, next) {
   try {
     const { id } = req.params;
-    const metrics = await metricsService.listMetrics({ projectId: id });
-    res.json({ data: metrics });
+    const { limit, skip } = req.query;
+    const result = await metricsService.listMetrics({
+      projectId: id,
+      limit: parseInt(limit, 10) || 100,
+      skip: parseInt(skip, 10) || 0,
+    });
+    res.json({ data: result });
   } catch (err) {
     next(err);
   }

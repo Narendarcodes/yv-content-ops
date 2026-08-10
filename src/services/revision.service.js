@@ -14,9 +14,13 @@ async function nextRevisionNumber(projectId) {
   return last ? last.revisionNumber + 1 : 1;
 }
 
-async function listRevisions({ projectId }) {
+async function listRevisions({ projectId, limit = 100, skip = 0 }) {
   await assertProject(projectId);
-  return RevisionRequest.find({ projectId }).sort({ revisionNumber: -1 });
+  const [items, total] = await Promise.all([
+    RevisionRequest.find({ projectId }).sort({ revisionNumber: -1 }).skip(skip).limit(limit),
+    RevisionRequest.countDocuments({ projectId }),
+  ]);
+  return { items, total, limit, skip };
 }
 
 async function requestRevision({ projectId, sourceVersionId = null, reason, requester }) {

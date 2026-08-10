@@ -27,3 +27,25 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Dependency vulnerability audit
+        run: npm audit --omit=dev
+
+  security:
+    name: Dependency & Supply-Chain Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: npm audit (all deps)
+        run: npm audit

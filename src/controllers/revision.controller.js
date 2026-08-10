@@ -3,8 +3,13 @@ const revisionService = require('../services/revision.service');
 async function list(req, res, next) {
   try {
     const { id } = req.params;
-    const revisions = await revisionService.listRevisions({ projectId: id });
-    res.json({ data: revisions });
+    const { limit, skip } = req.query;
+    const result = await revisionService.listRevisions({
+      projectId: id,
+      limit: parseInt(limit, 10) || 100,
+      skip: parseInt(skip, 10) || 0,
+    });
+    res.json({ data: result });
   } catch (err) {
     next(err);
   }

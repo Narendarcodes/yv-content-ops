@@ -3,8 +3,13 @@ const publicationService = require('../services/publication.service');
 async function list(req, res, next) {
   try {
     const { id } = req.params;
-    const pubs = await publicationService.listPublications({ projectId: id });
-    res.json({ data: pubs });
+    const { limit, skip } = req.query;
+    const result = await publicationService.listPublications({
+      projectId: id,
+      limit: parseInt(limit, 10) || 100,
+      skip: parseInt(skip, 10) || 0,
+    });
+    res.json({ data: result });
   } catch (err) {
     next(err);
   }

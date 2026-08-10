@@ -4,9 +4,14 @@ const projectService = require('../services/project.service');
 async function list(req, res, next) {
   try {
     const { id } = req.params;
-    const { state } = req.query;
-    const inputs = await inputService.listInputs({ projectId: id, state });
-    res.json({ data: inputs });
+    const { state, limit, skip } = req.query;
+    const result = await inputService.listInputs({
+      projectId: id,
+      state,
+      limit: parseInt(limit, 10) || 100,
+      skip: parseInt(skip, 10) || 0,
+    });
+    res.json({ data: result });
   } catch (err) {
     next(err);
   }

@@ -8,9 +8,13 @@ async function assertProject(projectId) {
   return project;
 }
 
-async function listMetrics({ projectId }) {
+async function listMetrics({ projectId, limit = 100, skip = 0 }) {
   await assertProject(projectId);
-  return PerformanceMetric.find({ projectId }).sort({ recordedAt: -1 });
+  const [items, total] = await Promise.all([
+    PerformanceMetric.find({ projectId }).sort({ recordedAt: -1 }).skip(skip).limit(limit),
+    PerformanceMetric.countDocuments({ projectId }),
+  ]);
+  return { items, total, limit, skip };
 }
 
 async function recordMetric({ projectId, publicationId = null, metric, value, unit = '', recordedBy }) {
