@@ -217,4 +217,43 @@ describe('Fluit-aligned features', () => {
       expect(after.body.data.totalOutstanding).toBe(0);
     });
   });
+
+  describe('User profile & my organizations', () => {
+    test('GET /users/me/organizations lists the orgs the user belongs to', async () => {
+      const res = await request(app).get('/api/v1/users/me/organizations').set(auth());
+      expect(res.statusCode).toBe(200);
+      const mine = res.body.data;
+      expect(Array.isArray(mine)).toBe(true);
+      expect(mine.some((m) => m.organization._id === orgId && m.role === 'admin')).toBe(true);
+    });
+
+    test('PATCH /users/me updates name and email', async () => {
+      const newEmail = `featprofile-${Date.now()}@example.com`;
+      const res = await request(app)
+        .patch('/api/v1/users/me')
+        .set(auth())
+        .send({ name: 'Feat Admin Renamed', email: newEmail });
+      expect(res.statusCode).toBe(200);
+      expect(res.body.data.name).toBe('Feat Admin Renamed');
+      expect(res.body.data.email).toBe(newEmail);
+
+      // /me reflects the change
+      const me = await request(app).get('/api/v1/users/me').set(auth());
+      expect(me.body.data.name).toBe('Feat Admin Renamed');
+    });
+
+    test('PATCH /users/me with an empty body is a 400', async () => {
+      const res = await request(app).patch('/api/v1/users/me').set(auth()).send({});
+      expect(res.statusCode).toBe(400);
+      expect(res.body.error.code).toBe('validation_error');
+    });
+
+    test('PATCH /users/me cannot take another user\'s email (409)', async () => {
+      const otherEmail = 'featother@example.com';
+      await request(app).post('/api/v1/auth/register').send({ name: 'Other', email: otherEmail, password: 'P@ssw0rd' });
+      const res = await request(app).patch('/api/v1/users/me').set(auth()).send({ email: otherEmail });
+      expect(res.statusCode).toBe(409);
+      expect(res.body.error.code).toBe('email_in_use');
+    });
+  });
 });

@@ -245,6 +245,83 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /users/me/organizations:
+    get:
+      tags: [Users]
+      summary: List the organizations the current user belongs to
+      operationId: myOrganizations
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Active memberships with their organizations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        membershipId:
+                          type: string
+                          example: 5f8d0a1b2c3d4e5f6a7b8c9d
+                        organization:
+                          $ref: '#/components/schemas/Organization'
+                        role:
+                          type: string
+                          example: admin
+        '401':
+          description: Missing or invalid access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/me:
+    patch:
+      tags: [Users]
+      summary: Update the current user's profile (name, email)
+      operationId: updateMe
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error (empty body or invalid fields)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Missing or invalid access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Email already registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /users/{userId}:
     get:
       tags: [Users]
@@ -3257,6 +3334,16 @@ components:
         role:
           type: string
           description: New role name
+    UpdateProfileRequest:
+      type: object
+      minProperties: 1
+      properties:
+        name:
+          type: string
+          maxLength: 200
+        email:
+          type: string
+          format: email
     CreateProjectRequest:
       type: object
       required: [organizationId, title]
