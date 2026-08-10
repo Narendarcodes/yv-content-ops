@@ -79,6 +79,17 @@ JWT_ACCESS_SECRET=... docker compose up --build
 
 All endpoints are prefixed with `/api/v1`. Requests (except `register`/`login`/`refresh`) require an `Authorization: Bearer <accessToken>` header. Endpoints marked 🔒 additionally require an org-scoped permission.
 
+### API Documentation (OpenAPI)
+
+A formal **OpenAPI 3.1** specification is maintained at [`docs/openapi.yaml`](docs/openapi.yaml) and served live by the app:
+
+| Endpoint | Description |
+| --- | --- |
+| `GET /api/v1/docs` | The raw OpenAPI spec (YAML) — machine-readable, works with any OpenAPI tooling |
+| `GET /api/v1/docs/ui` | Interactive Swagger UI (try requests directly in the browser) |
+
+The spec documents every endpoint with request/response schemas, authentication requirements, and permission scopes. Keep it in sync whenever routes or validators change.
+
 ### Auth (`/auth`)
 
 | Method | Path | Description |
@@ -96,7 +107,7 @@ All endpoints are prefixed with `/api/v1`. Requests (except `register`/`login`/`
 | `POST` | `/organizations` | — | Create organization (creator becomes admin) |
 | `POST` | `/organizations/:id/members` | 🔒 `manage_members` | Add a member |
 | `GET` | `/organizations/:id/members` | 🔒 `manage_members` | List members |
-| `PATCH` | `/organizations/:id/members/:userId` | 🔒 `manage_members` | Update role / disable |
+| `PATCH` | `/organizations/:id/members/:memberUserId` | 🔒 `manage_members` | Update role / disable |
 
 ### Users (`/users`)
 

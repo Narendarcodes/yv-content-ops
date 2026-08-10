@@ -10,6 +10,7 @@ const orgRouter = require('./routes/organizations');
 const projectsRouter = require('./routes/projects');
 const usersRouter = require('./routes/users');
 const notificationsRouter = require('./routes/notifications');
+const docsRouter = require('./routes/docs');
 const errors = require('./middleware/errors');
 const listeners = require('./events/listeners');
 
@@ -45,6 +46,8 @@ app.use(`${config.apiPrefix}/organizations`, orgRouter);
 app.use(`${config.apiPrefix}/projects`, projectsRouter);
 app.use(`${config.apiPrefix}/users`, usersRouter);
 app.use(`${config.apiPrefix}/notifications`, notificationsRouter);
+// API docs (OpenAPI spec + Swagger UI)
+app.use(`${config.apiPrefix}/docs`, docsRouter);
 
 // 404
 app.use((req, res) => {
