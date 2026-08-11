@@ -1,31 +1,14 @@
 /**
  * Demo role simulation for the Folio frontend.
  * Lets us walk every role's userflow (admin, editor, reviewer, designer,
- * publisher) before backend integration. Backend auth remains the real
- * security boundary — this is a UX verification aid only.
+ * publisher, member) before backend integration. Backend auth remains the
+ * real security boundary — this is a UX verification aid only.
  */
 import { useEffect, useState } from 'react'
 import { team, type TeamMember } from './mockData'
 
-export type Permission =
-  | 'view'
-  | 'comment'
-  | 'upload'
-  | 'approve'
-  | 'schedule'
-  | 'publish'
-  | 'metrics'
-  | 'manage_members'
-  | 'manage_concepts'
-  | 'settings'
-
-const rolePerms: Record<TeamMember['role'], (Permission | '*')[]> = {
-  admin: ['*'],
-  editor: ['view', 'comment', 'upload', 'approve', 'schedule', 'metrics', 'manage_concepts', 'settings'],
-  designer: ['view', 'comment', 'upload', 'metrics', 'manage_concepts', 'settings'],
-  reviewer: ['view', 'comment', 'approve', 'settings'],
-  publisher: ['view', 'schedule', 'publish', 'metrics', 'settings'],
-}
+export type { Permission, RoleInfo } from './roles'
+export { can, ROLES, roleOf, PERMISSION_LABELS } from './roles'
 
 const STORAGE_KEY = 'folio.demo-viewer'
 
@@ -65,10 +48,4 @@ export function useViewer(): TeamMember {
     }
   }, [])
   return state.user
-}
-
-/** Frontend-only capability check (mirrors backend permissions). */
-export function can(viewer: TeamMember, permission: Permission): boolean {
-  const perms = rolePerms[viewer.role]
-  return perms.includes('*') || perms.includes(permission)
 }

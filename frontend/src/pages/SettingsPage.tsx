@@ -1,5 +1,8 @@
 import { useState } from 'react'
+import { Check } from 'lucide-react'
 import { org } from '../lib/mockData'
+import { useViewer } from '../lib/viewer'
+import { ROLES, PERMISSION_LABELS } from '../lib/roles'
 
 function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
   return (
@@ -37,6 +40,7 @@ function Row({
 }
 
 export default function SettingsPage() {
+  const viewer = useViewer()
   const [notifEmail, setNotifEmail] = useState(true)
   const [notifDigest, setNotifDigest] = useState(true)
   const [mentions, setMentions] = useState(true)
@@ -63,6 +67,44 @@ export default function SettingsPage() {
               <label className="label">Workspace slug</label>
               <input value={org.slug} readOnly className="input bg-canvas/60 font-mono text-umber" />
             </div>
+          </div>
+        </section>
+
+        {/* Roles & permissions */}
+        <section className="card overflow-hidden">
+          <header className="border-b border-line px-6 py-4">
+            <h2 className="font-headline text-base font-semibold tracking-tight text-ink">Roles & permissions</h2>
+            <p className="mt-0.5 text-[13px] text-umber">
+              What each role can do in this workspace — this mirrors the permissions the backend enforces.
+            </p>
+          </header>
+          <div className="divide-y divide-line">
+            {ROLES.map((r) => (
+              <div key={r.role} className={`px-6 py-5 transition-colors ${r.role === viewer.role ? 'bg-tint/40' : 'hover:bg-canvas/40'}`}>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="font-headline text-sm font-semibold tracking-[-0.01em] text-ink">{r.label}</span>
+                    {r.role === viewer.role && (
+                      <span className="rounded-full bg-teal/10 px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider text-teal">
+                        You
+                      </span>
+                    )}
+                  </div>
+                  <p className="max-w-md text-[13px] text-umber">{r.blurb}</p>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {r.permissions.map((p) => (
+                    <span
+                      key={p}
+                      className="inline-flex items-center gap-1 rounded-md border border-line bg-surface px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-umber"
+                    >
+                      <Check size={10} strokeWidth={2.5} className="text-teal" />
+                      {PERMISSION_LABELS[p]}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 

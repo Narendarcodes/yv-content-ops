@@ -19,7 +19,7 @@ export interface TeamMember {
   name: string
   initials: string
   email: string
-  role: 'admin' | 'editor' | 'reviewer' | 'designer' | 'publisher'
+  role: 'admin' | 'editor' | 'reviewer' | 'designer' | 'publisher' | 'member'
   title: string
   lastActive: string
 }

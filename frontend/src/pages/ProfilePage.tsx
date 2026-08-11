@@ -1,7 +1,9 @@
-import { Building2, Mail, Pencil, Shield, Star, Hash } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Building2, Check, Mail, Pencil, Shield, Star, Hash } from 'lucide-react'
 import Avatar from '../components/ui'
 import { org, projects, team, videoReviews } from '../lib/mockData'
 import { useViewer } from '../lib/viewer'
+import { roleOf, PERMISSION_LABELS } from '../lib/roles'
 
 const roleLabel: Record<string, string> = {
   admin: 'Admin',
@@ -14,6 +16,7 @@ const roleLabel: Record<string, string> = {
 
 export default function ProfilePage() {
   const viewer = useViewer()
+  const access = roleOf(viewer)
   const activeProjects = projects.filter(
     (p) => p.assignee === viewer.id && !['PUBLISHED', 'CLOSED'].includes(p.status),
   ).length
@@ -115,6 +118,41 @@ export default function ProfilePage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      {/* Your access */}
+      <section className="card mt-6 overflow-hidden">
+        <header className="border-b border-line px-6 py-4">
+          <h3 className="font-headline text-[15px] font-semibold tracking-[-0.01em] text-ink">Your access</h3>
+        </header>
+        <div className="px-6 py-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-medium text-ink">{access.label} role</p>
+              <p className="mt-0.5 text-[13px] text-umber">{access.blurb}</p>
+            </div>
+            <Link
+              to="/settings"
+              className="group flex items-center gap-1 text-xs font-medium text-teal transition-opacity hover:opacity-80"
+            >
+              View all roles
+              <span className="transition-transform group-hover:translate-x-0.5">→</span>
+            </Link>
+          </div>
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+            {access.permissions.map((p) => (
+              <li
+                key={p}
+                className="flex items-center gap-2.5 rounded-lg border border-line bg-canvas/60 px-3 py-2"
+              >
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-teal/10 text-teal">
+                  <Check size={11} strokeWidth={2.5} />
+                </span>
+                <span className="text-[13px] font-medium text-ink">{PERMISSION_LABELS[p]}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </section>
     </div>
   )
