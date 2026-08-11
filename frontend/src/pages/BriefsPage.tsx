@@ -72,7 +72,7 @@ export default function BriefsPage() {
                 <tr key={b.id} className="table-row">
                   <td className="px-5 py-3.5">
                     <Link to={`/briefs/${b.id}`} className="font-medium text-ink hover:text-teal">{b.title}</Link>
-                    <p className="font-mono text-[10px] uppercase tracking-wider text-umber/50">{b.id}</p>
+                    <p className="font-mono text-[10px] uppercase tracking-wider text-umber/70">{b.id}</p>
                   </td>
                   <td className="px-5 py-3.5 text-sm text-umber">{b.project}</td>
                   <td className="px-5 py-3.5">

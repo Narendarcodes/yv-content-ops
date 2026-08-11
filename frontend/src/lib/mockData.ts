@@ -150,7 +150,7 @@ export const chatChannels = [
 export const chatMessages = [
   { id: 'm1', author: 'Elena K.', initials: 'EK', text: 'Draft v1.2 is up — applied the client feedback on tone.', time: '10:42 AM' },
   { id: 'm2', author: 'Ananya Rao', initials: 'AR', text: 'Nice. I’ll do a final pass before sending to review.', time: '10:47 AM' },
-  { id: 'm3', author: 'Marcus R.', initials: 'MR', text: 'Raw footage links are in the inputs inbox 📦', time: '10:51 AM' },
+  { id: 'm3', author: 'Marcus R.', initials: 'MR', text: 'Raw footage links are in the inputs inbox.', time: '10:51 AM' },
   { id: 'm4', author: 'Dev P.', initials: 'DP', text: 'Q3 data CSV uploaded to the report project.', time: '10:55 AM' },
   { id: 'm5', author: 'Elena K.', initials: 'EK', text: 'Perfect — I’ll fold it into section 3 tonight.', time: '11:02 AM' },
 ]

@@ -8,6 +8,7 @@
   /* Surfaces */
   --color-canvas: #f7f5f2;        /* Canvas Paper — app background */
   --color-surface: #ffffff;       /* Pure Surface — cards/panels */
+  --color-cream: #efebe3;         /* Warm cream — brand panels, thumbnails */
   --color-ink: #1c1917;           /* Charcoal Ink — primary text */
   --color-umber: #78716c;         /* Muted Umber — secondary text */
   --color-line: rgba(28, 25, 23, 0.10); /* Whisper Line — borders */
@@ -56,6 +57,42 @@ body {
 ::selection {
   background: var(--color-tint);
   color: var(--color-teal-press);
+}
+
+/* ---------- Browser surfaces (themed, not default) ---------- */
+* {
+  caret-color: var(--color-teal);
+}
+
+/* Focus ring — visible, on-palette, keyboard-only */
+:focus-visible {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 2px;
+  border-radius: var(--radius-card);
+}
+
+/* Custom scrollbars from the palette */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 113, 108, 0.35) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(120, 113, 108, 0.30);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 113, 108, 0.45);
+  border: 3px solid transparent;
+  background-clip: content-box;
 }
 
 /* ---------- Component recipes ---------- */
@@ -137,7 +174,7 @@ body {
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
   .input::placeholder {
-    color: rgba(120, 113, 108, 0.6);
+    color: rgba(120, 113, 108, 0.72);
   }
   .input:focus {
     border-color: var(--color-teal);

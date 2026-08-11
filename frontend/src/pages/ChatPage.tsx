@@ -73,7 +73,7 @@ export default function ChatPage() {
               <div className="min-w-0">
                 <div className="flex items-baseline gap-2">
                   <span className="text-[13px] font-medium text-ink">{m.author}</span>
-                  <span className="font-mono text-[10px] text-umber/50">{m.time}</span>
+                  <span className="font-mono text-[10px] text-umber/70">{m.time}</span>
                 </div>
                 <p className="mt-0.5 text-sm leading-relaxed text-ink/85">{m.text}</p>
               </div>
@@ -94,7 +94,7 @@ export default function ChatPage() {
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && send()}
               placeholder={`Message ${active.name}`}
-              className="flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-umber/60"
+              className="flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-umber/70"
             />
             <button onClick={send} className="btn-primary !h-8 !px-3" aria-label="Send">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">

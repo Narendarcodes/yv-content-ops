@@ -23,7 +23,7 @@ export default function ActivityPage() {
                   <span className="rounded border border-line px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-umber/70">
                     {a.project}
                   </span>
-                  <span className="font-mono text-[10px] uppercase tracking-wider text-umber/50">{a.time}</span>
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-umber/70">{a.time}</span>
                 </div>
               </div>
               <button className="btn-ghost !h-8 !px-2.5 text-umber" aria-label="More">

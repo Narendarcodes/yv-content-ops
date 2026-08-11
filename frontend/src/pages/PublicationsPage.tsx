@@ -41,7 +41,7 @@ export default function PublicationsPage() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
         {filtered.map((pub) => (
           <article key={pub.id} className="card overflow-hidden p-0 rise-in">
-            <div className="flex h-28 items-center justify-center bg-[#EFEBE3]">
+            <div className="flex h-28 items-center justify-center bg-cream">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-umber)" strokeWidth="1.3">
                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z" />
                 <path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5" />

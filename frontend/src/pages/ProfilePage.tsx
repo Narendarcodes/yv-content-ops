@@ -10,7 +10,7 @@ export default function ProfilePage() {
       </header>
 
       <section className="card overflow-hidden p-0">
-        <div className="h-24 bg-[#EFEBE3]" />
+        <div className="h-24 bg-cream" />
         <div className="px-6 pb-6">
           <div className="-mt-10 mb-4 flex items-end justify-between">
             <Avatar initials={currentUser.initials} size="xl" tone="ink" className="ring-4 ring-surface" />

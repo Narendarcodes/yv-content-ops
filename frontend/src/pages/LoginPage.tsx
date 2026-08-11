@@ -21,7 +21,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen">
       {/* Left branding panel */}
-      <div className="relative hidden w-[40%] flex-col justify-between overflow-hidden bg-[#EFEBE3] p-12 lg:flex">
+      <div className="relative hidden w-[40%] flex-col justify-between overflow-hidden bg-cream p-12 lg:flex">
         <div className="flex items-center gap-3">
           <span className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-teal font-headline text-base font-bold text-on-accent">
             Aa

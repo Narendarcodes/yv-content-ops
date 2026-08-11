@@ -92,7 +92,7 @@ export default function NotificationsPage() {
                   {n.unread && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-teal" aria-hidden="true" />}
                 </div>
                 <p className="mt-0.5 truncate text-[13px] text-umber">{n.desc}</p>
-                <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-umber/50">{n.time}</p>
+                <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-umber/70">{n.time}</p>
               </div>
             </button>
           )
