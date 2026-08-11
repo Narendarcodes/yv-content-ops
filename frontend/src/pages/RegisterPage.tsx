@@ -40,7 +40,7 @@ export default function RegisterPage() {
         </div>
         <div className="relative z-10">
           <h1 className="max-w-md font-headline text-4xl font-semibold leading-tight tracking-tight text-ink">
-            Every brief, version and review — in one calm workspace
+            Every concept, draft and review — in one calm workspace
           </h1>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-umber">
             Start your organization&apos;s content memory today. Free for small teams.
@@ -50,7 +50,7 @@ export default function RegisterPage() {
           <path d="M390 210c-12 80-70 150-150 160-90 10-180-40-210-120C-10 160 30 60 110 40c80-20 180 20 210 70 20 30 70 60 70 100Z" />
         </svg>
         <p className="relative z-10 font-mono text-[10px] uppercase tracking-widest text-umber/60">
-          Northern Lights Studio
+          Aaryajanani
         </p>
       </div>
 

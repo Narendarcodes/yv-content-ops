@@ -33,7 +33,7 @@ export default function LoginPage() {
             Precision content operations and project memory for modern editorial teams
           </h1>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-umber">
-            Briefs, versions, reviews and publications — every decision, remembered.
+            Concepts, drafts, reviews and published projects — every decision, remembered.
           </p>
         </div>
         {/* Decorative organic blob */}
@@ -41,7 +41,7 @@ export default function LoginPage() {
           <path d="M390 210c-12 80-70 150-150 160-90 10-180-40-210-120C-10 160 30 60 110 40c80-20 180 20 210 70 20 30 70 60 70 100Z" />
         </svg>
         <p className="relative z-10 font-mono text-[10px] uppercase tracking-widest text-umber/60">
-          Northern Lights Studio
+          Aaryajanani
         </p>
       </div>
 

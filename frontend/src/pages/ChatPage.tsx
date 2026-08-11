@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import Avatar from '../components/ui'
-import { chatChannels, chatMessages } from '../lib/mockData'
+import { chatChannels, chatMessages, team } from '../lib/mockData'
+import { useViewer } from '../lib/viewer'
+
+const memberOf = (id: string) => team.find((m) => m.id === id)
 
 export default function ChatPage() {
+  const viewer = useViewer()
   const [channel, setChannel] = useState(chatChannels[0].id)
   const [draft, setDraft] = useState('')
   const [messages, setMessages] = useState(chatMessages)
@@ -14,8 +18,7 @@ export default function ChatPage() {
       ...m,
       {
         id: `local-${Date.now()}`,
-        author: 'Ananya Rao',
-        initials: 'AR',
+        author: viewer.id,
         text: draft.trim(),
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
@@ -67,18 +70,22 @@ export default function ChatPage() {
         </header>
 
         <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
-          {messages.map((m) => (
-            <div key={m.id} className="flex items-start gap-3 rise-in">
-              <Avatar initials={m.initials} size="sm" tone={m.author === 'Ananya Rao' ? 'ink' : 'tint'} />
-              <div className="min-w-0">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-[13px] font-medium text-ink">{m.author}</span>
-                  <span className="font-mono text-[10px] text-umber/70">{m.time}</span>
+          {messages.map((m) => {
+            const author = memberOf(m.author)
+            const mine = m.author === viewer.id
+            return (
+              <div key={m.id} className="flex items-start gap-3 rise-in">
+                <Avatar initials={author?.initials ?? '?'} size="sm" tone={mine ? 'ink' : 'tint'} />
+                <div className="min-w-0">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-[13px] font-medium text-ink">{mine ? 'You' : (author?.name ?? m.author)}</span>
+                    <span className="font-mono text-[10px] text-umber/70">{m.time}</span>
+                  </div>
+                  <p className="mt-0.5 text-sm leading-relaxed text-ink/85">{m.text}</p>
                 </div>
-                <p className="mt-0.5 text-sm leading-relaxed text-ink/85">{m.text}</p>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         {/* Composer */}

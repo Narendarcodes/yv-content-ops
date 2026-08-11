@@ -29,11 +29,50 @@ export default function Chip({
 
 export function statusTone(status: string): keyof typeof tones {
   const s = status.toLowerCase()
-  if (['active', 'live', 'approved', 'paid', 'published', 'current'].some((k) => s.includes(k))) return 'teal'
-  if (['in review', 'pending', 'scheduled', 'sent'].some((k) => s.includes(k))) return 'warning'
-  if (['overdue', 'expired', 'void', 'danger'].some((k) => s.includes(k))) return 'danger'
-  if (['draft', 'inactive', 'backlog'].some((k) => s.includes(k))) return 'neutral'
+  if (['approved', 'published', 'live', 'received', 'done', 'closed', 'inputs ready', 'current'].some((k) => s.includes(k))) return 'teal'
+  if (['review', 'scheduled', 'revision', 'waiting', 'in progress', 'production', 'submitted', 'pending'].some((k) => s.includes(k))) return 'warning'
+  if (['blocked', 'overdue', 'cancelled', 'missing', 'expired'].some((k) => s.includes(k))) return 'danger'
+  if (['idea', 'assigned', 'backlog', 'draft', 'concept'].some((k) => s.includes(k))) return 'neutral'
   return 'success'
+}
+
+export function Tabs({
+  tabs,
+  active,
+  onChange,
+}: {
+  tabs: { id: string; label: string; count?: number }[]
+  active: string
+  onChange: (id: string) => void
+}) {
+  return (
+    <div className="flex items-center gap-1 overflow-x-auto border-b border-line" role="tablist">
+      {tabs.map((t) => (
+        <button
+          key={t.id}
+          role="tab"
+          aria-selected={active === t.id}
+          onClick={() => onChange(t.id)}
+          className={`flex items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${
+            active === t.id
+              ? 'border-teal text-ink'
+              : 'border-transparent text-umber hover:text-ink'
+          }`}
+        >
+          {t.label}
+          {t.count !== undefined && (
+            <span
+              className={`flex h-4 min-w-4 items-center justify-center rounded-full px-1 font-mono text-[10px] ${
+                active === t.id ? 'bg-tint text-teal' : 'bg-ink/5 text-umber'
+              }`}
+            >
+              {t.count}
+            </span>
+          )}
+        </button>
+      ))}
+    </div>
+  )
 }
 
 export function Modal({

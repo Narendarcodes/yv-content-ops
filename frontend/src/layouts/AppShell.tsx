@@ -1,6 +1,7 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import Avatar from '../components/ui'
-import { org, currentUser } from '../lib/mockData'
+import { org, team, projects, notifications } from '../lib/mockData'
+import { useViewer, switchViewer } from '../lib/viewer'
 
 type NavItem = {
   to: string
@@ -8,10 +9,53 @@ type NavItem = {
   icon: () => React.ReactNode
   end?: boolean
   badge?: number
+  roles?: string[]
+  tag?: string
+}
+
+const CRUMBS: Record<string, string> = {
+  '': 'Overview',
+  projects: 'Projects',
+  'my-work': 'My work',
+  review: 'Review',
+  board: 'Board',
+  concepts: 'Concepts',
+  analytics: 'Analytics',
+  schedule: 'Schedule & Publish',
+  chat: 'Team chat',
+  notifications: 'Notifications',
+  members: 'Members',
+  settings: 'Settings',
+  profile: 'Profile',
 }
 
 export default function AppShell() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const viewer = useViewer()
+  const segments = location.pathname.split('/').filter(Boolean)
+  const crumb = CRUMBS[segments[0] ?? ''] ?? 'Overview'
+
+  const visibleGroups = navGroups
+    .map((g) => ({ ...g, items: g.items.filter((i) => !i.roles || i.roles.includes(viewer.role)) }))
+    .filter((g) => g.items.length > 0)
+
+  // Live badge counts, consistent with Dashboard/Review pages
+  const inReview = (s: string) => ['FIRST_DRAFT_SUBMITTED', 'UNDER_REVIEW', 'REVISION_SUBMITTED'].includes(s)
+  const reviewCount =
+    viewer.role === 'admin' || viewer.role === 'reviewer'
+      ? projects.filter((p) => inReview(p.status)).length
+      : projects.filter((p) => inReview(p.status) && p.reviewers.includes(viewer.id)).length
+  const unreadCount = notifications.filter((n) => n.unread).length
+
+  const groups = visibleGroups.map((g) => ({
+    ...g,
+    items: g.items.map((i) => {
+      if (i.to === '/review') return { ...i, badge: reviewCount }
+      if (i.to === '/notifications') return { ...i, badge: unreadCount }
+      return i
+    }),
+  }))
 
   return (
     <div className="flex min-h-screen bg-canvas">
@@ -35,7 +79,7 @@ export default function AppShell() {
 
         {/* Nav */}
         <nav className="flex-1 space-y-4 overflow-y-auto px-3 pb-4">
-          {navGroups.map((group) => (
+          {groups.map((group) => (
             <div key={group.section}>
               <p className="nav-section">{group.section}</p>
               <div className="space-y-0.5">
@@ -48,6 +92,11 @@ export default function AppShell() {
                   >
                     <item.icon />
                     <span className="flex-1">{item.label}</span>
+                    {item.tag && (
+                      <span className="rounded-full bg-warning/10 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wide text-warning">
+                        {item.tag}
+                      </span>
+                    )}
                     {item.badge && (
                       <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-teal px-1 text-[10px] font-mono text-on-accent">
                         {item.badge}
@@ -66,15 +115,30 @@ export default function AppShell() {
             onClick={() => navigate('/profile')}
             className="flex w-full items-center gap-3 rounded-[8px] px-2 py-2 text-left hover:bg-ink/4 transition-colors"
           >
-            <Avatar initials={currentUser.initials} size="md" tone="ink" />
+            <Avatar initials={viewer.initials} size="md" tone="ink" />
             <div className="min-w-0 flex-1 leading-tight">
-              <p className="truncate text-sm font-medium text-ink">{currentUser.name}</p>
-              <p className="text-[11px] text-umber">Admin</p>
+              <p className="truncate text-sm font-medium text-ink">{viewer.name}</p>
+              <p className="text-[11px] text-umber">{viewer.title}</p>
             </div>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-umber/50">
               <path d="M7 2.5v9M3.5 9L7 12.5 10.5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
           </button>
+          <label className="mt-1.5 block px-2">
+            <span className="mb-1 block font-mono text-[9px] uppercase tracking-wider text-umber/60">View as (demo)</span>
+            <select
+              value={viewer.id}
+              onChange={(e) => switchViewer(e.target.value)}
+              className="input !h-8 w-full !px-2 text-xs"
+              aria-label="Switch role"
+            >
+              {team.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.name} — {m.title}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
       </aside>
 
@@ -83,7 +147,7 @@ export default function AppShell() {
         {/* Top bar */}
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-line bg-canvas/90 px-6 backdrop-blur">
           <p className="hidden text-[11px] font-mono uppercase tracking-wider text-umber/70 md:block">
-            Dashboard / Overview
+            {crumb}
           </p>
           <div className="relative ml-auto w-64">
             <svg
@@ -117,7 +181,7 @@ export default function AppShell() {
             className="rounded-full transition-transform active:scale-95"
             aria-label="Profile"
           >
-            <Avatar initials={currentUser.initials} size="sm" tone="ink" />
+            <Avatar initials={viewer.initials} size="sm" tone="ink" />
           </button>
         </header>
 
@@ -149,24 +213,18 @@ const DashboardIcon = () =>
       <rect x="9" y="9" width="5.5" height="5.5" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
     </>,
   )
-const FolderIcon = () =>
+const MyWorkIcon = () =>
   baseIcon(
     <>
-      <path d="M1.5 4.5A1.5 1.5 0 0 1 3 3h2.5l1.5 1.5H13A1.5 1.5 0 0 1 14.5 6v5.5A1.5 1.5 0 0 1 13 13H3a1.5 1.5 0 0 1-1.5-1.5v-7Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M2.5 3h11M2.5 3A1.5 1.5 0 0 0 1 4.5v8A1.5 1.5 0 0 0 2.5 14h11a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 13.5 3M5 1v4M11 1v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="m5.5 9.5 2 2 3-3.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
     </>,
   )
-const DocIcon = () =>
+const ReviewIcon = () =>
   baseIcon(
     <>
-      <path d="M3 1.5h6l4 4v9H3v-13Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
-      <path d="M9 1.5v4h4" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
-    </>,
-  )
-const BookIcon = () =>
-  baseIcon(
-    <>
-      <path d="M8 3.5C6.5 2 4 2 1.5 2.5v10C4 12 6.5 12 8 13.5 9.5 12 12 12 14.5 12.5v-10C12 2 9.5 2 8 3.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
-      <path d="M8 3.5v10" stroke="currentColor" strokeWidth="1.3" />
+      <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M6.5 5.4v5.2l4.5-2.6-4.5-2.6Z" fill="currentColor" stroke="currentColor" strokeWidth="0.8" strokeLinejoin="round" />
     </>,
   )
 const ColumnsIcon = () =>
@@ -177,21 +235,30 @@ const ColumnsIcon = () =>
       <rect x="11" y="2" width="3.5" height="12" rx="1" stroke="currentColor" strokeWidth="1.3" />
     </>,
   )
-const BranchIcon = () =>
+const FolderIcon = () =>
   baseIcon(
     <>
-      <circle cx="4" cy="4" r="2" stroke="currentColor" strokeWidth="1.3" />
-      <circle cx="12" cy="4" r="2" stroke="currentColor" strokeWidth="1.3" />
-      <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="1.3" />
-      <path d="M4 6v2.5A2.5 2.5 0 0 0 6.5 11H10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-      <path d="M4 6v.5A2.5 2.5 0 0 0 6.5 9" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <path d="M1.5 4.5A1.5 1.5 0 0 1 3 3h2.5l1.5 1.5H13A1.5 1.5 0 0 1 14.5 6v5.5A1.5 1.5 0 0 1 13 13H3a1.5 1.5 0 0 1-1.5-1.5v-7Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
     </>,
   )
-const InboxIcon = () =>
+const ConceptIcon = () =>
   baseIcon(
     <>
-      <path d="M2 9l2.5-6h7l2.5 6v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V9Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
-      <path d="M2 9h3.5l1 2h3l1-2H14" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M8 1.5 9.5 5l3.5.8-2.6 2.5.7 3.7L8 10.2 4.9 12l.7-3.7L3 5.8 6.5 5 8 1.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+    </>,
+  )
+const AnalyticsIcon = () =>
+  baseIcon(
+    <>
+      <path d="M2.5 13.5v-3M6.5 13.5V6M10.5 13.5V3M14 13.5H1" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </>,
+  )
+const ScheduleIcon = () =>
+  baseIcon(
+    <>
+      <rect x="1.5" y="3" width="13" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M1.5 6.5h13M5 1.5v3M11 1.5v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <path d="M5 10.5l2 2 3.5-4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
     </>,
   )
 const BellIcon = () =>
@@ -201,31 +268,10 @@ const BellIcon = () =>
       <path d="M6.5 12.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
     </>,
   )
-const CommentIcon = () =>
-  baseIcon(
-    <>
-      <path d="M1.5 3A1.5 1.5 0 0 1 3 1.5h10A1.5 1.5 0 0 1 14.5 3v6A1.5 1.5 0 0 1 13 10.5H6l-4 3v-9.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
-    </>,
-  )
 const ChatIcon = () =>
   baseIcon(
     <>
       <path d="M1.5 4A2 2 0 0 1 3.5 2h9a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5l-3.5 2.5V11h-.5a2 2 0 0 1-2-2V4Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
-    </>,
-  )
-const FileTextIcon = () =>
-  baseIcon(
-    <>
-      <path d="M3 1.5h6l4 4v9H3v-13Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
-      <path d="M6 8h4M6 10.5h4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-    </>,
-  )
-const CardIcon = () =>
-  baseIcon(
-    <>
-      <rect x="1.5" y="3" width="13" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
-      <path d="M1.5 6h13" stroke="currentColor" strokeWidth="1.3" />
-      <path d="M4.5 9.5h3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
     </>,
   )
 const UsersIcon = () =>
@@ -250,36 +296,45 @@ const navGroups: { section: string; items: NavItem[] }[] = [
     items: [{ to: '/', label: 'Dashboard', icon: DashboardIcon, end: true }],
   },
   {
-    section: 'Projects',
+    section: 'Work',
     items: [
-      { to: '/projects', label: 'Active Projects', icon: FolderIcon },
-      { to: '/briefs', label: 'Briefs', icon: DocIcon },
-      { to: '/publications', label: 'Publications', icon: BookIcon },
+      { to: '/my-work', label: 'My work', icon: MyWorkIcon },
+      { to: '/review', label: 'Review', icon: ReviewIcon, roles: ['admin', 'reviewer'] },
+      { to: '/board', label: 'Board', icon: ColumnsIcon },
     ],
   },
   {
-    section: 'Operations',
+    section: 'Projects',
     items: [
-      { to: '/projects/p1/kanban', label: 'Kanban Board', icon: ColumnsIcon },
-      { to: '/versions', label: 'Versions', icon: BranchIcon },
-      { to: '/inputs', label: 'Inputs', icon: InboxIcon },
+      { to: '/projects', label: 'Projects', icon: FolderIcon },
+      { to: '/concepts', label: 'Concepts', icon: ConceptIcon, roles: ['admin', 'editor', 'designer', 'reviewer'] },
+      { to: '/analytics', label: 'Analytics', icon: AnalyticsIcon },
+    ],
+  },
+  {
+    section: 'Launch',
+    items: [
+      {
+        to: '/schedule',
+        label: 'Schedule & Publish',
+        icon: ScheduleIcon,
+        tag: 'Soon',
+        roles: ['admin', 'publisher', 'editor', 'designer'],
+      },
     ],
   },
   {
     section: 'Comms',
     items: [
-      { to: '/notifications', label: 'Notifications', icon: BellIcon, badge: 3 },
-      { to: '/comments', label: 'Comments', icon: CommentIcon },
-      { to: '/chat', label: 'Team Chat', icon: ChatIcon },
+      { to: '/notifications', label: 'Notifications', icon: BellIcon },
+      { to: '/chat', label: 'Team chat', icon: ChatIcon },
     ],
   },
   {
     section: 'Admin',
     items: [
-      { to: '/contracts', label: 'Contracts', icon: FileTextIcon },
-      { to: '/invoices', label: 'Invoices', icon: CardIcon },
-      { to: '/members', label: 'Members', icon: UsersIcon },
-      { to: '/settings', label: 'Settings', icon: GearIcon },
+      { to: '/members', label: 'Members', icon: UsersIcon, roles: ['admin'] },
+      { to: '/settings', label: 'Settings', icon: GearIcon, roles: ['admin'] },
     ],
   },
 ]

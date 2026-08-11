@@ -1,7 +1,9 @@
 import Avatar from '../components/ui'
-import { currentUser, org } from '../lib/mockData'
+import { org } from '../lib/mockData'
+import { useViewer } from '../lib/viewer'
 
 export default function ProfilePage() {
+  const viewer = useViewer()
   return (
     <div className="fade-in mx-auto max-w-2xl">
       <header className="mb-6">
@@ -13,11 +15,11 @@ export default function ProfilePage() {
         <div className="h-24 bg-cream" />
         <div className="px-6 pb-6">
           <div className="-mt-10 mb-4 flex items-end justify-between">
-            <Avatar initials={currentUser.initials} size="xl" tone="ink" className="ring-4 ring-surface" />
+            <Avatar initials={viewer.initials} size="xl" tone="ink" className="ring-4 ring-surface" />
             <button className="btn-secondary">Edit profile</button>
           </div>
-          <h2 className="font-headline text-xl font-semibold tracking-tight text-ink">{currentUser.name}</h2>
-          <p className="text-sm text-umber">Admin · {org.name}</p>
+          <h2 className="font-headline text-xl font-semibold tracking-tight text-ink">{viewer.name}</h2>
+          <p className="text-sm text-umber">{viewer.title} · {org.name}</p>
         </div>
       </section>
 
@@ -25,8 +27,8 @@ export default function ProfilePage() {
         <h3 className="mb-4 font-headline text-base font-semibold tracking-tight text-ink">Account details</h3>
         <dl className="space-y-3">
           {[
-            { k: 'Email', v: currentUser.email },
-            { k: 'Role', v: currentUser.role },
+            { k: 'Email', v: viewer.email },
+            { k: 'Role', v: viewer.role },
             { k: 'Organization', v: org.name },
             { k: 'Workspace', v: org.slug },
           ].map((d) => (

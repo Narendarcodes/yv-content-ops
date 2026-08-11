@@ -1,52 +1,59 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
-import Chip, { statusTone, PageHeader, EmptyState } from '../components/primitives'
-import { AvatarStack } from '../components/ui'
-import { projects } from '../lib/mockData'
+import Chip, { statusTone, PageHeader, Tabs } from '../components/primitives'
+import Avatar from '../components/ui'
+import { projects, team, type Project } from '../lib/mockData'
+import { statusLabel } from '../lib/format'
 
-const tabs = ['All', 'Active', 'In Review', 'Draft']
+const memberOf = (id: string) => team.find((m) => m.id === id)
+
+const PHASES: { id: string; label: string; match: (p: Project) => boolean }[] = [
+  { id: 'all', label: 'All', match: () => true },
+  { id: 'active', label: 'In production', match: (p) => ['ASSIGNED', 'WAITING_FOR_INPUTS', 'INPUTS_READY', 'IN_PROGRESS'].includes(p.status) },
+  { id: 'review', label: 'In review', match: (p) => ['FIRST_DRAFT_SUBMITTED', 'UNDER_REVIEW', 'REVISION_REQUESTED', 'REVISION_IN_PROGRESS', 'REVISION_SUBMITTED'].includes(p.status) },
+  { id: 'approved', label: 'Approved', match: (p) => ['APPROVED', 'SCHEDULED'].includes(p.status) },
+  { id: 'published', label: 'Published', match: (p) => ['PUBLISHED', 'CLOSED'].includes(p.status) },
+]
 
 export default function ProjectsPage() {
-  const [tab, setTab] = useState('All')
+  const [tab, setTab] = useState('all')
   const [query, setQuery] = useState('')
+  const phase = PHASES.find((x) => x.id === tab)!
 
   const filtered = projects.filter((p) => {
-    const inTab = tab === 'All' || p.status === tab
-    const inQuery = p.name.toLowerCase().includes(query.toLowerCase()) || p.client.toLowerCase().includes(query.toLowerCase())
+    const inTab = phase.match(p)
+    const q = query.trim().toLowerCase()
+    const inQuery = !q || p.title.toLowerCase().includes(q) || p.type.toLowerCase().includes(q) || (memberOf(p.assignee)?.name.toLowerCase().includes(q) ?? false)
     return inTab && inQuery
   })
+
+  const counts = (id: string) => projects.filter((p) => PHASES.find((x) => x.id === id)!.match(p)).length
 
   return (
     <div className="fade-in">
       <PageHeader
-        title="Active Projects"
-        subtitle="All client work across the studio"
+        title="Projects"
+        subtitle="Every content project across its lifecycle — from production to published."
         actions={
-          <button className="btn-primary">
+          <Link to="/concepts" className="btn-primary">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path d="M7 1.5v11M1.5 7h11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
             </svg>
-            New project
-          </button>
+            Start from a concept
+          </Link>
         }
       />
 
       {/* Toolbar */}
       <div className="mb-5 flex flex-wrap items-center gap-3">
-        <div className="flex rounded-[8px] border border-line bg-surface p-0.5">
-          {tabs.map((t) => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`rounded-[6px] px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
-                tab === t ? 'bg-ink text-on-accent' : 'text-umber hover:text-ink'
-              }`}
-            >
-              {t}
-            </button>
-          ))}
+        <div className="flex-1">
+          <Tabs
+            tabs={PHASES.map((x) => ({ id: x.id, label: x.label, count: counts(x.id) }))}
+            active={tab}
+            onChange={setTab}
+          />
         </div>
-        <div className="relative ml-auto w-56">
+        <div className="relative w-56">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-umber/60">
             <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.3" />
             <path d="M9.5 9.5L12.5 12.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
@@ -63,14 +70,14 @@ export default function ProjectsPage() {
       {/* Table */}
       <div className="card overflow-hidden p-0">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px] text-left">
+          <table className="w-full min-w-[760px] text-left">
             <thead>
               <tr className="border-b border-line">
                 <th className="table-head">Project</th>
-                <th className="table-head">Client</th>
+                <th className="table-head">Type</th>
                 <th className="table-head">Status</th>
-                <th className="table-head">Deadline</th>
-                <th className="table-head">Team</th>
+                <th className="table-head">Assignee</th>
+                <th className="table-head">Platform</th>
                 <th className="table-head">Updated</th>
               </tr>
             </thead>
@@ -79,17 +86,25 @@ export default function ProjectsPage() {
                 <tr key={p.id} className="table-row">
                   <td className="px-5 py-3.5">
                     <Link to={`/projects/${p.id}`} className="font-medium text-ink hover:text-teal">
-                      {p.name}
+                      {p.title}
                     </Link>
+                    {p.status === 'PUBLISHED' && p.postUrl && (
+                      <a href={p.postUrl} target="_blank" rel="noreferrer" className="mt-0.5 block text-xs text-teal hover:underline">
+                        View live post
+                      </a>
+                    )}
                   </td>
-                  <td className="px-5 py-3.5 text-sm text-umber">{p.client}</td>
+                  <td className="px-5 py-3.5 text-sm text-umber">{p.type}</td>
                   <td className="px-5 py-3.5">
-                    <Chip label={p.status} tone={statusTone(p.status)} dot />
+                    <Chip label={statusLabel(p.status)} tone={statusTone(p.status)} dot />
                   </td>
-                  <td className="px-5 py-3.5 font-mono text-xs text-ink/80">{p.deadline}</td>
                   <td className="px-5 py-3.5">
-                    <AvatarStack initials={['EK', 'MR', 'SL']} max={3} />
+                    <span className="flex items-center gap-2">
+                      <Avatar initials={memberOf(p.assignee)?.initials ?? '?'} size="xs" tone="tint" />
+                      <span className="text-sm text-ink/80">{memberOf(p.assignee)?.name}</span>
+                    </span>
                   </td>
+                  <td className="px-5 py-3.5 text-sm text-umber">{p.platform ?? '—'}</td>
                   <td className="px-5 py-3.5 font-mono text-[11px] text-umber/70">{p.updated}</td>
                 </tr>
               ))}
@@ -97,12 +112,8 @@ export default function ProjectsPage() {
           </table>
         </div>
         {filtered.length === 0 && (
-          <div className="p-6">
-            <EmptyState
-              icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" /></svg>}
-              title="No projects found"
-              description="Try a different filter or search term."
-            />
+          <div className="px-5 py-12 text-center">
+            <p className="text-sm text-umber">No projects match this view. Try another phase or search term.</p>
           </div>
         )}
       </div>

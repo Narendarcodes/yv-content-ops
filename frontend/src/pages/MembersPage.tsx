@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import Avatar from '../components/ui'
 import Chip from '../components/primitives'
-import { members } from '../lib/mockData'
+import { members, org } from '../lib/mockData'
 
 const roleTone: Record<string, 'teal' | 'neutral' | 'warning' | 'success'> = {
   Admin: 'teal',
   Editor: 'warning',
   Reviewer: 'success',
-  Writer: 'neutral',
+  Designer: 'neutral',
   Publisher: 'neutral',
 }
 
@@ -20,7 +20,7 @@ export default function MembersPage() {
       <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-headline text-2xl font-semibold tracking-tight text-ink">Members</h1>
-          <p className="mt-1 text-sm text-umber">{members.length} people in Northern Lights Studio</p>
+          <p className="mt-1 text-sm text-umber">{members.length} people in {org.name}</p>
         </div>
         <button className="btn-primary">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
