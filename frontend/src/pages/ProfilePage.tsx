@@ -1,43 +1,120 @@
+import { Building2, Mail, Pencil, Shield, Star, Hash } from 'lucide-react'
 import Avatar from '../components/ui'
-import { org } from '../lib/mockData'
+import { org, projects, team, videoReviews } from '../lib/mockData'
 import { useViewer } from '../lib/viewer'
+
+const roleLabel: Record<string, string> = {
+  admin: 'Admin',
+  editor: 'Editor',
+  reviewer: 'Reviewer',
+  publisher: 'Publisher',
+  designer: 'Designer',
+  member: 'Member',
+}
 
 export default function ProfilePage() {
   const viewer = useViewer()
+  const activeProjects = projects.filter(
+    (p) => p.assignee === viewer.id && !['PUBLISHED', 'CLOSED'].includes(p.status),
+  ).length
+  const myComments = Object.values(videoReviews).reduce(
+    (n, r) => n + r.comments.filter((c) => c.author === viewer.id).length,
+    0,
+  )
+  const teammateCount = team.length
+
+  const stats = [
+    { label: 'Active projects', value: activeProjects },
+    { label: 'Comments written', value: myComments },
+    { label: 'Teammates', value: teammateCount },
+  ]
+
   return (
-    <div className="fade-in mx-auto max-w-2xl">
-      <header className="mb-6">
-        <h1 className="font-headline text-2xl font-semibold tracking-tight text-ink">Profile</h1>
-        <p className="mt-1 text-sm text-umber">Your account details</p>
+    <div className="mx-auto max-w-3xl">
+      {/* Header */}
+      <header className="mb-7">
+        <h1 className="font-headline text-[28px] font-semibold leading-tight tracking-[-0.03em] text-ink">
+          Profile
+        </h1>
+        <p className="mt-1.5 text-sm text-umber">Your account details and workspace identity</p>
       </header>
 
-      <section className="card overflow-hidden p-0">
-        <div className="h-24 bg-cream" />
-        <div className="px-6 pb-6">
-          <div className="-mt-10 mb-4 flex items-end justify-between">
-            <Avatar initials={viewer.initials} size="xl" tone="ink" className="ring-4 ring-surface" />
-            <button className="btn-secondary">Edit profile</button>
+      {/* Hero card */}
+      <section className="card overflow-hidden">
+        {/* Banner — tonal field, quiet craft */}
+        <div className="relative h-28 overflow-hidden bg-cream">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                'radial-gradient(ellipse 70% 90% at 15% 0%, rgba(15,118,110,0.16), transparent 60%), radial-gradient(ellipse 60% 80% at 90% 100%, rgba(15,118,110,0.10), transparent 55%)',
+            }}
+            aria-hidden="true"
+          />
+          <div
+            className="absolute inset-0 opacity-40"
+            style={{ backgroundImage: 'radial-gradient(rgba(28,25,23,0.12) 1px, transparent 1px)', backgroundSize: '20px 20px' }}
+            aria-hidden="true"
+          />
+        </div>
+
+        <div className="px-7 pb-7">
+          <div className="-mt-11 mb-5 flex items-end justify-between">
+            <Avatar
+              initials={viewer.initials}
+              size="xl"
+              tone="ink"
+              className="h-24 w-24 text-[26px] ring-[5px] ring-surface shadow-[0_4px_16px_rgba(28,25,23,0.18)]"
+            />
+            <button className="btn-secondary group">
+              <Pencil size={14} strokeWidth={1.75} className="text-umber transition-transform group-hover:-rotate-6" />
+              Edit profile
+            </button>
           </div>
-          <h2 className="font-headline text-xl font-semibold tracking-tight text-ink">{viewer.name}</h2>
-          <p className="text-sm text-umber">{viewer.title} · {org.name}</p>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="font-headline text-2xl font-semibold tracking-[-0.02em] text-ink">{viewer.name}</h2>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-tint px-2.5 py-0.5 font-mono text-[11px] font-medium text-teal">
+              <Shield size={11} strokeWidth={2} />
+              {roleLabel[viewer.role] ?? viewer.role}
+            </span>
+          </div>
+          <p className="mt-1 text-sm text-umber">{viewer.title}</p>
+
+          {/* Stats */}
+          <div className="mt-6 grid grid-cols-3 gap-3">
+            {stats.map((s) => (
+              <div key={s.label} className="rounded-xl border border-line bg-canvas/70 px-4 py-3">
+                <p className="font-headline text-2xl font-semibold tracking-[-0.02em] text-ink">{s.value}</p>
+                <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-umber/70">{s.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="card mt-6 p-6">
-        <h3 className="mb-4 font-headline text-base font-semibold tracking-tight text-ink">Account details</h3>
-        <dl className="space-y-3">
+      {/* Account details */}
+      <section className="card mt-6 overflow-hidden">
+        <header className="border-b border-line px-6 py-4">
+          <h3 className="font-headline text-[15px] font-semibold tracking-[-0.01em] text-ink">Account details</h3>
+        </header>
+        <ul className="divide-y divide-line">
           {[
-            { k: 'Email', v: viewer.email },
-            { k: 'Role', v: viewer.role },
-            { k: 'Organization', v: org.name },
-            { k: 'Workspace', v: org.slug },
+            { k: 'Email', v: viewer.email, icon: <Mail size={15} strokeWidth={1.75} /> },
+            { k: 'Role', v: roleLabel[viewer.role] ?? viewer.role, icon: <Shield size={15} strokeWidth={1.75} /> },
+            { k: 'Organization', v: org.name, icon: <Building2 size={15} strokeWidth={1.75} /> },
+            { k: 'Workspace', v: org.slug, icon: <Hash size={15} strokeWidth={1.75} /> },
+            { k: 'Member since', v: '2026', icon: <Star size={15} strokeWidth={1.75} /> },
           ].map((d) => (
-            <div key={d.k} className="flex items-center justify-between">
-              <dt className="text-[10px] font-mono uppercase tracking-wider text-umber/60">{d.k}</dt>
+            <li key={d.k} className="flex items-center gap-3.5 px-6 py-3.5 transition-colors hover:bg-canvas/50">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-ink/5 text-umber">
+                {d.icon}
+              </span>
+              <dt className="flex-1 font-mono text-[10px] uppercase tracking-wider text-umber/70">{d.k}</dt>
               <dd className="text-sm font-medium text-ink">{d.v}</dd>
-            </div>
+            </li>
           ))}
-        </dl>
+        </ul>
       </section>
     </div>
   )

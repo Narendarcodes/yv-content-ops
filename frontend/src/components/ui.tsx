@@ -21,7 +21,7 @@ export default function Avatar({
 }) {
   const sizes = {
     xs: 'h-6 w-6 text-[9px]',
-    sm: 'h-7 w-7 text-[10px]',
+    sm: 'h-8 w-8 text-[10px]',
     md: 'h-9 w-9 text-xs',
     lg: 'h-11 w-11 text-sm',
     xl: 'h-20 w-20 text-2xl',
@@ -42,7 +42,7 @@ export function AvatarStack({ initials, max = 3 }: { initials: string[]; max?: n
   return (
     <span className="flex -space-x-2">
       {shown.map((ini, i) => (
-        <span key={i} className="rounded-full ring-2 ring-surface">
+        <span key={i} className="rounded-full ring-2 ring-surface transition-transform hover:-translate-y-0.5">
           <Avatar initials={ini} size="xs" tone={i % 2 === 0 ? 'teal' : 'tint'} />
         </span>
       ))}
@@ -80,12 +80,30 @@ export function PageHeader({
   actions?: ReactNode
 }) {
   return (
-    <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <header className="mb-7 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="font-headline text-2xl font-semibold tracking-tight text-ink">{title}</h1>
-        {subtitle && <p className="mt-1 text-sm text-umber">{subtitle}</p>}
+        <h1 className="font-headline text-[28px] font-semibold leading-tight tracking-[-0.03em] text-ink">
+          {title}
+        </h1>
+        {subtitle && <p className="mt-1.5 max-w-prose text-sm leading-relaxed text-umber">{subtitle}</p>}
       </div>
       {actions && <div className="flex items-center gap-2">{actions}</div>}
     </header>
+  )
+}
+
+/** Section heading used inside cards — consistent editorial rhythm */
+export function SectionHeading({
+  title,
+  action,
+}: {
+  title: string
+  action?: ReactNode
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4 px-5 py-4">
+      <h2 className="font-headline text-[15px] font-semibold tracking-[-0.01em] text-ink">{title}</h2>
+      {action}
+    </div>
   )
 }

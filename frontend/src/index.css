@@ -31,12 +31,19 @@
   --font-mono: 'JetBrains Mono', monospace;
 
   /* Radii */
-  --radius-card: 8px;
+  --radius-card: 12px;
+  --radius-pill: 999px;
 
   /* Shadows — hairline diffused, elevation only when needed */
   --shadow-card: 0 1px 2px rgba(28, 25, 23, 0.04), 0 4px 12px rgba(28, 25, 23, 0.05);
+  --shadow-card-hover: 0 2px 4px rgba(28, 25, 23, 0.05), 0 12px 28px rgba(28, 25, 23, 0.10);
   --shadow-pop: 0 4px 16px rgba(28, 25, 23, 0.10), 0 12px 40px rgba(28, 25, 23, 0.08);
   --shadow-scrim: 0 0 0 9999px rgba(28, 25, 23, 0.45);
+
+  /* Motion — custom easing (never ease-in for UI) */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);      /* enter / feedback — starts fast */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);   /* on-screen movement */
+  --ease-press: cubic-bezier(0.3, 0, 0.2, 1);
 }
 
 /* ---------- Base ---------- */
@@ -102,27 +109,35 @@ body {
     border: 1px solid var(--color-line);
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-card);
+    transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
+  }
+  .card-hover:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-line-strong);
+    box-shadow: var(--shadow-card-hover);
   }
 
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
     border-radius: var(--radius-card);
     padding: 0 16px;
-    height: 36px;
+    height: 38px;
     font-family: var(--font-body);
     font-size: 14px;
     font-weight: 500;
+    letter-spacing: -0.005em;
     white-space: nowrap;
     user-select: none;
     cursor: pointer;
     border: 1px solid transparent;
-    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+    transition: background-color 0.15s var(--ease-out), border-color 0.15s var(--ease-out),
+      color 0.15s var(--ease-out), transform 0.12s var(--ease-press), box-shadow 0.15s var(--ease-out);
   }
   .btn:active {
-    transform: translateY(1px) scale(0.98);
+    transform: scale(0.97);
   }
   .btn:disabled {
     opacity: 0.4;
@@ -131,9 +146,11 @@ body {
   .btn-primary {
     background: var(--color-teal);
     color: var(--color-on-accent);
+    box-shadow: 0 1px 2px rgba(15, 118, 110, 0.25);
   }
   .btn-primary:hover {
     background: var(--color-teal-press);
+    box-shadow: 0 2px 8px rgba(15, 118, 110, 0.30);
   }
   .btn-secondary {
     background: var(--color-surface);
@@ -160,25 +177,51 @@ body {
     opacity: 0.9;
   }
 
+  /* Icon button — quiet square control for topbars/toolbars */
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    color: var(--color-umber);
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color 0.15s var(--ease-out), color 0.15s var(--ease-out), transform 0.12s var(--ease-press);
+  }
+  .icon-btn:hover {
+    color: var(--color-ink);
+    background: rgba(28, 25, 23, 0.05);
+  }
+  .icon-btn:active {
+    transform: scale(0.92);
+  }
+
   .input {
     width: 100%;
-    border-radius: var(--radius-card);
+    border-radius: 10px;
     border: 1px solid var(--color-line);
     background: var(--color-surface);
     padding: 0 12px;
-    height: 36px;
+    height: 40px;
     font-family: var(--font-body);
     font-size: 14px;
     color: var(--color-ink);
     outline: none;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    transition: border-color 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out), background-color 0.15s var(--ease-out);
   }
   .input::placeholder {
     color: rgba(120, 113, 108, 0.72);
   }
+  .input:hover {
+    border-color: var(--color-line-strong);
+  }
   .input:focus {
     border-color: var(--color-teal);
-    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.14);
+    background: var(--color-surface);
   }
   .input-error {
     border-color: var(--color-danger);
@@ -213,27 +256,46 @@ body {
   .chip-danger { background: rgba(220, 38, 38, 0.10); color: var(--color-danger); }
 
   .nav-item {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 12px;
-    border-radius: var(--radius-card);
+    border-radius: 10px;
     padding: 0 12px;
-    height: 36px;
+    height: 38px;
     font-family: var(--font-body);
     font-size: 14px;
     font-weight: 500;
-    color: rgba(28, 25, 23, 0.75);
-    transition: background-color 0.15s ease, color 0.15s ease;
+    color: rgba(28, 25, 23, 0.72);
+    transition: background-color 0.16s var(--ease-out), color 0.16s var(--ease-out);
     text-decoration: none;
   }
   .nav-item:hover {
     color: var(--color-ink);
-    background: rgba(28, 25, 23, 0.04);
+    background: rgba(28, 25, 23, 0.045);
   }
   .nav-item.active {
     background: var(--color-tint);
-    color: var(--color-teal);
-    font-weight: 500;
+    color: var(--color-teal-press);
+    font-weight: 600;
+  }
+  /* Active rail — quiet 2px accent that makes the active row read at a glance */
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 18px;
+    border-radius: 999px;
+    background: var(--color-teal);
+  }
+  .nav-item svg {
+    transition: transform 0.16s var(--ease-out);
+  }
+  .nav-item:hover svg {
+    transform: translateX(1px);
   }
 
   .nav-section {
@@ -276,14 +338,46 @@ body {
 /* ---------- Motion (reduced-motion safe) ---------- */
 @media (prefers-reduced-motion: no-preference) {
   .fade-in {
-    animation: fade-in 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: fade-in 0.28s var(--ease-out);
   }
   .rise-in {
-    animation: rise-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: rise-in 0.38s var(--ease-out) both;
   }
   .modal-in {
-    animation: modal-in 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: modal-in 0.26s var(--ease-out);
   }
+
+  /* Staggered entrance — children with .stagger bring themselves in one by one */
+  .stagger > * {
+    animation: rise-in 0.4s var(--ease-out) both;
+  }
+  .stagger > *:nth-child(1) { animation-delay: 0.02s; }
+  .stagger > *:nth-child(2) { animation-delay: 0.06s; }
+  .stagger > *:nth-child(3) { animation-delay: 0.10s; }
+  .stagger > *:nth-child(4) { animation-delay: 0.14s; }
+  .stagger > *:nth-child(5) { animation-delay: 0.18s; }
+  .stagger > *:nth-child(6) { animation-delay: 0.22s; }
+  .stagger > *:nth-child(7) { animation-delay: 0.26s; }
+  .stagger > *:nth-child(8) { animation-delay: 0.30s; }
+
+  /* Page-level entrance: fade + a short upward drift */
+  .page-enter {
+    animation: page-enter 0.34s var(--ease-out) both;
+  }
+
+  /* Gentle, unmissable ping for the live notification dot */
+  .ping-dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: inherit;
+    animation: ping 2.4s var(--ease-in-out) infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stagger > *, .page-enter, .rise-in, .fade-in, .modal-in { animation: none; }
 }
 
 @keyframes fade-in {
@@ -291,10 +385,38 @@ body {
   to { opacity: 1; }
 }
 @keyframes rise-in {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes modal-in {
-  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
   to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes ping {
+  0% { transform: scale(1); opacity: 0.7; }
+  70%, 100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* Brand mark — the "Aa" monogram */
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--color-teal);
+  color: var(--color-on-accent);
+  font-family: var(--font-headline);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  box-shadow: 0 1px 3px rgba(15, 118, 110, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+/* Hero accent underline for the auth pages */
+.auth-rule {
+  background: var(--color-teal);
+  border-radius: 999px;
 }
