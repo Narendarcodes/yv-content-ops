@@ -46,7 +46,7 @@ export default function DashboardPage() {
           </h1>
           <p className="mt-2 text-sm text-umber">
             {viewer.role === 'admin'
-              ? 'Here’s what the team is working on across Aaryajanani today.'
+              ? 'Here’s what the team is working on across your organization today.'
               : viewer.role === 'reviewer'
                 ? 'Here’s what’s waiting for your review and approval.'
                 : 'Here’s what’s on your plate today.'}

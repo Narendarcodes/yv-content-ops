@@ -81,9 +81,9 @@ export default function AppShell() {
       <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-line bg-canvas">
         {/* Brand */}
         <div className="flex items-center gap-3 px-4 pt-5 pb-4">
-          <span className="brand-mark h-9 w-9 text-sm">Aa</span>
+          <span className="brand-mark h-9 w-9 text-sm">Fo</span>
           <div className="leading-tight">
-            <p className="font-headline text-base font-bold tracking-[-0.02em] text-ink">Aaryajanani</p>
+            <p className="font-headline text-base font-bold tracking-[-0.02em] text-ink">Folio</p>
             <button
               onClick={() => navigate('/settings')}
               className="flex items-center gap-1 text-[11px] text-umber transition-colors hover:text-teal"

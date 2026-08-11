@@ -1,5 +1,5 @@
 /**
- * Demo role simulation for the Aaryajanani frontend.
+ * Demo role simulation for the Folio frontend.
  * Lets us walk every role's userflow (admin, editor, reviewer, designer,
  * publisher) before backend integration. Backend auth remains the real
  * security boundary — this is a UX verification aid only.
@@ -27,7 +27,7 @@ const rolePerms: Record<TeamMember['role'], (Permission | '*')[]> = {
   publisher: ['view', 'schedule', 'publish', 'metrics', 'settings'],
 }
 
-const STORAGE_KEY = 'aaryajanani.demo-viewer'
+const STORAGE_KEY = 'folio.demo-viewer'
 
 function initialUser(): TeamMember {
   const saved = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null

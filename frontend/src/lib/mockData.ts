@@ -1,5 +1,5 @@
 /**
- * Mock data for Aaryajanani — Social Media Content Operations OS.
+ * Mock data for Folio — Social Media Content Operations OS.
  * Domain language follows the PRD: Concepts, Projects, drafts, versions,
  * review (on video timestamps), revisions, approval, scheduling and
  * published projects. No agency/CRM vocabulary (no briefs, contracts,

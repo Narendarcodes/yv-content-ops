@@ -44,8 +44,8 @@ export default function LoginPage() {
         />
 
         <div className="relative z-10 flex items-center gap-3">
-          <span className="brand-mark h-10 w-10 text-base">Aa</span>
-          <span className="font-headline text-xl font-bold tracking-[-0.02em] text-ink">Aaryajanani</span>
+          <span className="brand-mark h-10 w-10 text-base">Fo</span>
+          <span className="font-headline text-xl font-bold tracking-[-0.02em] text-ink">Folio</span>
         </div>
 
         <div className="relative z-10">
@@ -80,7 +80,7 @@ export default function LoginPage() {
         </div>
 
         <p className="relative z-10 font-mono text-[10px] uppercase tracking-[0.2em] text-umber/60">
-          Aaryajanani — Content Operations
+          Folio — Content Operations
         </p>
       </div>
 
@@ -88,7 +88,7 @@ export default function LoginPage() {
       <div className="flex flex-1 items-center justify-center bg-surface px-6 py-12">
         <div className="w-full max-w-sm">
           <div className="mb-8 lg:hidden">
-            <span className="brand-mark h-10 w-10 text-base">Aa</span>
+            <span className="brand-mark h-10 w-10 text-base">Fo</span>
           </div>
 
           <div className="stagger">
@@ -153,9 +153,9 @@ export default function LoginPage() {
             </form>
 
             <p className="mt-7 text-center text-sm text-umber">
-              Don&apos;t have an account?{' '}
+              New to Folio?{' '}
               <Link to="/register" className="font-medium text-teal transition-opacity hover:opacity-80">
-                Create one
+                Create your organization
               </Link>
             </p>
 

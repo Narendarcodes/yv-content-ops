@@ -1,5 +1,5 @@
 /**
- * API client for Aaryajanani.
+ * API client for Folio.
  *
  * MOCK-FIRST: The backend integration comes in a later phase (requires approval).
  * Until then every module consumes `mockApi`, which returns the exact response
