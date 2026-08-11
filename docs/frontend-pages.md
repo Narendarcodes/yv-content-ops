@@ -93,32 +93,33 @@ All 23 pages above have been designed in **Google Stitch** using the Aaryajanani
 - **Device type**: DESKTOP
 - Machine-readable screen map: `.stitch/metadata.json`
 
-Screen ID map (id → page from the table above):
+Screen ID map (id → page from the table above). All screens regenerated on 2026-08-25 with correct Outfit/Geist/JetBrains Mono fonts and standardized sidebar:
 
-| Page | Screen ID |
-|---|---|
-| Login (1) | `c610d3c34c7d4b2f83a54df53a03e28e` |
-| Register (2) | `c491c180b23c4bdfaf2dbbdcbeac55a3` |
-| App Shell (3) | `7713bfd1014d46a1b0880a76746fba98` |
-| Notification Center (4) | `713cc404478d4019a9f3b92d1067340a` |
-| Create Organization (5) | `9516e1a92940420a88468b685540be44` |
-| Members & Roles (6) | `9d1050d0a2f54906844bcd8adcfd5aa6` |
-| Project List (7) | `84265cb0c8024c079f5ce9187fcce131` |
-| Create Project modal (8) | `0f228974935946a39ff372fc492169e1` |
-| Project Detail Overview (9) | `b760ed8921bc4525b1e01b7424dee46e` |
-| Versions tab (10) | `84aa845fcc334f348b2d1a96ba0fa18d` |
-| Inputs tab (11) | `2e73af30afc8400d8ec56fb1796902e1` |
-| Comments & Review tab (12) | `368ebd8e91044d00a17466246b2b3a7b` |
-| Activity Feed tab (13) | `bad886b72a274ba193d849d0846be92a` |
-| Publications tab (14) | `bccef7f0215b4f5ea8d49e39c85f0df3` |
-| Metrics tab (15) | `599059b15a7c437a9f2497a1b2593b0d` |
-| Tasks Kanban (16) | `3e90fd42ae974e2bbe59db6957b3b67a` |
-| Brief Editor (17) | `a29fd6a29ea8433184ef30918dd4ce55` |
-| Chat (18) | `11e9fa6bc5074a5e941fdbfac277d407` |
-| Contracts (19) | `4ae242387e444a0a8003778a6886cf01` |
-| Contract Detail (20) | `35a5bb24b78547c48f2a8126a03abfbf` |
-| Invoices (21) | `33da852622c74e2bb7b396b500075c46` |
-| Invoice Detail (22) | `2722831a8fbc4390b6e5d66b66d12cef` |
-| Profile (23) | `07b40c5d7e354588b96f8bb53ab49f0c` |
+| Page | Screen ID | Notes |
+|---|---|---|
+| Login (1) | `348cfa9649194760b93deb0e2f23608d` | Regenerated |
+| Register (2) | `4e8dbfdcbe644f18ae75b70cbeda7adf` | Regenerated |
+| App Shell (3) | `daf8262cc40e48f3af621a954e061b61` | Regenerated |
+| Notification Center (4) | `ce82a0fd5a744dd3af7b64fc73d2b31c` | Regenerated |
+| Create Organization (5) | `ea88002196b641d6b740cdf5bcce42e6` | Regenerated |
+| Members & Roles (6) | `7a14a30b9752498390de3a8910021a45` | Regenerated |
+| Project List (7) | `bad75e513d5c4b6ca2da214eec448759` | Regenerated |
+| Create Project modal (8) | `7de21227c05645269dc46b897fb71d38` | Regenerated |
+| Dashboard Overview (9) | `c60563947bc64f9bb829a709d858ca8b` | Regenerated |
+| Versions History (10) | `4cff372fa9d7445988dbc8773b123304` | Regenerated |
+| Inputs Inbox (11) | `18072c14169049348e1b010fbd2e839f` | Regenerated |
+| Comments & Annotations (12) | `a9727d00978f4e009d0bdbbed6abd9f0` | Regenerated |
+| Activity Feed (13) | `9588cb1fc87241df9521cef65ee85185` | Regenerated |
+| Publications (14) | `537faf7dfa8b4b769a8e951f537530bd` | Regenerated |
+| Tasks Kanban (16) | `be30c46822184998a154af9972756a7a` | Regenerated |
+| Briefs List | `dca284ab9dd646908dcece53174183f4` | New screen |
+| Brief Detail | `a8da9a0674e0406bad1b6836645c3fc2` | New screen |
+| Team Chat (18) | `55ab8912a63747198e82babd28a2125c` | Regenerated |
+| Contracts List (19) | `d089965fa9454ef59434a6229cb49066` | Regenerated |
+| Contract Detail (20) | `a87267e555f04294b6d25bc4523d9ec1` | Regenerated |
+| Invoices List (21) | `5a3901a0c27348be883a0cf61d2f0842` | Regenerated |
+| Invoice Detail (22) | `81cc3fc273254e24bcf54bfae7153e29` | Regenerated |
+| Profile (23) | `5d9731b8daf44c7c9b683719624b9ee3` | Regenerated |
+| Settings | `92c43425063d49b3a485f7ee2b4ce476` | New screen |
 
 Plus a generated logo asset: `147f653db54e4dfb8b9b23d969b25524`.
