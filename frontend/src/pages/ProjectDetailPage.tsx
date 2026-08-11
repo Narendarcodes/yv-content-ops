@@ -1,16 +1,34 @@
-import { Link, useParams } from 'react-router-dom'
-import Chip, { statusTone } from '../components/primitives'
+import { useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { UploadCloud } from 'lucide-react'
+import Chip, { statusTone, Modal } from '../components/primitives'
 import Avatar, { AvatarStack } from '../components/ui'
 import { projects, videoReviews, projectInputs, team, activity } from '../lib/mockData'
 import { statusLabel } from '../lib/format'
 import { useViewer, can } from '../lib/viewer'
+import { useToast } from '../components/toast'
 
 const memberOf = (id: string) => team.find((m) => m.id === id)
 
 export default function ProjectDetailPage() {
   const { id } = useParams()
+  const navigate = useNavigate()
+  const toast = useToast()
   const viewer = useViewer()
-  const project = projects.find((p) => p.id === id) ?? projects[0]
+  const [uploadOpen, setUploadOpen] = useState(false)
+  const [uploadNote, setUploadNote] = useState('')
+  const project = projects.find((p) => p.id === id)
+
+  // Unknown project id — a real 404 instead of silently showing the first project
+  if (!project) {
+    return (
+      <div className="fade-in card mx-auto max-w-md p-12 text-center">
+        <h1 className="font-headline text-lg font-semibold text-ink">Project not found</h1>
+        <p className="mt-1 text-sm text-umber">This project doesn&apos;t exist or was removed.</p>
+        <Link to="/projects" className="btn-secondary mt-5 inline-flex">Back to projects</Link>
+      </div>
+    )
+  }
 
   const review = videoReviews[project.id]
   const inputs = projectInputs[project.id] ?? []
@@ -61,16 +79,66 @@ export default function ProjectDetailPage() {
             </Link>
           )}
           {isInReview && canComment && !review && (
-            <button className="btn-primary" title="Draft coming — editors upload the video here">Review draft</button>
+            <button
+              onClick={() => navigate(`/projects/${project.id}/review`)}
+              className="btn-primary"
+              title="Open the review workspace for this draft"
+            >
+              Review draft
+            </button>
           )}
           {canUpload && (
-            <button className="btn-secondary" title="Upload a new cut of this video">Upload new version</button>
+            <button onClick={() => setUploadOpen(true)} className="btn-secondary" title="Upload a new cut of this video">
+              Upload new version
+            </button>
           )}
           {canApprove && !isInReview && project.status !== 'PUBLISHED' && (
-            <button className="btn-secondary" title="Approval happens in the review workspace">Approve latest</button>
+            <button
+              onClick={() => navigate(`/projects/${project.id}/review`)}
+              className="btn-secondary"
+              title="Approval happens in the review workspace"
+            >
+              Approve latest
+            </button>
           )}
         </div>
       </div>
+
+      {/* Upload new version */}
+      <Modal open={uploadOpen} onClose={() => setUploadOpen(false)} title="Upload a new version">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            setUploadOpen(false)
+            setUploadNote('')
+            // Demo: upload is simulated — the backend storage API handles real files later
+            toast('success', 'Version uploaded', `${project.title} · ${uploadNote.trim() || 'New cut'}`)
+          }}
+          className="space-y-4 px-6 py-5"
+        >
+          <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-line bg-canvas/60 px-6 py-8 text-center">
+            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-tint text-teal">
+              <UploadCloud size={18} strokeWidth={1.75} />
+            </span>
+            <p className="text-sm font-medium text-ink">Drop your video here</p>
+            <p className="text-[13px] text-umber">MP4 or MOV, up to 2 GB — the review workspace opens automatically.</p>
+          </div>
+          <div>
+            <label htmlFor="upload-note" className="label">Version note (optional)</label>
+            <input
+              id="upload-note"
+              value={uploadNote}
+              onChange={(e) => setUploadNote(e.target.value)}
+              placeholder="e.g. Fixed the subtitle timing"
+              className="input"
+            />
+          </div>
+          <div className="flex justify-end gap-2 pt-1">
+            <button type="button" onClick={() => setUploadOpen(false)} className="btn-ghost">Cancel</button>
+            <button type="submit" className="btn-primary">Upload version</button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Summary cards */}
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

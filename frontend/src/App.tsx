@@ -1,7 +1,10 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import type { ReactNode } from 'react'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import AppShell from './layouts/AppShell'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import { useAuth } from './lib/auth'
 import DashboardPage from './pages/DashboardPage'
 import MyWorkPage from './pages/MyWorkPage'
 import ReviewPage from './pages/ReviewPage'
@@ -18,15 +21,37 @@ import MembersPage from './pages/MembersPage'
 import SettingsPage from './pages/SettingsPage'
 import ProfilePage from './pages/ProfilePage'
 
+/** Blocks the app shell until a session exists — redirects to /login. */
+function RequireAuth({ children }: { children: ReactNode }) {
+  const { authenticated } = useAuth()
+  const location = useLocation()
+  if (!authenticated) {
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />
+  }
+  return <>{children}</>
+}
+
+/** Keeps signed-in users out of the auth screens — returns them to where they were headed. */
+function RedirectIfAuthed({ children }: { children: ReactNode }) {
+  const { authenticated } = useAuth()
+  const location = useLocation()
+  if (authenticated) {
+    const from = (location.state as { from?: string } | null)?.from
+    return <Navigate to={from ?? '/'} replace />
+  }
+  return <>{children}</>
+}
+
 export default function App() {
   return (
     <Routes>
-      {/* Public */}
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
+      {/* Public (redirect to app when already signed in) */}
+      <Route path="/login" element={<RedirectIfAuthed><LoginPage /></RedirectIfAuthed>} />
+      <Route path="/register" element={<RedirectIfAuthed><RegisterPage /></RedirectIfAuthed>} />
+      <Route path="/forgot-password" element={<RedirectIfAuthed><ForgotPasswordPage /></RedirectIfAuthed>} />
 
       {/* Authenticated app shell */}
-      <Route element={<AppShell />}>
+      <Route element={<RequireAuth><AppShell /></RequireAuth>}>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/my-work" element={<MyWorkPage />} />
         <Route path="/review" element={<ReviewPage />} />

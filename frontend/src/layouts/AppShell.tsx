@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
   LayoutGrid,
@@ -14,10 +15,15 @@ import {
   Settings,
   Search,
   ChevronsUpDown,
+  LogOut,
 } from 'lucide-react'
 import Avatar from '../components/ui'
-import { org, team, projects, notifications } from '../lib/mockData'
+import { org, team, projects } from '../lib/mockData'
 import { useViewer, switchViewer } from '../lib/viewer'
+import { logout, useAuth } from '../lib/auth'
+import { useNotifications } from '../lib/notifications'
+import CommandPalette from '../components/CommandPalette'
+
 
 const iconProps = { size: 17, strokeWidth: 1.75 }
 
@@ -51,8 +57,23 @@ export default function AppShell() {
   const navigate = useNavigate()
   const location = useLocation()
   const viewer = useViewer()
+  const { session } = useAuth()
+  const notifs = useNotifications()
+  const [paletteOpen, setPaletteOpen] = useState(false)
   const segments = location.pathname.split('/').filter(Boolean)
   const crumb = CRUMBS[segments[0] ?? ''] ?? 'Overview'
+
+  // Global ⌘K / Ctrl+K — open the command palette from anywhere
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setPaletteOpen((v) => !v)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   const visibleGroups = navGroups
     .map((g) => ({ ...g, items: g.items.filter((i) => !i.roles || i.roles.includes(viewer.role)) }))
@@ -64,7 +85,7 @@ export default function AppShell() {
     viewer.role === 'admin' || viewer.role === 'reviewer'
       ? projects.filter((p) => inReview(p.status)).length
       : projects.filter((p) => inReview(p.status) && p.reviewers.includes(viewer.id)).length
-  const unreadCount = notifications.filter((n) => n.unread).length
+  const unreadCount = notifs.filter((n) => n.unread).length
 
   const groups = visibleGroups.map((g) => ({
     ...g,
@@ -155,6 +176,23 @@ export default function AppShell() {
               ))}
             </select>
           </label>
+          <div className="mt-2 flex items-center gap-2 border-t border-line px-2 pt-2.5">
+            <div className="min-w-0 flex-1 leading-tight">
+              <p className="font-mono text-[9px] uppercase tracking-wider text-umber/60">Signed in as</p>
+              <p className="truncate text-[11px] text-ink/70">{session?.user.email ?? viewer.email}</p>
+            </div>
+            <button
+              onClick={() => {
+                logout()
+                navigate('/login', { replace: true })
+              }}
+              className="icon-btn !h-8 !w-8"
+              aria-label="Sign out"
+              title="Sign out"
+            >
+              <LogOut size={15} strokeWidth={1.75} />
+            </button>
+          </div>
         </div>
       </aside>
 
@@ -174,7 +212,12 @@ export default function AppShell() {
             />
             <input
               placeholder="Search projects, people…"
-              className="input !h-9 !pl-9"
+              readOnly
+              value=""
+              onFocus={() => setPaletteOpen(true)}
+              onClick={() => setPaletteOpen(true)}
+              className="input !h-9 !pl-9 cursor-pointer"
+              aria-label="Search projects and people"
             />
             <kbd className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md border border-line bg-canvas px-1.5 py-0.5 font-mono text-[9px] text-umber/60">
               ⌘K
@@ -208,6 +251,9 @@ export default function AppShell() {
           </div>
         </main>
       </div>
+
+      {/* Global command palette */}
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </div>
   )
 }

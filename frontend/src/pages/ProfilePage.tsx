@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Building2, Check, Mail, Pencil, Shield, Star, Hash } from 'lucide-react'
+import { Building2, Check, Mail, Pencil, Shield, Star, Hash, X } from 'lucide-react'
 import Avatar from '../components/ui'
 import { org, projects, team, videoReviews } from '../lib/mockData'
 import { useViewer } from '../lib/viewer'
 import { roleOf, PERMISSION_LABELS } from '../lib/roles'
+import { useToast } from '../components/toast'
 
 const roleLabel: Record<string, string> = {
   admin: 'Admin',
@@ -16,6 +18,10 @@ const roleLabel: Record<string, string> = {
 
 export default function ProfilePage() {
   const viewer = useViewer()
+  const toast = useToast()
+  const [editing, setEditing] = useState(false)
+  const [name, setName] = useState(viewer.name)
+  const [title, setTitle] = useState(viewer.title)
   const access = roleOf(viewer)
   const activeProjects = projects.filter(
     (p) => p.assignee === viewer.id && !['PUBLISHED', 'CLOSED'].includes(p.status),
@@ -69,20 +75,74 @@ export default function ProfilePage() {
               tone="ink"
               className="h-24 w-24 text-[26px] ring-[5px] ring-surface shadow-[0_4px_16px_rgba(28,25,23,0.18)]"
             />
-            <button className="btn-secondary group">
-              <Pencil size={14} strokeWidth={1.75} className="text-umber transition-transform group-hover:-rotate-6" />
-              Edit profile
-            </button>
+            {editing ? (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setEditing(false)
+                    setName(viewer.name)
+                    setTitle(viewer.title)
+                  }}
+                  className="btn-ghost"
+                >
+                  <X size={14} strokeWidth={1.75} />
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setEditing(false)
+                    // Demo: profile edits are local for now — backend profile API later
+                    toast('success', 'Profile updated', `${name.trim() || viewer.name} · ${title.trim() || viewer.title}`)
+                  }}
+                  className="btn-primary"
+                >
+                  <Check size={14} strokeWidth={2} />
+                  Save
+                </button>
+              </div>
+            ) : (
+              <button onClick={() => setEditing(true)} className="btn-secondary group">
+                <Pencil size={14} strokeWidth={1.75} className="text-umber transition-transform group-hover:-rotate-6" />
+                Edit profile
+              </button>
+            )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <h2 className="font-headline text-2xl font-semibold tracking-[-0.02em] text-ink">{viewer.name}</h2>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-tint px-2.5 py-0.5 font-mono text-[11px] font-medium text-teal">
-              <Shield size={11} strokeWidth={2} />
-              {roleLabel[viewer.role] ?? viewer.role}
-            </span>
-          </div>
-          <p className="mt-1 text-sm text-umber">{viewer.title}</p>
+          {editing ? (
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div>
+                <label htmlFor="profile-name" className="label">Full name</label>
+                <input
+                  id="profile-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="input"
+                  placeholder="Your name"
+                />
+              </div>
+              <div>
+                <label htmlFor="profile-title" className="label">Title</label>
+                <input
+                  id="profile-title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="input"
+                  placeholder="What do you do?"
+                />
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-wrap items-center gap-3">
+                <h2 className="font-headline text-2xl font-semibold tracking-[-0.02em] text-ink">{viewer.name}</h2>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-tint px-2.5 py-0.5 font-mono text-[11px] font-medium text-teal">
+                  <Shield size={11} strokeWidth={2} />
+                  {roleLabel[viewer.role] ?? viewer.role}
+                </span>
+              </div>
+              <p className="mt-1 text-sm text-umber">{viewer.title}</p>
+            </>
+          )}
 
           {/* Stats */}
           <div className="mt-6 grid grid-cols-3 gap-3">

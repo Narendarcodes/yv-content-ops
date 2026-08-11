@@ -4,6 +4,7 @@ import {
   ArrowLeft, ArrowRight, Building2, Check, ChevronDown, Hash,
   Lock, Mail, Plus, Trash2, User as UserIcon, UserPlus,
 } from 'lucide-react'
+import { loginAs } from '../lib/auth'
 
 /* ------------------------------------------------------------------ */
 /* Organization signup — three steps: Organization → Admin → Team     */
@@ -476,7 +477,11 @@ export default function RegisterPage() {
 
                 <button
                   type="button"
-                  onClick={() => navigate('/')}
+                  onClick={() => {
+                    // Demo: the new org's admin signs in as the workspace admin
+                    loginAs('ananya')
+                    navigate('/', { replace: true })
+                  }}
                   className="btn-primary group mt-8 w-full !h-11 !text-[15px]"
                 >
                   Go to your workspace

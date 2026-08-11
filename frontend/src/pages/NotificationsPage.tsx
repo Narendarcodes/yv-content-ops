@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { notifications } from '../lib/mockData'
+import { useNavigate } from 'react-router-dom'
+import { useNotifications, markRead, markAllRead } from '../lib/notifications'
+import { useToast } from '../components/toast'
 
 const typeMeta: Record<string, { icon: JSX.Element; tone: string }> = {
-  mention: {
+  review: {
     tone: 'bg-tint text-teal',
     icon: (
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
@@ -20,12 +22,29 @@ const typeMeta: Record<string, { icon: JSX.Element; tone: string }> = {
       </svg>
     ),
   },
-  deadline: {
+  revision: {
     tone: 'bg-warning/10 text-warning',
     icon: (
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <path d="M8 2.5v4l2.5 2" strokeLinecap="round" />
         <circle cx="8" cy="8" r="6.5" />
-        <path d="M8 4.5V8l2.5 1.5" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  schedule: {
+    tone: 'bg-ink/5 text-umber',
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <rect x="2" y="3.5" width="12" height="10" rx="1.5" />
+        <path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  published: {
+    tone: 'bg-tint text-teal',
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <path d="M2.5 8.5 6 12l7.5-8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
   },
@@ -39,10 +58,30 @@ const typeMeta: Record<string, { icon: JSX.Element; tone: string }> = {
   },
 }
 
+/** Where each notification type should take the user. */
+const ROUTES: Record<string, string> = {
+  review: '/projects/p1/review',
+  comment: '/projects/p1/review',
+  revision: '/projects/p2',
+  approval: '/projects/p5',
+  schedule: '/schedule',
+  published: '/projects/p10',
+}
+
 export default function NotificationsPage() {
-  const [all, setAll] = useState(notifications)
+  const navigate = useNavigate()
+  const toast = useToast()
+  const all = useNotifications()
   const [tab, setTab] = useState<'All' | 'Unread'>('All')
   const visible = tab === 'All' ? all : all.filter((n) => n.unread)
+
+  const open = (n: (typeof all)[number]) => {
+    if (n.unread) {
+      markRead(n.id)
+      toast('info', 'Marked as read')
+    }
+    navigate(ROUTES[n.type] ?? '/notifications')
+  }
 
   return (
     <div className="fade-in mx-auto max-w-3xl">
@@ -52,7 +91,10 @@ export default function NotificationsPage() {
           <p className="mt-1 text-sm text-umber">Mentions, approvals and deadlines</p>
         </div>
         <button
-          onClick={() => setAll(all.map((n) => ({ ...n, unread: false })))}
+          onClick={() => {
+            markAllRead()
+            toast('success', 'All caught up')
+          }}
           className="btn-ghost text-teal"
         >
           Mark all as read
@@ -79,6 +121,7 @@ export default function NotificationsPage() {
           return (
             <button
               key={n.id}
+              onClick={() => open(n)}
               className={`flex w-full items-start gap-4 px-5 py-4 text-left transition-colors hover:bg-canvas/60 ${
                 n.unread ? 'bg-tint/30' : ''
               }`}

@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { UserPlus, Users } from 'lucide-react'
 import Avatar from '../components/ui'
-import Chip from '../components/primitives'
+import Chip, { Modal } from '../components/primitives'
 import { members, org } from '../lib/mockData'
+import { useToast } from '../components/toast'
 
 const roleTone: Record<string, 'teal' | 'neutral' | 'warning' | 'success'> = {
   Admin: 'teal',
@@ -11,9 +13,30 @@ const roleTone: Record<string, 'teal' | 'neutral' | 'warning' | 'success'> = {
   Publisher: 'neutral',
 }
 
+const ROLE_OPTIONS = ['Editor', 'Reviewer', 'Designer', 'Publisher', 'Member']
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 export default function MembersPage() {
+  const toast = useToast()
   const [query, setQuery] = useState('')
+  const [inviteOpen, setInviteOpen] = useState(false)
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteRole, setInviteRole] = useState('Editor')
+  const [inviteError, setInviteError] = useState(false)
   const filtered = members.filter((m) => m.name.toLowerCase().includes(query.toLowerCase()))
+
+  const sendInvite = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!EMAIL_RE.test(inviteEmail.trim())) {
+      setInviteError(true)
+      return
+    }
+    setInviteError(false)
+    setInviteOpen(false)
+    setInviteEmail('')
+    // Demo: invite is simulated — the backend members API sends the real email later
+    toast('success', 'Invitation sent', `${inviteEmail.trim()} was invited as ${inviteRole}.`)
+  }
 
   return (
     <div className="fade-in">
@@ -22,10 +45,8 @@ export default function MembersPage() {
           <h1 className="font-headline text-2xl font-semibold tracking-tight text-ink">Members</h1>
           <p className="mt-1 text-sm text-umber">{members.length} people in {org.name}</p>
         </div>
-        <button className="btn-primary">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M7 1.5v11M1.5 7h11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-          </svg>
+        <button onClick={() => setInviteOpen(true)} className="btn-primary">
+          <UserPlus size={14} strokeWidth={2} />
           Invite member
         </button>
       </header>
@@ -68,7 +89,64 @@ export default function MembersPage() {
             </tbody>
           </table>
         </div>
+        {filtered.length === 0 && (
+          <div className="flex flex-col items-center gap-2 px-6 py-14 text-center">
+            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ink/5 text-umber">
+              <Users size={18} strokeWidth={1.75} />
+            </span>
+            <p className="text-sm font-medium text-ink">No members match “{query}”</p>
+            <p className="text-[13px] text-umber">Try a different name, or clear the search.</p>
+            <button onClick={() => setQuery('')} className="btn-ghost mt-1 text-teal">
+              Clear search
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Invite member */}
+      <Modal open={inviteOpen} onClose={() => setInviteOpen(false)} title="Invite a member">
+        <form onSubmit={sendInvite} className="space-y-4 px-6 py-5">
+          <div>
+            <label htmlFor="invite-email" className="label">Email address</label>
+            <input
+              id="invite-email"
+              type="email"
+              value={inviteEmail}
+              onChange={(e) => {
+                setInviteEmail(e.target.value)
+                setInviteError(false)
+              }}
+              placeholder="name@example.com"
+              className={`input ${inviteError ? 'input-error' : ''}`}
+              autoFocus
+            />
+            {inviteError && (
+              <p className="mt-1.5 text-xs text-danger">Enter a valid email address.</p>
+            )}
+          </div>
+          <div>
+            <label htmlFor="invite-role" className="label">Role</label>
+            <select
+              id="invite-role"
+              value={inviteRole}
+              onChange={(e) => setInviteRole(e.target.value)}
+              className="input"
+            >
+              {ROLE_OPTIONS.map((r) => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex justify-end gap-2 pt-1">
+            <button type="button" onClick={() => setInviteOpen(false)} className="btn-ghost">
+              Cancel
+            </button>
+            <button type="submit" className="btn-primary">
+              Send invite
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   )
 }

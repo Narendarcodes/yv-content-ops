@@ -3,6 +3,7 @@ import { Check } from 'lucide-react'
 import { org } from '../lib/mockData'
 import { useViewer } from '../lib/viewer'
 import { ROLES, PERMISSION_LABELS } from '../lib/roles'
+import { useToast } from '../components/toast'
 
 function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
   return (
@@ -41,11 +42,25 @@ function Row({
 
 export default function SettingsPage() {
   const viewer = useViewer()
+  const toast = useToast()
   const [notifEmail, setNotifEmail] = useState(true)
   const [notifDigest, setNotifDigest] = useState(true)
   const [mentions, setMentions] = useState(true)
   const [twoFactor, setTwoFactor] = useState(false)
   const [orgName, setOrgName] = useState(org.name)
+
+  const save = () => {
+    // Persist preferences locally — backend settings API replaces this later
+    try {
+      localStorage.setItem(
+        'folio.settings',
+        JSON.stringify({ orgName: orgName.trim(), notifEmail, notifDigest, mentions, twoFactor }),
+      )
+    } catch {
+      /* storage unavailable */
+    }
+    toast('success', 'Settings saved', 'Your preferences are up to date.')
+  }
 
   return (
     <div className="fade-in mx-auto max-w-2xl">
@@ -134,7 +149,7 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        <button className="btn-primary">Save changes</button>
+        <button onClick={save} className="btn-primary">Save changes</button>
       </div>
     </div>
   )

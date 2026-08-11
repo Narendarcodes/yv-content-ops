@@ -1,17 +1,34 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react'
-import { projects } from '../lib/mockData'
+import { projects, team } from '../lib/mockData'
+import { loginAs } from '../lib/auth'
+import { useToast } from '../components/toast'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const toast = useToast()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState(false)
+  const [busy, setBusy] = useState(false)
 
   // A live project card for the brand panel — proof the product works
   const sample = projects.find((p) => ['FIRST_DRAFT_SUBMITTED', 'UNDER_REVIEW'].includes(p.status)) ?? projects[0]
+
+  const from = (location.state as { from?: string } | null)?.from ?? '/'
+
+  const signIn = (memberId: string, label: string) => {
+    setBusy(true)
+    // Brief simulated latency so the flow feels real; backend replaces this later
+    window.setTimeout(() => {
+      loginAs(memberId)
+      toast('success', `Signed in as ${label}`)
+      navigate(from, { replace: true })
+    }, 450)
+  }
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -19,9 +36,15 @@ export default function LoginPage() {
       setError(true)
       return
     }
+    if (!password) {
+      setError(true)
+      return
+    }
     setError(false)
-    // Mock auth — real integration comes later
-    navigate('/')
+    // Demo auth: a known team email signs in as that member, anything else
+    // signs in as the workspace admin. Backend integration replaces this.
+    const member = team.find((m) => m.email.toLowerCase() === email.trim().toLowerCase())
+    signIn(member?.id ?? 'ananya', member?.name ?? 'Ananya Rao')
   }
 
   return (
@@ -122,9 +145,9 @@ export default function LoginPage() {
               <div>
                 <div className="mb-1.5 flex items-center justify-between">
                   <label htmlFor="password" className="label !mb-0">Password</label>
-                  <a href="#" className="text-xs font-medium text-teal transition-opacity hover:opacity-80">
+                  <Link to="/forgot-password" className="text-xs font-medium text-teal transition-opacity hover:opacity-80">
                     Forgot password?
-                  </a>
+                  </Link>
                 </div>
                 <div className="relative">
                   <Lock size={16} strokeWidth={1.75} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-umber/50" />
@@ -146,9 +169,9 @@ export default function LoginPage() {
                   </button>
                 </div>
               </div>
-              <button type="submit" className="btn-primary group w-full !h-11 !text-[15px]">
-                Sign in
-                <ArrowRight size={16} strokeWidth={2} className="transition-transform group-hover:translate-x-0.5" />
+              <button type="submit" disabled={busy} className="btn-primary group w-full !h-11 !text-[15px]">
+                {busy ? 'Signing in…' : 'Sign in'}
+                {!busy && <ArrowRight size={16} strokeWidth={2} className="transition-transform group-hover:translate-x-0.5" />}
               </button>
             </form>
 
@@ -162,6 +185,24 @@ export default function LoginPage() {
             <div className="mt-8 rounded-xl border border-dashed border-line bg-canvas/70 px-4 py-3 text-center">
               <p className="font-mono text-[10px] uppercase tracking-wider text-umber/70">Demo — no password needed</p>
               <p className="mt-0.5 text-xs text-umber">Any valid email signs you in. Your workspace is waiting.</p>
+            </div>
+
+            <div className="mt-4">
+              <p className="mb-2 text-center font-mono text-[10px] uppercase tracking-wider text-umber/60">
+                Or jump straight in as
+              </p>
+              <div className="flex flex-wrap justify-center gap-1.5">
+                {team.map((m) => (
+                  <button
+                    key={m.id}
+                    disabled={busy}
+                    onClick={() => signIn(m.id, m.name)}
+                    className="rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:border-teal/40 hover:bg-tint/40 disabled:opacity-50"
+                  >
+                    {m.name.split(' ')[0]} · {m.role}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
