@@ -116,6 +116,15 @@ export interface Session {
   loggedInAt: string
 }
 
+/** Check whether an organization name/slug is already registered (public). */
+export async function checkOrgAvailability(slug: string, name: string): Promise<{ slugTaken: boolean; nameTaken: boolean }> {
+  const qs = new URLSearchParams({ slug, name })
+  const res = await fetch(`${API_BASE}/organizations/availability?${qs}`)
+  if (!res.ok) throw new Error('Availability check failed')
+  const body = await res.json()
+  return body.data ?? { slugTaken: false, nameTaken: false }
+}
+
 /** Register a new user with name+email+password */
 export async function register(name: string, email: string, password: string): Promise<SessionUser> {
   const res = await fetch(`${API_BASE}/auth/register`, {

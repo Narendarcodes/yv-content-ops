@@ -5,7 +5,7 @@ import {
   Lock, Mail, Plus, Trash2, User as UserIcon, UserPlus, Eye, EyeOff,
 } from 'lucide-react'
 import { useToast } from '../components/toast'
-import { login as apiLogin, register as apiRegister, createOrg as apiCreateOrg, addMember as apiAddMember } from '../services/api'
+import { login as apiLogin, register as apiRegister, createOrg as apiCreateOrg, addMember as apiAddMember, checkOrgAvailability } from '../services/api'
 
 /* ------------------------------------------------------------------ */
 /* Organization signup - three steps: Organization → Admin → Team     */
@@ -91,6 +91,36 @@ export default function RegisterPage() {
     setStep((s) => Math.min(s + 1, 4))
   }
 
+  /**
+   * Step-1 continuation: first ask the backend whether this workspace already
+   * exists. If it does, the right next step is SIGN-IN, not registration.
+   */
+  const [checkingOrg, setCheckingOrg] = useState(false)
+  const [existingWorkspace, setExistingWorkspace] = useState<string | null>(null)
+
+  const nextFromOrg = async () => {
+    setTried(true)
+    if (!orgValid) return
+    setCheckingOrg(true)
+    setExistingWorkspace(null)
+    try {
+      const { slugTaken, nameTaken } = await checkOrgAvailability(orgSlug.trim(), orgName.trim())
+      if (slugTaken || nameTaken) {
+        setExistingWorkspace(nameTaken ? orgName.trim() : orgSlug.trim())
+        return
+      }
+      setTried(false)
+      setStep(2)
+    } catch {
+      // Availability endpoint unreachable - let registration proceed and rely
+      // on create-time conflict handling instead of blocking the user here.
+      setTried(false)
+      setStep(2)
+    } finally {
+      setCheckingOrg(false)
+    }
+  }
+
   const back = () => {
     setTried(false)
     setStep((s) => Math.max(s - 1, 1))
@@ -107,9 +137,12 @@ export default function RegisterPage() {
 
   /** When the email is already registered: explain clearly and route to sign-in. */
   const [existingAccount, setExistingAccount] = useState<string | null>(null)
+  const [creating, setCreating] = useState(false)
 
   const createWorkspace = async () => {
+    if (creating) return
     setExistingAccount(null)
+    setCreating(true)
     try {
       // 1. Register the admin user, then sign in
       try {
@@ -138,6 +171,8 @@ export default function RegisterPage() {
       navigate('/', { replace: true })
     } catch {
       toast('danger', 'Could not create workspace', 'Check your details and try again.')
+    } finally {
+      setCreating(false)
     }
   }
 
@@ -248,8 +283,21 @@ export default function RegisterPage() {
                 </h2>
                 <p className="mt-2 text-sm text-umber">Your team, projects and content history will live here.</p>
 
+                {existingWorkspace && (
+                  <div className="mt-5 rounded-[10px] border border-warning/30 bg-warning/8 px-4 py-3" role="alert">
+                    <p className="text-sm font-medium text-ink">This workspace already exists</p>
+                    <p className="mt-0.5 text-[13px] text-umber">
+                      <span className="font-medium text-ink">{existingWorkspace}</span> is already
+                      registered. Sign in with your account to continue where your team left off.
+                    </p>
+                    <Link to="/login" className="btn-secondary mt-3 !h-9 w-full text-[13px]">
+                      Sign in instead
+                    </Link>
+                  </div>
+                )}
+
                 <form
-                  onSubmit={(e) => { e.preventDefault(); next() }}
+                  onSubmit={(e) => { e.preventDefault(); void nextFromOrg() }}
                   className="mt-7 space-y-5"
                   noValidate
                 >
@@ -277,7 +325,7 @@ export default function RegisterPage() {
                       <input
                         id="orgSlug"
                         value={orgSlug}
-                        onChange={(e) => { setSlugTouched(true); setOrgSlug(slugify(e.target.value)) }}
+                        onChange={(e) => { setSlugTouched(true); setExistingWorkspace(null); setOrgSlug(slugify(e.target.value)) }}
                         placeholder="aaryajanani-studio"
                         className={`input !pl-10 font-mono text-[13px] ${tried && !slugOk ? 'input-error' : ''}`}
                       />
@@ -289,9 +337,9 @@ export default function RegisterPage() {
                   </div>
 
                   <div className="flex items-center gap-3 pt-2">
-                    <button type="button" onClick={next} className="btn-primary group flex-1 btn-lg">
-                      Continue
-                      <ArrowRight size={16} strokeWidth={2} className="transition-transform group-hover:translate-x-0.5" />
+                    <button type="submit" disabled={checkingOrg} className="btn-primary group flex-1 btn-lg">
+                      {checkingOrg ? 'Checking…' : 'Continue'}
+                      {!checkingOrg && <ArrowRight size={16} strokeWidth={2} className="transition-transform group-hover:translate-x-0.5" />}
                     </button>
                   </div>
                 </form>
@@ -502,16 +550,19 @@ export default function RegisterPage() {
                   </button>
                 </div>
 
-                <div className="mt-6 flex items-center gap-3">
+                <form
+                  onSubmit={(e) => { e.preventDefault(); void createWorkspace() }}
+                  className="mt-6 flex items-center gap-3"
+                >
                   <button type="button" onClick={back} className="btn-secondary btn-lg">
                     <ArrowLeft size={15} strokeWidth={2} />
                     Back
                   </button>
-                  <button type="button" onClick={createWorkspace} className="btn-primary group flex-1 btn-lg">
-                    Create workspace
-                    <ArrowRight size={16} strokeWidth={2} className="transition-transform group-hover:translate-x-0.5" />
+                  <button type="submit" disabled={creating} className="btn-primary group flex-1 btn-lg">
+                    {creating ? 'Creating…' : 'Create workspace'}
+                    {!creating && <ArrowRight size={16} strokeWidth={2} className="transition-transform group-hover:translate-x-0.5" />}
                   </button>
-                </div>
+                </form>
                 <button
                   type="button"
                   onClick={() => setStep(4)}
