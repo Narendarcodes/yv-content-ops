@@ -15,6 +15,7 @@ const { Server } = require('socket.io');
 const { verifyAccessToken } = require('../utils/tokens');
 const Membership = require('../models/membership.model');
 const Channel = require('../models/channel.model');
+const logger = require('../utils/logger');
 
 let io = null;
 
@@ -44,25 +45,20 @@ function initSocketServer(httpServer) {
         if (!channelId) return ack?.({ ok: false, error: 'channelId required' });
         const channel = await Channel.findById(channelId).select('projectId').lean();
         if (!channel) return ack?.({ ok: false, error: 'not_found' });
+        // Channel docs store projectId; resolve its organization for the check.
+        const Project = require('../models/project.model');
+        const project = await Project.findById(channel.projectId).select('organizationId').lean();
+        if (!project) return ack?.({ ok: false, error: 'project_not_found' });
         const member = await Membership.findOne({
           userId: socket.data.userId,
-          organizationId: channel.projectId.organizationId ?? channel.orgId,
+          organizationId: project.organizationId,
           disabled: { $ne: true },
         });
-        // Channel docs store projectId; resolve its organization for the check.
-        if (!member) {
-          const Project = require('./models/project.model');
-          const project = await Project.findById(channel.projectId).select('organizationId').lean();
-          const orgMember = project && (await Membership.findOne({
-            userId: socket.data.userId,
-            organizationId: project.organizationId,
-            disabled: { $ne: true },
-          }));
-          if (!orgMember) return ack?.({ ok: false, error: 'forbidden' });
-        }
+        if (!member) return ack?.({ ok: false, error: 'forbidden' });
         await socket.join(`channel:${channelId}`);
         ack?.({ ok: true });
       } catch (err) {
+        logger.warn({ err }, 'channel:join failed');
         ack?.({ ok: false, error: 'join_failed' });
       }
     });

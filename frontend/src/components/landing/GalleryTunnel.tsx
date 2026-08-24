@@ -1,74 +1,47 @@
 import { useEffect, useRef } from 'react'
-import type * as THREE from 'three' // types only; runtime import is dynamic below
+import type * as THREE from 'three'
 
 /**
- * Port of OriginKit's `gallery-tunnel` engine (hero-03) to Folio.
+ * Faithful port of OriginKit's `gallery-tunnel` component — `variant-3` preset.
  *
- * - Three.js corridor of N chained segments along -Z: grid wires on
- *   floor/ceiling/walls + sparse plain gradient slabs.
- * - Camera drifts forward FOREVER at constant calm speed; segments passing
- *   behind the camera teleport to the far end and re-randomize their slabs
- *   (shared geometry is NEVER disposed → no vanishing over time).
- * - Minimal product words ("Briefs", "Reviews"…) float in the corridor gaps
- *   on transparent billboards you fly past.
- * - Fog fades the far end; rAF paused off-screen/hidden (no scroll flicker).
+ * Engine constants (TUNNEL_WIDTH 2, TUNNEL_HEIGHT 1.8, SEGMENT_DEPTH 1,
+ * NUM_SEGMENTS 15, LINE_RADIUS 0.003, SCROLL_TO_Z 0.05, CAMERA_CHASE 0.1,
+ * FOG_FAR = NUM_SEGMENTS * DEPTH * 0.95) and the populate() slab logic
+ * (every other segment takes slabs; each slab then has a 50% chance to show;
+ * shown slabs alternate color/image materials via stride counters) are
+ * 1:1 with the published module. Only the "images" half is swapped for
+ * Folio gradient canvases, per the user's no-text/plain-blocks direction.
+ *
+ * Strict variant-3 tweaks: fade:100 · grid:6 · boost:33 · speed:100 ·
+ * tunnelSize:1 · lineOpacity:100 · lineColor:#E4E4E4 · background:#FFFFFF
  */
 
-type Three = typeof import('three')
-
-// ---- OriginKit control-panel configuration (mapped to our engine) ----
-// Grid Opacity: 50%   -> line material opacity 0.50
-// Grid Count:  4      -> GRID (cells per face)
-// Tunnel Size: 1      -> corridor scale multiplier (1 = default footprint)
-// Speed: 100          -> base forward speed
-// Click Boost: 100    -> hold-pointer accelerate multiplier
-// Middle Fade: 100%   -> fog strength at the far end
-const LINE_OPACITY = 0.5
-const GRID = 4
-const TUNNEL_SIZE = 1
-const BASE_SPEED = 0.05 // units/sec at Speed=100
-const CLICK_BOOST = 4.5 // hold-to-accelerate multiplier at Boost=100
-const MIDDLE_FADE = 100 // % - drives fog near/far
-
-const SEGMENTS = Math.max(24, Math.round(30 * TUNNEL_SIZE))
-const SEG_LEN = 1
-const HALF_W = 0.9 * TUNNEL_SIZE
-const HALF_H = 0.5 * TUNNEL_SIZE
-
-const SLAB_STOPS: [string, string, string][] = [
-  ['#e6f2f0', '#7fb8b0', '#0f766e'],
-  ['#f7f0dd', '#e3c98a', '#c09a4e'],
-  ['#efe9df', '#c2b49a', '#78716c'],
-  ['#ffffff', '#efebe3', '#d8d0bf'],
-]
-
-/** Plain gradient slab texture — no text. */
-function makeSlabTexture(T3: Three, index: number) {
-  const c = document.createElement('canvas')
-  c.width = c.height = 256
-  const ctx = c.getContext('2d')!
-  const [a, b, d] = SLAB_STOPS[index % SLAB_STOPS.length]
-  const g = ctx.createLinearGradient(0, 0, 256, 256)
-  g.addColorStop(0, a)
-  g.addColorStop(0.55, b)
-  g.addColorStop(1, d)
-  ctx.fillStyle = g
-  ctx.fillRect(0, 0, 256, 256)
-  const tex = new T3.CanvasTexture(c)
-  tex.colorSpace = T3.SRGBColorSpace
-  return tex
+// ---- strict variant-3 tweak values ----
+const CFG = {
+  background: '#FFFFFF',
+  lineColor: '#E4E4E4',
+  lineOpacity: 100,
+  grid: 6,
+  speed: 100,
+  boost: 33,
+  fade: 100,
+  tunnelSize: 1,
 }
 
+// OriginKit variant-3 palette (kept exactly; Folio-neutral enough on white)
+const COLORS = ['#FF6A00', '#AB54F7', '#EA3737', '#0072E3', '#00AA3C', '#FFB200']
 
-export default function GalleryTunnel({
-  className = '',
-  background = '#f7f5f2',
-  lineColor = '#c6bfae',
-}: {
-  className?: string
-  background?: string
-  lineColor?: string
-}) {
+// engine constants — identical to the published module
+const TUNNEL_WIDTH = 2 * CFG.tunnelSize
+const TUNNEL_HEIGHT = 1.8 * CFG.tunnelSize
+const SEGMENT_DEPTH = 1
+const NUM_SEGMENTS = 15
+const LINE_RADIUS = 0.003
+const SCROLL_TO_Z = 0.05
+const CAMERA_CHASE = 0.1
+const FOG_FAR = NUM_SEGMENTS * SEGMENT_DEPTH * 0.95
+
+export default function GalleryTunnel({ className = '' }: { className?: string }) {
   const hostRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -78,131 +51,157 @@ export default function GalleryTunnel({
     let teardown: (() => void) | null = null
 
     ;(async () => {
-      const T3 = await import('three')
+      const THREE = await import('three')
       if (killed || !hostRef.current) return
-
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-      const scene = new T3.Scene()
-      scene.background = new T3.Color(background)
-      const fade = MIDDLE_FADE / 100
-      const FOG_FAR = (SEGMENTS - 6) * SEG_LEN // dissolve only near the very end of a deep chain
-      const FOG_NEAR = FOG_FAR * (0.25 + 0.35 * (1 - fade))
-      scene.fog = new T3.Fog(new T3.Color(background), FOG_NEAR, FOG_FAR)
+      const scene = new THREE.Scene()
+      scene.background = new THREE.Color(CFG.background)
+      const fogNear = Math.min(FOG_FAR * (1 - Math.min(100, Math.max(0, CFG.fade)) / 100), FOG_FAR - 0.01)
+      scene.fog = new THREE.Fog(new THREE.Color(CFG.background), fogNear, FOG_FAR)
 
-      const camera = new T3.PerspectiveCamera(45, 1, 0.1, 100)
+      const camera = new THREE.PerspectiveCamera(45, 1, 1, 1000)
+      camera.position.set(0, 0, 0)
 
-      const renderer = new T3.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' })
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' })
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
       Object.assign(renderer.domElement.style, { display: 'block', width: '100%', height: '100%' })
       host.appendChild(renderer.domElement)
 
-      // ---------- shared materials & geometry (created ONCE, never disposed) ----------
-      const lineMat = new T3.MeshBasicMaterial({ color: new T3.Color(lineColor), transparent: true, opacity: LINE_OPACITY })
-      const slabMats = SLAB_STOPS.map((_, i) => new T3.MeshBasicMaterial({ map: makeSlabTexture(T3, i), side: T3.DoubleSide }))
+      const lineMaterial = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(CFG.lineColor),
+        transparent: true,
+        opacity: Math.min(100, Math.max(0, CFG.lineOpacity)) / 100,
+      })
 
-      const faceW = (HALF_W * 2) / GRID
-      const faceH = (HALF_H * 2) / GRID
-
-      const wireX = new T3.TubeGeometry(
-        new T3.LineCurve3(new T3.Vector3(0, 0, -SEG_LEN / 2), new T3.Vector3(0, 0, SEG_LEN / 2)), 1, 0.0035, 6,
-      )
-      const tileFloorCeil = new T3.PlaneGeometry(faceW * 0.96, SEG_LEN)
-      const tileWall = new T3.PlaneGeometry(SEG_LEN, faceH * 0.96)
-
-      /** One grid cell on one face: 0 floor · 1 ceiling · 2 left · 3 right */
-      function placeTile(group: THREE.Group, face: number, cell: number, material: THREE.Material | null) {
-        const mesh = new T3.Mesh(face <= 1 ? tileFloorCeil : tileWall, material ?? lineMat)
-        if (face === 0) {
-          mesh.position.set(-HALF_W + (cell + 0.5) * faceW, -HALF_H, -SEG_LEN / 2)
-          mesh.rotation.x = -Math.PI / 2
-        } else if (face === 1) {
-          mesh.position.set(-HALF_W + (cell + 0.5) * faceW, HALF_H, -SEG_LEN / 2)
-          mesh.rotation.x = Math.PI / 2
-        } else if (face === 2) {
-          mesh.position.set(-HALF_W, -HALF_H + (cell + 0.5) * faceH, -SEG_LEN / 2)
-          mesh.rotation.y = Math.PI / 2
-        } else {
-          mesh.position.set(HALF_W, -HALF_H + (cell + 0.5) * faceH, -SEG_LEN / 2)
-          mesh.rotation.y = -Math.PI / 2
-        }
-        group.add(mesh)
-        return mesh
+      // Folio gradient canvases stand in for the demo's image URLs
+      function makeGradientMat(index: number) {
+        const c = document.createElement('canvas')
+        c.width = c.height = 128
+        const ctx = c.getContext('2d')!
+        const stops: [string, string][] = [
+          ['#e6f2f0', '#0f766e'],
+          ['#f7f0dd', '#c09a4e'],
+          ['#efe9df', '#78716c'],
+          ['#ffffff', '#d8d0bf'],
+        ]
+        const [a, b] = stops[index % stops.length]
+        const g = ctx.createLinearGradient(0, 0, 128, 128)
+        g.addColorStop(0, a)
+        g.addColorStop(1, b)
+        ctx.fillStyle = g
+        ctx.fillRect(0, 0, 128, 128)
+        const tex = new THREE.CanvasTexture(c)
+        tex.colorSpace = THREE.SRGBColorSpace
+        return new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide })
       }
 
-      const rand = (n: number) => Math.floor(Math.random() * n)
+      const palette = COLORS
+      const colorMats = palette.map((hex) => new THREE.MeshBasicMaterial({ color: new THREE.Color(hex), side: THREE.DoubleSide }))
+      const imageMats = palette.map((_, i) => makeGradientMat(i))
 
-      interface Segment extends THREE.Group {
-        userData: { slabs: THREE.Mesh[] }
+      let imageIndex = 0
+      let colorIndex = 0
+      let populateIndex = 0
+      let scrollPos = 0
+      let raf = 0
+      let pressed = false
+      let alive = true
+
+      const hw = TUNNEL_WIDTH / 2
+      const hh = TUNNEL_HEIGHT / 2
+      const cols = Math.max(1, Math.round(CFG.grid))
+      const rows = Math.max(1, Math.round(CFG.grid))
+      const colW = TUNNEL_WIDTH / cols
+      const rowH = TUNNEL_HEIGHT / rows
+
+      const geoFloor = new THREE.PlaneGeometry(colW, SEGMENT_DEPTH)
+      const geoWall = new THREE.PlaneGeometry(SEGMENT_DEPTH, rowH)
+      const geoTubeZ = new THREE.TubeGeometry(new THREE.LineCurve3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -SEGMENT_DEPTH)), 1, LINE_RADIUS, 8)
+      const geoTubeX = new THREE.TubeGeometry(new THREE.LineCurve3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(TUNNEL_WIDTH, 0, 0)), 1, LINE_RADIUS, 8)
+      const geoTubeY = new THREE.TubeGeometry(new THREE.LineCurve3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, TUNNEL_HEIGHT, 0)), 1, LINE_RADIUS, 8)
+
+      const tube = (geo: THREE.BufferGeometry, x: number, y: number, z = 0) => {
+        const m = new THREE.Mesh(geo, lineMaterial)
+        m.position.set(x, y, z)
+        return m
       }
 
-      /** Build one segment: grid wires + sparse plain-gradient slabs. */
-      function buildSegment(): Segment {
-        const group = new T3.Group() as unknown as Segment
+      // SLOTS: every grid cell across floor/ceiling/both walls — exactly as the original
+      const SLOTS: Array<{ geo: THREE.BufferGeometry; pos: THREE.Vector3; rot: THREE.Euler }> = []
+      {
+        const z = -SEGMENT_DEPTH / 2
+        for (let i = 0; i < cols; i++) {
+          const x = -hw + i * colW + colW / 2
+          SLOTS.push({ geo: geoFloor, pos: new THREE.Vector3(x, -hh, z), rot: new THREE.Euler(-Math.PI / 2, 0, 0) })
+          SLOTS.push({ geo: geoFloor, pos: new THREE.Vector3(x, hh, z), rot: new THREE.Euler(Math.PI / 2, 0, 0) })
+        }
+        for (let i = 0; i < rows; i++) {
+          const y = -hh + i * rowH + rowH / 2
+          SLOTS.push({ geo: geoWall, pos: new THREE.Vector3(-hw, y, z), rot: new THREE.Euler(0, Math.PI / 2, 0) })
+          SLOTS.push({ geo: geoWall, pos: new THREE.Vector3(hw, y, z), rot: new THREE.Euler(0, -Math.PI / 2, 0) })
+        }
+      }
 
-        // transverse wires across floor & ceiling
-        for (let i = 0; i <= GRID; i++) {
-          const x = -HALF_W + i * faceW
-          for (const y of [-HALF_H, HALF_H]) {
-            const m = new T3.Mesh(wireX, lineMat)
-            m.position.set(x, y, -SEG_LEN / 2)
-            group.add(m)
+      // populate(): every OTHER segment may take slabs; each slab then shows
+      // only 50% of the time; shown slabs alternate color/gradient via strides.
+      function populate(group: THREE.Group) {
+        const takesSlabs = populateIndex % 2 === 0
+        populateIndex++
+        const slabs = group.userData.slabs as THREE.Mesh[]
+        for (const slab of slabs) {
+          if (!takesSlabs || Math.random() > 0.5) {
+            slab.visible = false
+            continue
+          }
+          slab.visible = true
+          if (Math.random() > 0.5) {
+            slab.material = colorMats[(5 * colorIndex) % colorMats.length]
+            colorIndex++
+          } else {
+            slab.material = imageMats[(3 * imageIndex) % imageMats.length]
+            imageIndex++
           }
         }
-        // longitudinal wires along both walls
-        for (let i = 1; i < GRID; i++) {
-          const y = -HALF_H + i * faceH
-          for (const x of [-HALF_W, HALF_W]) {
-            const m = new T3.Mesh(wireX, lineMat)
-            m.position.set(x, y, -SEG_LEN / 2)
-            group.add(m)
-          }
-        }
+      }
 
-        // Irregular gallery placement — like the OriginKit demo:
-        // each wall independently gets 0-2 slabs at random cell + random
-        // vertical/horizontal offset, so no two segments look alike.
-        const slabs: THREE.Mesh[] = []
-        for (const face of [2, 3]) {
-          const n = rand(3) // 0, 1 or 2 slabs per wall
-          const usedCells = new Set<number>()
-          for (let k = 0; k < n; k++) {
-            let cell = rand(GRID)
-            let guard = 0
-            while (usedCells.has(cell) && guard++ < GRID) cell = rand(GRID)
-            usedCells.add(cell)
-            const mesh = placeTile(group, face, cell, slabMats[rand(slabMats.length)])
-            // jitter position along the segment & scale for organic variety
-            mesh.position.z += (Math.random() - 0.5) * SEG_LEN * 0.55
-            const s = 0.75 + Math.random() * 0.6
-            mesh.scale.set(1, s, 1)
-          }
+      function createSegment(z: number) {
+        const group = new THREE.Group()
+        group.position.z = z
+        for (let i = 0; i <= cols; i++) {
+          const x = -hw + i * colW
+          group.add(tube(geoTubeZ, x, -hh))
+          group.add(tube(geoTubeZ, x, hh))
         }
-        // occasional floor/ceiling accent
-        if (Math.random() < 0.22) {
-          slabs.push(placeTile(group, Math.random() < 0.5 ? 0 : 1, rand(GRID), slabMats[rand(slabMats.length)]))
+        for (let i = 1; i < rows; i++) {
+          const y = -hh + i * rowH
+          group.add(tube(geoTubeZ, -hw, y))
+          group.add(tube(geoTubeZ, hw, y))
         }
+        group.add(tube(geoTubeX, -hw, -hh))
+        group.add(tube(geoTubeX, -hw, hh))
+        group.add(tube(geoTubeY, -hw, -hh))
+        group.add(tube(geoTubeY, hw, -hh))
 
+        const slabs: THREE.Mesh[] = SLOTS.map((slot) => {
+          const m = new THREE.Mesh(slot.geo, colorMats[0])
+          m.position.copy(slot.pos)
+          m.rotation.copy(slot.rot)
+          m.visible = false
+          group.add(m)
+          return m
+        })
         group.userData.slabs = slabs
+        populate(group)
         return group
       }
 
-      /** Re-randomize an existing segment's slab colors (no geometry churn). */
-      function reshuffle(seg: Segment) {
-        for (const slab of seg.userData.slabs) {
-          slab.material = slabMats[rand(slabMats.length)]
-        }
+      const segments: THREE.Group[] = []
+      for (let i = 0; i < NUM_SEGMENTS; i++) {
+        const g = createSegment(-i * SEGMENT_DEPTH)
+        scene.add(g)
+        segments.push(g)
       }
-
-      // ---------- segment chain ----------
-      const segments: Segment[] = []
-      for (let i = 0; i < SEGMENTS; i++) {
-        const s = buildSegment()
-        s.position.z = -i * SEG_LEN
-        scene.add(s)
-        segments.push(s)
-      }
-      const CHAIN_LEN = SEGMENTS * SEG_LEN
 
       // ---------- sizing ----------
       const resize = () => {
@@ -223,38 +222,43 @@ export default function GalleryTunnel({
       const onVis = () => { if (document.hidden) visible = false }
       document.addEventListener('visibilitychange', onVis)
 
-      // Click Boost: hold the pointer down on the hero to accelerate.
-      let pressed = false
       host.addEventListener('pointerdown', () => { pressed = true })
       window.addEventListener('pointerup', () => { pressed = false })
 
-      let camZ = 0
-      let last = 0
-      let raf = 0
-      const tick = (t: number) => {
-        raf = requestAnimationFrame(tick)
-        const dt = last ? Math.min((t - last) / 1000, 1 / 30) : 1 / 30
-        last = t
-        if (!visible) return // paused off-screen → no scroll flicker
+      const cfgSpeed = Math.max(0, CFG.speed) / 100
+      const cfgBoost = Math.max(0, CFG.boost) / 10
 
-        const speed = pressed ? BASE_SPEED * CLICK_BOOST : BASE_SPEED
-        if (!reduced) camZ += speed * dt
-        camera.position.z = camZ
+      const animate = () => {
+        if (!alive) return
+        raf = requestAnimationFrame(animate)
+        if (!visible) return
 
-        // teleport far-passed segments to the front; re-skin, never rebuild
-        for (let i = 0; i < segments.length; i++) {
-          const s = segments[i]
-          if (s.position.z > camZ + SEG_LEN * 1.5) {
-            s.position.z -= CHAIN_LEN
-            reshuffle(s)
+        scrollPos += pressed && !reduced ? cfgBoost : cfgSpeed
+        const want = -SCROLL_TO_Z * scrollPos
+        camera.position.z += CAMERA_CHASE * (want - camera.position.z)
+
+        const span = NUM_SEGMENTS * SEGMENT_DEPTH
+        const z = camera.position.z
+        for (const seg of segments) {
+          if (seg.position.z > z + SEGMENT_DEPTH) {
+            let min = 0
+            for (const s of segments) min = Math.min(min, s.position.z)
+            seg.position.z = min - SEGMENT_DEPTH
+            populate(seg)
+          } else if (seg.position.z < z - span - SEGMENT_DEPTH) {
+            let max = -999999
+            for (const s of segments) max = Math.max(max, s.position.z)
+            seg.position.z = max + SEGMENT_DEPTH
+            populate(seg)
           }
         }
 
         renderer.render(scene, camera)
       }
-      raf = requestAnimationFrame(tick)
+      raf = requestAnimationFrame(animate)
 
       teardown = () => {
+        alive = false
         cancelAnimationFrame(raf)
         ro.disconnect()
         io.disconnect()
@@ -268,7 +272,7 @@ export default function GalleryTunnel({
       killed = true
       teardown?.()
     }
-  }, [background, lineColor])
+  }, [])
 
   return <div ref={hostRef} aria-hidden="true" className={className} />
 }
