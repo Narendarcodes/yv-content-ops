@@ -12,7 +12,8 @@ const taskController = require('../controllers/task.controller');
 const briefController = require('../controllers/brief.controller');
 const reviewController = require('../controllers/review.controller');
 const chatController = require('../controllers/chat.controller');
-const { authenticate, requirePermission } = require('../middleware/auth');
+const { authenticate, requireOrg, requirePermission, requireProjectMember } = require('../middleware/auth');
+const fileStreamController = require('../controllers/fileStream.controller');
 const { validate } = require('../middleware/validate');
 const {
   createProjectSchema,
@@ -55,6 +56,8 @@ router.post('/:id/schedule', authenticate, requirePermission('project.schedule')
 router.get('/:id/versions', authenticate, requirePermission('project.view'), projectController.getVersions);
 router.post('/:id/versions', authenticate, requirePermission('project.upload_version'), validate(addVersionSchema), projectController.addVersion);
 router.post('/:id/versions/:versionId/files', authenticate, requirePermission('project.upload_version'), upload.single('file'), projectController.uploadFile);
+// Stream/download a stored version file (Range-aware for video seeking).
+router.get('/:id/versions/:versionId/files/:fileId', authenticate, requireProjectMember(), fileStreamController.streamVersionFile);
 
 // --- Inputs ---
 router.get('/:id/inputs', authenticate, requirePermission('project.view'), inputController.list);

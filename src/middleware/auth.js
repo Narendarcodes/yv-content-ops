@@ -62,4 +62,29 @@ function requirePermission(permission) {
   };
 }
 
-module.exports = { authenticate, requireOrg, requirePermission };
+/**
+ * Require the signed-in user to hold an active membership in the
+ * organization that owns the project at req.params.id.
+ * Used by routes addressed by projectId alone (no organizationId in the path).
+ */
+function requireProjectMember(idParam = 'id') {
+  return async function (req, res, next) {
+    try {
+      const Project = require('../models/project.model');
+      const project = await Project.findById(req.params[idParam]).select('organizationId').lean();
+      if (!project) return res.status(404).json({ error: { code: 'project_not_found', message: 'Project not found' } });
+      const membership = await Membership.findOne({
+        userId: req.user._id,
+        organizationId: project.organizationId,
+        disabled: { $ne: true },
+      });
+      if (!membership) return res.status(403).json({ error: { code: 'forbidden', message: 'Not a member of this project’s organization' } });
+      req.membership = membership;
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
+}
+
+module.exports = { authenticate, requireOrg, requirePermission, requireProjectMember };

@@ -6,6 +6,7 @@ import Avatar from '../components/ui'
 import { statusLabel, formatTime } from '../lib/format'
 import { useViewer, can } from '../lib/viewer'
 import { useProject, useReviews, useTeam, useMe } from '../lib/data'
+import { listVersions, versionFileUrl, type ProjectVersion } from '../services/api'
 
 const SAMPLE_VIDEO_URL = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
 
@@ -29,16 +30,50 @@ export default function ReviewWorkspacePage() {
   const memberOf = (mid: string) => team.find((m) => m.id === mid)
 
   const reviewsForProject = allReviews.filter((r) => r.projectId === id)
-  const review = {
-    fileName: project ? `${project.title}.mp4` : 'draft.mp4',
-    versions: [{
+
+  // Real versions from the backend; fall back to a placeholder entry when the
+  // project has no uploads yet (so timestamped comments still work).
+  const [versions, setVersions] = useState<ProjectVersion[]>([])
+  useEffect(() => {
+    let active = true
+    if (!id) return
+    listVersions(id)
+      .then((v) => active && setVersions(v))
+      .catch(() => {})
+    return () => {
+      active = false
+    }
+  }, [id])
+
+  const versionEntries = (() => {
+    const real = versions
+      .filter((v) => v.files.length > 0)
+      .flatMap((v) =>
+        v.files
+          .filter((f) => f.mimeType.startsWith('video/'))
+          .map((f) => ({
+            id: `${v.id}:${f.id}`,
+            label: `v${v.versionNumber}`,
+            url: versionFileUrl(id, v.id, f.id),
+            filename: f.filename,
+            uploadedAt: v.createdAt,
+            summary: v.changeSummary || 'Draft upload',
+          })),
+      )
+    if (real.length > 0) return real
+    return [{
       id: 'v1',
       label: project?.approvedVersion ?? 'v1.0',
       url: SAMPLE_VIDEO_URL,
-      uploadedBy: project?.assignee ?? '',
+      filename: 'sample-draft.mp4',
       uploadedAt: project?.updated ?? '',
-      summary: 'Current draft',
-    }],
+      summary: 'No uploaded draft yet — showing sample',
+    }]
+  })()
+
+  const review = {
+    fileName: versionEntries[0]?.filename ?? 'draft.mp4',
+    versions: versionEntries.map((v) => ({ id: v.id, label: v.label, url: v.url, summary: v.summary })),
     comments: reviewsForProject.map((r) => ({
       id: r.id,
       author: r.author,
@@ -158,7 +193,7 @@ export default function ReviewWorkspacePage() {
             {approved && <Chip label="Approved" tone="teal" />}
           </div>
           <p className="mt-1 text-sm text-umber">
-            {[version.label, `uploaded by ${memberOf(version.uploadedBy)?.name}`, version.uploadedAt].filter(Boolean).join(' · ')}
+            {[version.label, 'uploadedAt' in version && version.uploadedAt ? `uploaded ${version.uploadedAt}` : ''].filter(Boolean).join(' · ') || version.label}
           </p>
         </div>
 

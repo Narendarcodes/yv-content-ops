@@ -404,6 +404,52 @@ export async function listChannelMessages(projectId: string, channelId: string) 
   return normalizeList(items)
 }
 
+/** ------------------------------------------------------------------- */
+/* Version files (video drafts) */
+export interface VersionFile {
+  id: string
+  filename: string
+  mimeType: string
+  size: number
+}
+
+export interface ProjectVersion {
+  id: string
+  versionNumber: number
+  changeSummary: string
+  createdAt: string
+  files: VersionFile[]
+}
+
+/** Authenticated URL for streaming a version file (Range-aware). */
+export function versionFileUrl(projectId: string, versionId: string, fileId: string): string {
+  return `${API_BASE}/projects/${projectId}/versions/${versionId}/files/${fileId}`
+}
+
+async function authedJson<T>(url: string): Promise<T> {
+  const res = await authFetch(url, { credentials: 'include' })
+  if (!res.ok) throw new Error('Request failed')
+  const body = await res.json()
+  const data = body?.data ?? body
+  return (Array.isArray(data) ? data : data?.items ?? []) as T
+}
+
+export async function listVersions(projectId: string): Promise<ProjectVersion[]> {
+  const raw = await authedJson<any[]>(`${API_BASE}/projects/${projectId}/versions`)
+  return raw.map((v) => ({
+    id: String(v._id ?? v.id),
+    versionNumber: v.versionNumber,
+    changeSummary: v.changeSummary ?? '',
+    createdAt: v.createdAt,
+    files: (v.files ?? []).map((f: any) => ({
+      id: String(f._id),
+      filename: f.filename,
+      mimeType: f.mimeType,
+      size: f.size,
+    })),
+  }))
+}
+
 /** Send a chat message to a channel (persisted server-side). */
 export async function sendChannelMessage(projectId: string, channelId: string, body: string) {
   const res = await authFetch(

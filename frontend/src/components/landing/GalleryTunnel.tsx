@@ -30,7 +30,7 @@ const BASE_SPEED = 0.05 // units/sec at Speed=100
 const CLICK_BOOST = 4.5 // hold-to-accelerate multiplier at Boost=100
 const MIDDLE_FADE = 100 // % - drives fog near/far
 
-const SEGMENTS = Math.max(8, Math.round(15 * TUNNEL_SIZE))
+const SEGMENTS = Math.max(24, Math.round(30 * TUNNEL_SIZE))
 const SEG_LEN = 1
 const HALF_W = 0.9 * TUNNEL_SIZE
 const HALF_H = 0.5 * TUNNEL_SIZE
@@ -86,8 +86,9 @@ export default function GalleryTunnel({
       const scene = new T3.Scene()
       scene.background = new T3.Color(background)
       const fade = MIDDLE_FADE / 100
-      const FOG_FAR = 6 + (13 - 6) * fade // higher fade -> deeper visibility falloff
-      scene.fog = new T3.Fog(new T3.Color(background), FOG_FAR * 0.48, FOG_FAR)
+      const FOG_FAR = (SEGMENTS - 6) * SEG_LEN // dissolve only near the very end of a deep chain
+      const FOG_NEAR = FOG_FAR * (0.25 + 0.35 * (1 - fade))
+      scene.fog = new T3.Fog(new T3.Color(background), FOG_NEAR, FOG_FAR)
 
       const camera = new T3.PerspectiveCamera(45, 1, 0.1, 100)
 
@@ -158,11 +159,28 @@ export default function GalleryTunnel({
           }
         }
 
-        // sparse PLAIN gradient slabs (no text)
+        // Irregular gallery placement — like the OriginKit demo:
+        // each wall independently gets 0-2 slabs at random cell + random
+        // vertical/horizontal offset, so no two segments look alike.
         const slabs: THREE.Mesh[] = []
-        const faces = [2, 3, 0, 1].sort(() => Math.random() - 0.5).slice(0, 2)
-        for (const face of faces) {
-          slabs.push(placeTile(group, face, rand(GRID), slabMats[rand(slabMats.length)]))
+        for (const face of [2, 3]) {
+          const n = rand(3) // 0, 1 or 2 slabs per wall
+          const usedCells = new Set<number>()
+          for (let k = 0; k < n; k++) {
+            let cell = rand(GRID)
+            let guard = 0
+            while (usedCells.has(cell) && guard++ < GRID) cell = rand(GRID)
+            usedCells.add(cell)
+            const mesh = placeTile(group, face, cell, slabMats[rand(slabMats.length)])
+            // jitter position along the segment & scale for organic variety
+            mesh.position.z += (Math.random() - 0.5) * SEG_LEN * 0.55
+            const s = 0.75 + Math.random() * 0.6
+            mesh.scale.set(1, s, 1)
+          }
+        }
+        // occasional floor/ceiling accent
+        if (Math.random() < 0.22) {
+          slabs.push(placeTile(group, Math.random() < 0.5 ? 0 : 1, rand(GRID), slabMats[rand(slabMats.length)]))
         }
 
         group.userData.slabs = slabs
@@ -226,7 +244,7 @@ export default function GalleryTunnel({
         // teleport far-passed segments to the front; re-skin, never rebuild
         for (let i = 0; i < segments.length; i++) {
           const s = segments[i]
-          if (s.position.z > camZ + SEG_LEN) {
+          if (s.position.z > camZ + SEG_LEN * 1.5) {
             s.position.z -= CHAIN_LEN
             reshuffle(s)
           }
