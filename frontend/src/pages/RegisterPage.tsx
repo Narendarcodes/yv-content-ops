@@ -105,15 +105,23 @@ export default function RegisterPage() {
   const invitedCount = members.filter((m) => m.email.trim().length > 0).length
   const toast = useToast()
 
+  /** When the email is already registered: explain clearly and route to sign-in. */
+  const [existingAccount, setExistingAccount] = useState<string | null>(null)
+
   const createWorkspace = async () => {
+    setExistingAccount(null)
     try {
       // 1. Register the admin user, then sign in
       try {
         await apiRegister(adminName.trim(), adminEmail.trim(), adminPassword)
       } catch (err: any) {
-        // 409 user_exists is fine - the account already exists; sign in below.
         const msg = String(err?.message || '')
-        if (!/exist/i.test(msg)) throw err
+        if (/exist/i.test(msg)) {
+          // Account already registered - tell the user plainly and send them to sign-in.
+          setExistingAccount(adminEmail.trim())
+          return
+        }
+        throw err
       }
       await apiLogin(adminEmail.trim(), adminPassword)
       // 2. Create the organization
@@ -296,6 +304,24 @@ export default function RegisterPage() {
                   Create the admin account
                 </h2>
                 <p className="mt-2 text-sm text-umber">You&apos;ll own the workspace and manage your team.</p>
+
+                {existingAccount && (
+                  <div
+                    className="mt-5 rounded-[10px] border border-warning/30 bg-warning/8 px-4 py-3"
+                    role="alert"
+                  >
+                    <p className="text-sm font-medium text-ink">
+                      An account with this email already exists
+                    </p>
+                    <p className="mt-0.5 text-[13px] text-umber">
+                      <span className="font-medium text-ink">{existingAccount}</span> is already
+                      registered. Sign in with it to finish setting up your workspace.
+                    </p>
+                    <Link to="/login" className="btn-secondary mt-3 !h-9 w-full text-[13px]">
+                      Sign in instead
+                    </Link>
+                  </div>
+                )}
 
                 <form
                   onSubmit={(e) => { e.preventDefault(); next() }}
