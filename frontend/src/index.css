@@ -510,6 +510,7 @@ body {
 
 .landing {
   font-family: var(--font-body);
+  overflow-x: clip; /* kill any stray horizontal overflow (marquee, 3D edges) */
 }
 
 /* Instrument Serif display utility */

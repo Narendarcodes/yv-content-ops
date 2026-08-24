@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import Chip, { statusTone } from '../components/primitives'
 import Avatar from '../components/ui'
+import { StatCardSkeleton, ErrorBanner } from '../components/states'
 import { type Project } from '../lib/types'
 import { statusLabel } from '../lib/format'
 import { useViewer } from '../lib/viewer'
@@ -215,11 +216,15 @@ export default function DashboardPage() {
   const firstName = viewer.name.split(' ')[0]
   const info = roleOf(viewer)
 
-  const { projects } = useProjects()
-  const { team } = useTeam()
+  const { projects, loading: projectsLoading, error: projectsError } = useProjects()
+  const { team, loading: teamLoading } = useTeam()
   setTeamRef(team)
   const me = useMe()
   const { reviews } = useReviews()
+
+  // While the backend round-trip is in flight, show skeletons - never a
+  // misleading "zero" state on slow connections.
+  const loading = projectsLoading || teamLoading
 
   // My scope
   const myWork = projects.filter((p) => p.assignee === viewer.id && p.status !== 'PUBLISHED' && p.status !== 'CLOSED')
@@ -308,11 +313,17 @@ export default function DashboardPage() {
       </div>
 
       {/* Stat cards */}
-      <section className="stagger grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.length > 0 ? stats.map((s) => <StatCard key={s.label} s={s} />) : (
-          <div className="py-10 text-center text-sm text-umber">No stats to display</div>
-        )}
-      </section>
+      {loading ? (
+        <StatCardSkeleton count={4} />
+      ) : projectsError ? (
+        <ErrorBanner onRetry={() => window.location.reload()} />
+      ) : (
+        <section className="stagger grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {stats.length > 0 ? stats.map((s) => <StatCard key={s.label} s={s} />) : (
+            <div className="py-10 text-center text-sm text-umber">No stats to display</div>
+          )}
+        </section>
+      )}
 
       {/* ---------------- Admin: team overview ---------------- */}
       {viewer.role === 'admin' && (

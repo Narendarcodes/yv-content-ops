@@ -157,9 +157,18 @@ export async function createProject(input: { title: string; type?: string; organ
 export function useTeam() {
   const [team, setTeam] = useState<TeamMember[]>([])
   const [org, setOrg] = useState<{ id: string; name: string; slug: string } | null>(null)
+  const [loading, setLoading] = useState(true)
   useEffect(() => {
     let active = true
-    loadTeam().then((t) => active && setTeam(t)).catch(() => {})
+    loadTeam()
+      .then((t) => {
+        if (!active) return
+        setTeam(t)
+        setLoading(false)
+      })
+      .catch(() => {
+        if (active) setLoading(false)
+      })
     api
       .listOrgs()
       .then((orgs) => active && orgs && orgs.length && setOrg(orgs[0]))
@@ -169,24 +178,39 @@ export function useTeam() {
     }
   }, [])
   const memberOf = (id: string) => team.find((m) => m.id === id)
-  return { team, org, memberOf }
+  return { team, org, memberOf, loading }
 }
 
 export function useProjects() {
   const [projects, setProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   useEffect(() => {
     let active = true
-    const listener = () => {
-      loadProjects().then((p) => active && setProjects(p)).catch(() => {})
+    const fetchProjects = () => {
+      setLoading(true)
+      setError(false)
+      loadProjects()
+        .then((p) => {
+          if (!active) return
+          setProjects(p)
+          setLoading(false)
+        })
+        .catch(() => {
+          if (!active) return
+          setError(true)
+          setLoading(false)
+        })
     }
+    const listener = () => fetchProjects()
     projectsListeners.add(listener)
-    loadProjects().then((p) => active && setProjects(p)).catch(() => {})
+    fetchProjects()
     return () => {
       active = false
       projectsListeners.delete(listener)
     }
   }, [])
-  return { projects }
+  return { projects, loading, error, retry: loadProjects }
 }
 
 /** Members view-list shape (role capitalized) used by the Members screen. */
@@ -289,14 +313,28 @@ export async function loadBoard(): Promise<BoardTask[]> {
 
 export function useBoard() {
   const [tasks, setTasks] = useState<BoardTask[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   useEffect(() => {
     let active = true
-    loadBoard().then((t) => active && setTasks(t)).catch(() => {})
+    setLoading(true)
+    setError(false)
+    loadBoard()
+      .then((t) => {
+        if (!active) return
+        setTasks(t)
+        setLoading(false)
+      })
+      .catch(() => {
+        if (!active) return
+        setError(true)
+        setLoading(false)
+      })
     return () => {
       active = false
     }
   }, [])
-  return { tasks }
+  return { tasks, loading, error }
 }
 
 /* ------------------------------ reviews ------------------------------ */
