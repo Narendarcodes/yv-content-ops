@@ -18,10 +18,10 @@ import {
   LogOut,
 } from 'lucide-react'
 import Avatar from '../components/ui'
-import { org, team, projects } from '../lib/mockData'
-import { useViewer, switchViewer } from '../lib/viewer'
+import { useViewer } from '../lib/viewer'
 import { logout, useAuth } from '../lib/auth'
-import { useNotifications } from '../lib/notifications'
+import { useNotifications, refreshNotifications } from '../lib/notifications'
+import { useTeam, useProjects } from '../lib/data'
 import CommandPalette from '../components/CommandPalette'
 
 
@@ -59,11 +59,13 @@ export default function AppShell() {
   const viewer = useViewer()
   const { session } = useAuth()
   const notifs = useNotifications()
+  const { org } = useTeam()
+  const { projects } = useProjects()
   const [paletteOpen, setPaletteOpen] = useState(false)
   const segments = location.pathname.split('/').filter(Boolean)
   const crumb = CRUMBS[segments[0] ?? ''] ?? 'Overview'
 
-  // Global ⌘K / Ctrl+K — open the command palette from anywhere
+  // Global ⌘K / Ctrl+K - open the command palette from anywhere
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
@@ -74,6 +76,21 @@ export default function AppShell() {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [])
+
+  // Fetch notifications from the backend on mount
+  useEffect(() => {
+    void refreshNotifications()
+  }, [])
+
+  // The viewer is the authenticated session user (RequireAuth guarantees a
+  // session; this guards the brief moment before the hook hydrates).
+  if (!viewer) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-canvas">
+        <p className="text-sm text-umber">Loading your workspace…</p>
+      </div>
+    )
+  }
 
   const visibleGroups = navGroups
     .map((g) => ({ ...g, items: g.items.filter((i) => !i.roles || i.roles.includes(viewer.role)) }))
@@ -110,7 +127,7 @@ export default function AppShell() {
               className="flex items-center gap-1 text-[11px] text-umber transition-colors hover:text-teal"
               title="Switch workspace"
             >
-              {org.name}
+              {org?.name ?? 'Workspace'}
               <ChevronsUpDown size={11} strokeWidth={2} className="text-umber/50" />
             </button>
           </div>
@@ -161,32 +178,17 @@ export default function AppShell() {
             </div>
             <ChevronsUpDown size={14} strokeWidth={2} className="text-umber/40 transition-transform group-hover:text-umber/70" />
           </button>
-          <label className="mt-1.5 block px-2">
-            <span className="mb-1 block font-mono text-[9px] uppercase tracking-wider text-umber/60">View as (demo)</span>
-            <select
-              value={viewer.id}
-              onChange={(e) => switchViewer(e.target.value)}
-              className="input !h-8 w-full !px-2 text-xs"
-              aria-label="Switch role"
-            >
-              {team.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.name} — {m.title}
-                </option>
-              ))}
-            </select>
-          </label>
-          <div className="mt-2 flex items-center gap-2 border-t border-line px-2 pt-2.5">
+          <div className="mt-1.5 flex items-center gap-2 border-t border-line px-2 pt-2.5">
             <div className="min-w-0 flex-1 leading-tight">
               <p className="font-mono text-[9px] uppercase tracking-wider text-umber/60">Signed in as</p>
               <p className="truncate text-[11px] text-ink/70">{session?.user.email ?? viewer.email}</p>
             </div>
             <button
-              onClick={() => {
-                logout()
+              onClick={async () => {
+                await logout()
                 navigate('/login', { replace: true })
               }}
-              className="icon-btn !h-8 !w-8"
+              className="icon-btn icon-btn-sm"
               aria-label="Sign out"
               title="Sign out"
             >
@@ -200,8 +202,7 @@ export default function AppShell() {
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar */}
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-line bg-canvas/85 px-6 backdrop-blur-md md:px-8">
-          <p className="hidden items-center gap-2 text-[11px] font-mono uppercase tracking-wider text-umber/70 md:flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-teal" aria-hidden="true" />
+          <p className="hidden items-center text-[11px] font-mono uppercase tracking-wider text-umber/70 md:flex">
             {crumb}
           </p>
           <div className="relative ml-auto w-64">
@@ -237,7 +238,7 @@ export default function AppShell() {
           </button>
           <button
             onClick={() => navigate('/profile')}
-            className="rounded-full ring-2 ring-transparent transition-all hover:ring-teal/40 active:scale-95"
+            className="rounded-full ring-2 ring-transparent transition-[box-shadow,transform] hover:ring-teal/40 active:scale-95"
             aria-label="Profile"
           >
             <Avatar initials={viewer.initials} size="sm" tone="ink" />

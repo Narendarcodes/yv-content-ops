@@ -1,12 +1,13 @@
 /**
  * Role & permission model for Folio.
- * Mirrors the backend permission seeds (src/seed/roles.js) so the demo UX
- * matches what the API will enforce. Frontend checks are a UX aid only —
- * the backend remains the real security boundary.
+ * Mirrors the backend role seeds (src/seed/roles.js) so the UX matches what
+ * the API enforces. Frontend checks are a UX aid only - the backend remains
+ * the real security boundary. A user's role comes from their login session,
+ * never from a client-side switcher.
  */
-import type { TeamMember } from './mockData'
+import type { RoleName, TeamMember } from './types'
 
-export type Role = TeamMember['role']
+export type Role = RoleName
 
 export type Permission =
   | 'view'
@@ -49,7 +50,7 @@ export const ROLES: RoleInfo[] = [
     role: 'admin',
     label: 'Admin',
     desk: 'Team overview',
-    blurb: 'Full access — manages the organization and every project.',
+    blurb: 'Full access - manages the organization and every project.',
     permissions: [
       'view', 'create', 'upload', 'comment', 'approve', 'schedule',
       'publish', 'metrics', 'manage_members', 'manage_concepts', 'settings',
@@ -90,16 +91,32 @@ export const ROLES: RoleInfo[] = [
     role: 'member',
     label: 'Member',
     desk: 'Your workspace',
-    blurb: 'Read-only access — views projects and comments.',
+    blurb: 'Read-only access - views projects and comments.',
     permissions: ['view', 'comment'],
   },
 ]
 
-export function roleOf(viewer: TeamMember): RoleInfo {
-  return ROLES.find((r) => r.role === viewer.role) ?? ROLES[0]
+const ROLE_ALIASES: Record<string, Role> = {
+  admin: 'admin',
+  editor: 'editor',
+  designer: 'designer',
+  reviewer: 'reviewer',
+  publisher: 'publisher',
+  member: 'member',
+}
+
+/** Normalize any role-ish string (backend seeds, membership docs) to a Role. */
+export function normalizeRole(value: string | null | undefined): Role {
+  if (!value) return 'member'
+  return ROLE_ALIASES[String(value).toLowerCase()] ?? 'member'
+}
+
+export function roleOf(viewer: Pick<TeamMember, 'role'>): RoleInfo {
+  return ROLES.find((r) => r.role === normalizeRole(viewer.role)) ?? ROLES[5]
 }
 
 /** Frontend-only capability check (mirrors backend permissions). */
-export function can(viewer: TeamMember, permission: Permission): boolean {
-  return roleOf(viewer).permissions.includes(permission)
+export function can(viewer: { role?: string } | null, permission: Permission): boolean {
+  if (!viewer) return false
+  return roleOf({ role: viewer.role as Role }).permissions.includes(permission)
 }

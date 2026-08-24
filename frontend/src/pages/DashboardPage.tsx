@@ -1,18 +1,27 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  ArrowRight, BadgeCheck, CalendarClock, CheckSquare, Clapperboard,
+  ArrowRight, BadgeCheck, Bell, CalendarClock, CheckSquare, Clapperboard,
   Eye, Inbox, Megaphone, MessageCircle, MessageSquare, Shield, Users,
 } from 'lucide-react'
 import Chip, { statusTone } from '../components/primitives'
 import Avatar from '../components/ui'
-import { projects, scheduledPosts, activity, team, videoReviews, type Project } from '../lib/mockData'
+import { type Project } from '../lib/types'
 import { statusLabel } from '../lib/format'
 import { useViewer } from '../lib/viewer'
 import { roleOf, type Role } from '../lib/roles'
+import { useTeam, useProjects, useReviews, useMe } from '../lib/data'
+import { useNotifications } from '../lib/notifications'
 
 const iconProps = { size: 18, strokeWidth: 1.75 }
-const memberOf = (id: string) => team.find((m) => m.id === id)
+
+// Shared team reference so module-level components (ProjectRow, WorkCard,
+// ActivityCard) can resolve member ids even though the team is loaded async.
+let teamRef: ReturnType<typeof useTeam>['team'] = []
+export function setTeamRef(t: typeof teamRef) {
+  teamRef = t
+}
+const memberOf = (id: string) => teamRef.find((m) => m.id === id)
 
 const REVIEW = ['FIRST_DRAFT_SUBMITTED', 'UNDER_REVIEW', 'REVISION_SUBMITTED', 'REVISION_IN_PROGRESS']
 const PRODUCTION = ['ASSIGNED', 'WAITING_FOR_INPUTS', 'INPUTS_READY', 'IN_PROGRESS', 'REVISION_REQUESTED']
@@ -79,11 +88,11 @@ function ProjectRow({ p, icon }: { p: Project; icon: ReactNode }) {
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium text-ink">{p.title}</p>
           <p className="truncate text-xs text-umber">
-            {assignee?.name ?? 'Unassigned'} · {p.approvedVersion ? `${p.approvedVersion} · ` : ''}{p.updated}
+            {[assignee?.name ?? 'Unassigned', p.approvedVersion, p.updated].filter(Boolean).join(' · ')}
           </p>
         </div>
         <Chip label={statusLabel(p.status)} tone={statusTone(p.status)} />
-        <ArrowRight size={15} strokeWidth={1.75} className="text-umber/30 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
+        <ArrowRight size={15} strokeWidth={1.75} className="text-umber/30 opacity-0 transition-[transform,opacity] group-hover:translate-x-0.5 group-hover:opacity-100" />
       </Link>
     </li>
   )
@@ -131,46 +140,52 @@ function WorkCard({ p }: { p: Project }) {
   )
 }
 
-function ScheduledCard({ className }: { className?: string }) {
+function ScheduledCard({ items, className }: { items: Project[]; className?: string }) {
   return (
     <div className={`card overflow-hidden ${className ?? ''}`}>
       <CardHeader title="Scheduled to publish" to="/schedule" action="Schedule" />
       <ul className="divide-y divide-line">
-        {scheduledPosts.map((sp) => (
-          <li key={sp.id} className="flex items-center gap-3 px-5 py-3.5 transition-colors hover:bg-canvas/50">
+        {items.map((p) => (
+          <li key={p.id} className="flex items-center gap-3 px-5 py-3.5 transition-colors hover:bg-canvas/50">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-success/10 text-success">
               <CalendarClock {...iconProps} />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-ink">{sp.title}</p>
-              <p className="truncate text-xs text-umber">{sp.platform} · {sp.scheduledAt}</p>
+              <p className="truncate text-sm font-medium text-ink">{p.title}</p>
+              <p className="truncate text-xs text-umber">{p.platform ?? '-'} · {p.scheduleDate ?? p.publishedAt ?? '-'}</p>
             </div>
           </li>
         ))}
-        {!scheduledPosts.length && <li className="px-5 py-8 text-center text-sm text-umber">Nothing scheduled yet.</li>}
+        {!items.length && <li className="px-5 py-8 text-center text-sm text-umber">Nothing scheduled yet.</li>}
       </ul>
     </div>
   )
 }
 
 function ActivityCard() {
+  const notifications = useNotifications()
+  const recent = notifications.slice(0, 5)
   return (
     <div className="card overflow-hidden">
       <CardHeader title="Recent activity" />
-      <ul className="divide-y divide-line">
-        {activity.slice(0, 4).map((a, i) => (
-          <li key={i} className="flex gap-3 px-5 py-3.5">
-            <Avatar initials={memberOf(a.actor)?.initials ?? '?'} size="sm" tone={i % 2 ? 'tint' : 'teal'} />
-            <div className="min-w-0">
-              <p className="text-sm leading-snug text-ink">
-                <span className="font-medium">{memberOf(a.actor)?.name}</span> {a.verb}{' '}
-                <span className="font-medium text-teal">{a.target}</span>
-              </p>
-              <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-umber/60">{a.time}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {recent.length ? (
+        <ul className="divide-y divide-line">
+          {recent.map((n, i) => (
+            <li key={n.id} className="flex gap-3 px-5 py-3.5">
+              <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${i % 2 ? 'bg-tint text-teal' : 'bg-ink/5 text-umber'}`}>
+                <Bell {...iconProps} />
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm leading-snug text-ink">{n.title}</p>
+                <p className="mt-0.5 text-xs text-umber">{n.desc}</p>
+                <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-umber/60">{n.time}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="px-5 py-8 text-center text-sm text-umber">No activity recorded yet.</p>
+      )}
     </div>
   )
 }
@@ -200,6 +215,12 @@ export default function DashboardPage() {
   const firstName = viewer.name.split(' ')[0]
   const info = roleOf(viewer)
 
+  const { projects } = useProjects()
+  const { team } = useTeam()
+  setTeamRef(team)
+  const me = useMe()
+  const { reviews } = useReviews()
+
   // My scope
   const myWork = projects.filter((p) => p.assignee === viewer.id && p.status !== 'PUBLISHED' && p.status !== 'CLOSED')
   const mineInReview = projects.filter((p) => p.assignee === viewer.id && inReview(p))
@@ -214,10 +235,8 @@ export default function DashboardPage() {
   const waitingInputs = projects.filter((p) => p.status === 'WAITING_FOR_INPUTS' || p.status === 'INPUTS_READY')
   const publishedAll = projects.filter((p) => p.status === 'PUBLISHED')
   const sharedWithMe = projects.filter((p) => p.reviewers.includes(viewer.id) || p.creator === viewer.id)
-  const myComments = Object.values(videoReviews).reduce(
-    (n, r) => n + r.comments.filter((c) => c.author === viewer.id).length,
-    0,
-  )
+  const scheduled = projects.filter((p) => p.status === 'SCHEDULED' || p.status === 'PUBLISHED')
+  const myComments = reviews.filter((r) => r.author === me?.id).length
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
@@ -226,7 +245,7 @@ export default function DashboardPage() {
     admin: [
       { label: 'Awaiting review', value: allInReview.length, icon: <MessageSquare {...iconProps} />, tone: 'warning' },
       { label: 'In production', value: production.length, icon: <Clapperboard {...iconProps} />, tone: 'teal' },
-      { label: 'Scheduled to publish', value: scheduledPosts.length, icon: <CalendarClock {...iconProps} />, tone: 'success' },
+      { label: 'Scheduled to publish', value: scheduled.length, icon: <CalendarClock {...iconProps} />, tone: 'success' },
       { label: 'Team members', value: team.length, icon: <Users {...iconProps} />, tone: 'neutral' },
     ],
     editor: [
@@ -248,7 +267,7 @@ export default function DashboardPage() {
       { label: 'In production', value: production.length, icon: <Clapperboard {...iconProps} />, tone: 'teal' },
     ],
     publisher: [
-      { label: 'Scheduled to publish', value: scheduledPosts.length, icon: <CalendarClock {...iconProps} />, tone: 'success' },
+      { label: 'Scheduled to publish', value: scheduled.length, icon: <CalendarClock {...iconProps} />, tone: 'success' },
       { label: 'Ready to publish', value: readyToPublish.length, icon: <BadgeCheck {...iconProps} />, tone: 'warning' },
       { label: 'Published', value: publishedAll.length, icon: <Megaphone {...iconProps} />, tone: 'neutral' },
       { label: 'In production', value: production.length, icon: <Clapperboard {...iconProps} />, tone: 'teal' },
@@ -274,7 +293,7 @@ export default function DashboardPage() {
           <p className="mt-2 text-sm text-umber">
             {viewer.role === 'admin'
               ? 'Here’s what the team is working on across your organization today.'
-              : `Your ${info.desk.toLowerCase()} — ${info.blurb}`}
+              : `Your ${info.desk.toLowerCase()} - ${info.blurb}`}
           </p>
         </div>
         <Link
@@ -290,7 +309,9 @@ export default function DashboardPage() {
 
       {/* Stat cards */}
       <section className="stagger grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((s) => <StatCard key={s.label} s={s} />)}
+        {stats.length > 0 ? stats.map((s) => <StatCard key={s.label} s={s} />) : (
+          <div className="py-10 text-center text-sm text-umber">No stats to display</div>
+        )}
       </section>
 
       {/* ---------------- Admin: team overview ---------------- */}
@@ -307,7 +328,7 @@ export default function DashboardPage() {
               empty="Nothing waiting on you right now."
             />
             <div className="space-y-6">
-              <ScheduledCard />
+              <ScheduledCard items={scheduled} />
               <ActivityCard />
             </div>
           </section>
@@ -344,7 +365,7 @@ export default function DashboardPage() {
             </div>
             <div className="space-y-6">
               <ProjectListCard
-                title="In review — my submissions"
+                title="In review - my submissions"
                 icon={<MessageSquare {...iconProps} />}
                 items={mineInReview}
                 empty="Nothing of yours is in review."
@@ -375,7 +396,7 @@ export default function DashboardPage() {
             action="All my work"
             icon={<Clapperboard {...iconProps} />}
             items={myWork}
-            empty="Nothing waiting on your desk — nice."
+            empty="Nothing is waiting on your desk."
           />
           <div className="space-y-6">
             {mineInReview.length > 0 && (
@@ -414,7 +435,7 @@ export default function DashboardPage() {
       {viewer.role === 'publisher' && (
         <>
           <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-            <ScheduledCard className="xl:col-span-2" />
+            <ScheduledCard items={scheduled} className="xl:col-span-2" />
             <div className="space-y-6">
               <ProjectListCard
                 title="Ready to publish"

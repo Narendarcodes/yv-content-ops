@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { Clock, Minus } from 'lucide-react'
 import Chip, { statusTone, Modal } from '../components/primitives'
 import Avatar from '../components/ui'
-import { projects, videoReviews, team, SAMPLE_VIDEO_URL } from '../lib/mockData'
 import { statusLabel, formatTime } from '../lib/format'
 import { useViewer, can } from '../lib/viewer'
+import { useProject, useReviews, useTeam, useMe } from '../lib/data'
 
-const memberOf = (id: string) => team.find((m) => m.id === id)
+const SAMPLE_VIDEO_URL = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
 
 interface LocalComment {
   id: string
@@ -19,15 +20,41 @@ interface LocalComment {
 }
 
 export default function ReviewWorkspacePage() {
-  const { id } = useParams()
+  const { id = '' } = useParams()
   const viewer = useViewer()
-  const project = projects.find((p) => p.id === id)
-  const review = id ? videoReviews[id] : undefined
+  const { project } = useProject(id)
+  const { team } = useTeam()
+  const { reviews: allReviews } = useReviews()
+  const me = useMe()
+  const memberOf = (mid: string) => team.find((m) => m.id === mid)
+
+  const reviewsForProject = allReviews.filter((r) => r.projectId === id)
+  const review = {
+    fileName: project ? `${project.title}.mp4` : 'draft.mp4',
+    versions: [{
+      id: 'v1',
+      label: project?.approvedVersion ?? 'v1.0',
+      url: SAMPLE_VIDEO_URL,
+      uploadedBy: project?.assignee ?? '',
+      uploadedAt: project?.updated ?? '',
+      summary: 'Current draft',
+    }],
+    comments: reviewsForProject.map((r) => ({
+      id: r.id,
+      author: r.author,
+      time: 0,
+      body: r.body,
+      replies: [],
+      resolved: r.resolved,
+      createdAt: r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '',
+    })),
+  }
 
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [versionId, setVersionId] = useState(review?.versions[0]?.id ?? '')
+  const syncedFor = useRef<string>('')
+  const [versionId, setVersionId] = useState(review.versions[0].id)
   const [currentTime, setCurrentTime] = useState(0)
-  const [comments, setComments] = useState<LocalComment[]>(review?.comments ?? [])
+  const [comments, setComments] = useState<LocalComment[]>(review.comments)
   const [draft, setDraft] = useState('')
   const [draftTime, setDraftTime] = useState<number | null>(null)
   const [replyingTo, setReplyingTo] = useState<string | null>(null)
@@ -38,19 +65,21 @@ export default function ReviewWorkspacePage() {
   const [notice, setNotice] = useState<string | null>(null)
 
   useEffect(() => {
-    if (review) {
+    if (!id) return
+    if (syncedFor.current !== id) {
       setVersionId(review.versions[0].id)
       setComments(review.comments)
+      if (review.comments.length > 0 || allReviews.length > 0) syncedFor.current = id
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
+  }, [id, allReviews])
 
-  if (!project || !review) {
+  if (!project) {
     return (
       <div className="fade-in card p-12 text-center">
-        <h1 className="font-headline text-lg font-semibold text-ink">No review workspace for this project yet</h1>
-        <p className="mt-1 text-sm text-umber">Drafts appear here once an editor uploads a video.</p>
-        <Link to={`/projects/${id}`} className="btn-secondary mt-5 inline-flex">Back to project</Link>
+        <h1 className="font-headline text-lg font-semibold text-ink">Project not found</h1>
+        <p className="mt-1 text-sm text-umber">This project doesn&apos;t exist or was removed.</p>
+        <Link to="/projects" className="btn-secondary mt-5 inline-flex">Back to projects</Link>
       </div>
     )
   }
@@ -81,7 +110,7 @@ export default function ReviewWorkspacePage() {
     const t = draftTime ?? Math.floor(currentTime)
     setComments((prev) => [
       ...prev,
-      { id: `c-${Date.now()}`, author: viewer.id, time: t, body: draft.trim(), replies: [], resolved: false, createdAt: 'Just now' },
+      { id: `c-${Date.now()}`, author: me?.id ?? viewer.id, time: t, body: draft.trim(), replies: [], resolved: false, createdAt: 'Just now' },
     ])
     setDraft('')
     setDraftTime(null)
@@ -93,7 +122,7 @@ export default function ReviewWorkspacePage() {
     setComments((prev) =>
       prev.map((c) =>
         c.id === parentId
-          ? { ...c, replies: [...c.replies, { id: `r-${Date.now()}`, author: viewer.id, body: replyText.trim() }] }
+          ? { ...c, replies: [...c.replies, { id: `r-${Date.now()}`, author: me?.id ?? viewer.id, body: replyText.trim() }] }
           : c,
       ),
     )
@@ -107,7 +136,7 @@ export default function ReviewWorkspacePage() {
 
   const requestRevision = () => {
     setRevisionOpen(false)
-    setNotice(`Revision requested — “${revisionReason.trim() || 'No reason given'}”. Notifying the editor.`)
+    setNotice(`Revision requested: ${revisionReason.trim() || 'no reason given'}. Notifying the editor.`)
     setRevisionReason('')
   }
 
@@ -129,7 +158,7 @@ export default function ReviewWorkspacePage() {
             {approved && <Chip label="Approved" tone="teal" />}
           </div>
           <p className="mt-1 text-sm text-umber">
-            {version.label} · uploaded by {memberOf(version.uploadedBy)?.name} · {version.uploadedAt}
+            {[version.label, `uploaded by ${memberOf(version.uploadedBy)?.name}`, version.uploadedAt].filter(Boolean).join(' · ')}
           </p>
         </div>
 
@@ -176,7 +205,7 @@ export default function ReviewWorkspacePage() {
               >
                 {review.versions.map((v) => (
                   <option key={v.id} value={v.id}>
-                    {v.label} — {v.summary}
+                    {v.label} - {v.summary}
                   </option>
                 ))}
               </select>
@@ -200,11 +229,8 @@ export default function ReviewWorkspacePage() {
             <p className="font-mono text-xs text-umber/70">
               Playhead <span className="text-ink">{formatTime(currentTime)}</span> · {review.fileName}
             </p>
-            <button className="btn-secondary !h-9" onClick={captureTime} disabled={!canComment}>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.3" />
-                <path d="M7 3.5v3.5M7 7 9.5 8.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-              </svg>
+            <button className="btn-secondary btn-sm" onClick={captureTime} disabled={!canComment}>
+              <Clock size={15} strokeWidth={1.75} />
               Comment at {formatTime(currentTime)}
             </button>
           </div>
@@ -216,12 +242,9 @@ export default function ReviewWorkspacePage() {
                 onClick={() => seekTo(draftTime)}
                 className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-tint px-2.5 py-1 font-mono text-[11px] font-medium text-teal hover:underline"
               >
-                <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
-                  <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.3" />
-                  <path d="M7 3.5v3.5M7 7 9.5 8.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-                </svg>
+                <Clock size={11} strokeWidth={2} />
                 {formatTime(draftTime)}
-                <span onClick={(e) => { e.stopPropagation(); setDraftTime(null) }} className="ml-1 text-umber hover:text-ink">×</span>
+                <Minus size={11} strokeWidth={2} className="ml-0.5 text-umber transition-colors hover:text-ink" />
               </button>
             )}
             <textarea
@@ -230,14 +253,14 @@ export default function ReviewWorkspacePage() {
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submitComment()
               }}
-              placeholder={canComment ? 'Leave feedback for the editor — use “Comment at time” to anchor it to the video…' : 'You don’t have comment permission in this demo.'}
+              placeholder={canComment ? 'Leave feedback for the editor - use “Comment at time” to anchor it to the video…' : 'You don’t have comment permission for this project.'}
               disabled={!canComment}
               rows={3}
               className="w-full resize-none bg-transparent text-sm text-ink outline-none placeholder:text-umber/70"
             />
             <div className="mt-2 flex items-center justify-between">
               <p className="text-[11px] text-umber/60">⌘/Ctrl + Enter to send</p>
-              <button className="btn-primary !h-9" onClick={submitComment} disabled={!draft.trim() || !canComment}>
+              <button className="btn-primary btn-sm" onClick={submitComment} disabled={!draft.trim() || !canComment}>
                 Send comment
               </button>
             </div>
@@ -264,10 +287,7 @@ export default function ReviewWorkspacePage() {
                           className="inline-flex items-center gap-1 rounded-full bg-tint px-2 py-0.5 font-mono text-[11px] font-medium text-teal hover:underline"
                           title="Jump the video to this timestamp"
                         >
-                          <svg width="10" height="10" viewBox="0 0 14 14" fill="none">
-                            <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.3" />
-                            <path d="M7 3.5v3.5M7 7 9.5 8.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-                          </svg>
+                          <Clock size={10} strokeWidth={2} />
                           {formatTime(c.time)}
                         </button>
                         <span className="font-mono text-[10px] uppercase tracking-wider text-umber/60">{c.createdAt}</span>
@@ -305,7 +325,7 @@ export default function ReviewWorkspacePage() {
                             className="input !h-9 flex-1"
                             autoFocus
                           />
-                          <button className="btn-primary !h-9" onClick={() => submitReply(c.id)} disabled={!replyText.trim()}>
+                          <button className="btn-primary btn-sm" onClick={() => submitReply(c.id)} disabled={!replyText.trim()}>
                             Send
                           </button>
                         </div>

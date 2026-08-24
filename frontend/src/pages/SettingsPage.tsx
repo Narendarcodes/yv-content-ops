@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Check } from 'lucide-react'
-import { org } from '../lib/mockData'
 import { useViewer } from '../lib/viewer'
 import { ROLES, PERMISSION_LABELS } from '../lib/roles'
 import { useToast } from '../components/toast'
+import { useTeam } from '../lib/data'
 
 function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
   return (
@@ -14,7 +14,7 @@ function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void 
       className={`relative h-6 w-11 rounded-full transition-colors ${on ? 'bg-teal' : 'bg-ink/15'}`}
     >
       <span
-        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${on ? 'left-[22px]' : 'left-0.5'}`}
+        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-[left] ${on ? 'left-[22px]' : 'left-0.5'}`}
       />
     </button>
   )
@@ -43,14 +43,17 @@ function Row({
 export default function SettingsPage() {
   const viewer = useViewer()
   const toast = useToast()
+  const { org } = useTeam()
   const [notifEmail, setNotifEmail] = useState(true)
   const [notifDigest, setNotifDigest] = useState(true)
   const [mentions, setMentions] = useState(true)
   const [twoFactor, setTwoFactor] = useState(false)
-  const [orgName, setOrgName] = useState(org.name)
+  const [orgName, setOrgName] = useState(org?.name ?? '')
+
+  useEffect(() => { if (org) setOrgName(org.name) }, [org])
 
   const save = () => {
-    // Persist preferences locally — backend settings API replaces this later
+    // Persist preferences locally - backend settings API replaces this later
     try {
       localStorage.setItem(
         'folio.settings',
@@ -80,7 +83,7 @@ export default function SettingsPage() {
             </div>
             <div>
               <label className="label">Workspace slug</label>
-              <input value={org.slug} readOnly className="input bg-canvas/60 font-mono text-umber" />
+              <input value={org?.slug ?? ''} readOnly className="input bg-canvas/60 font-mono text-umber" />
             </div>
           </div>
         </section>
@@ -90,7 +93,7 @@ export default function SettingsPage() {
           <header className="border-b border-line px-6 py-4">
             <h2 className="font-headline text-base font-semibold tracking-tight text-ink">Roles & permissions</h2>
             <p className="mt-0.5 text-[13px] text-umber">
-              What each role can do in this workspace — this mirrors the permissions the backend enforces.
+              What each role can do in this workspace - this mirrors the permissions the backend enforces.
             </p>
           </header>
           <div className="divide-y divide-line">

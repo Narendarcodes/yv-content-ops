@@ -11,7 +11,9 @@
     "test:watch": "jest --runInBand --watch",
     "test:coverage": "jest --runInBand --coverage",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "seed": "node scripts/seed-chat.js",
+    "seed:dry": "node scripts/seed-chat.js --dry-run"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

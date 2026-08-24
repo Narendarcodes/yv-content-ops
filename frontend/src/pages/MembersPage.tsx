@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { UserPlus, Users } from 'lucide-react'
+import { Search, UserPlus, Users } from 'lucide-react'
 import Avatar from '../components/ui'
 import Chip, { Modal } from '../components/primitives'
-import { members, org } from '../lib/mockData'
+import { useMembers } from '../lib/data'
 import { useToast } from '../components/toast'
 
 const roleTone: Record<string, 'teal' | 'neutral' | 'warning' | 'success'> = {
@@ -18,6 +18,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export default function MembersPage() {
   const toast = useToast()
+  const { members, org } = useMembers()
   const [query, setQuery] = useState('')
   const [inviteOpen, setInviteOpen] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
@@ -34,7 +35,7 @@ export default function MembersPage() {
     setInviteError(false)
     setInviteOpen(false)
     setInviteEmail('')
-    // Demo: invite is simulated — the backend members API sends the real email later
+    // Demo: invite is simulated - the backend members API sends the real email later
     toast('success', 'Invitation sent', `${inviteEmail.trim()} was invited as ${inviteRole}.`)
   }
 
@@ -43,7 +44,7 @@ export default function MembersPage() {
       <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-headline text-2xl font-semibold tracking-tight text-ink">Members</h1>
-          <p className="mt-1 text-sm text-umber">{members.length} people in {org.name}</p>
+          <p className="mt-1 text-sm text-umber">{members.length} people in {org?.name ?? 'your workspace'}</p>
         </div>
         <button onClick={() => setInviteOpen(true)} className="btn-primary">
           <UserPlus size={14} strokeWidth={2} />
@@ -52,55 +53,64 @@ export default function MembersPage() {
       </header>
 
       <div className="relative mb-5 w-64">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-umber/60">
-          <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.3" />
-          <path d="M9.5 9.5L12.5 12.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-        </svg>
+        <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-umber/60" />
         <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search members…" className="input !pl-9 !h-9" />
       </div>
 
       <div className="card overflow-hidden p-0">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[680px] text-left">
-            <thead>
-              <tr className="border-b border-line">
-                <th className="table-head">Member</th>
-                <th className="table-head">Email</th>
-                <th className="table-head">Role</th>
-                <th className="table-head">Last active</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((m) => (
-                <tr key={m.id} className="table-row">
-                  <td className="px-5 py-3.5">
-                    <div className="flex items-center gap-3">
-                      <Avatar initials={m.initials} size="md" tone={m.role === 'Admin' ? 'ink' : 'tint'} />
-                      <span className="font-medium text-ink">{m.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-5 py-3.5 text-sm text-umber">{m.email}</td>
-                  <td className="px-5 py-3.5">
-                    <Chip label={m.role} tone={roleTone[m.role] ?? 'neutral'} />
-                  </td>
-                  <td className="px-5 py-3.5 font-mono text-[11px] text-umber/70">{m.lastActive}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {members.length === 0 ? (
+            <div className="flex flex-col items-center gap-2 px-6 py-14 text-center">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ink/5 text-umber">
+                <Users size={18} strokeWidth={1.75} />
+              </span>
+              <p className="text-sm font-medium text-ink">No members yet</p>
+              <p className="text-[13px] text-umber">Invite someone to get the team started.</p>
+            </div>
+          ) : (
+            <>
+              <table className="w-full min-w-[680px] text-left">
+                <thead>
+                  <tr className="border-b border-line">
+                    <th className="table-head">Member</th>
+                    <th className="table-head">Email</th>
+                    <th className="table-head">Role</th>
+                    <th className="table-head">Last active</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((m) => (
+                    <tr key={m.id} className="table-row">
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <Avatar initials={m.initials} size="md" tone={m.role === 'Admin' ? 'ink' : 'tint'} />
+                          <span className="font-medium text-ink">{m.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5 text-sm text-umber">{m.email}</td>
+                      <td className="px-5 py-3.5">
+                        <Chip label={m.role} tone={roleTone[m.role] ?? 'neutral'} />
+                      </td>
+                      <td className="px-5 py-3.5 font-mono text-[11px] text-umber/70">{m.lastActive}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {filtered.length === 0 && (
+                <div className="flex flex-col items-center gap-2 px-6 py-14 text-center">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ink/5 text-umber">
+                    <Users size={18} strokeWidth={1.75} />
+                  </span>
+                  <p className="text-sm font-medium text-ink">No members match “{query}”</p>
+                  <p className="text-[13px] text-umber">Try a different name, or clear the search.</p>
+                  <button onClick={() => setQuery('')} className="btn-ghost mt-1 text-teal">
+                    Clear search
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </div>
-        {filtered.length === 0 && (
-          <div className="flex flex-col items-center gap-2 px-6 py-14 text-center">
-            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ink/5 text-umber">
-              <Users size={18} strokeWidth={1.75} />
-            </span>
-            <p className="text-sm font-medium text-ink">No members match “{query}”</p>
-            <p className="text-[13px] text-umber">Try a different name, or clear the search.</p>
-            <button onClick={() => setQuery('')} className="btn-ghost mt-1 text-teal">
-              Clear search
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Invite member */}

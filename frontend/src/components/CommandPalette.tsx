@@ -1,12 +1,12 @@
 /**
- * Global command palette (⌘K / Ctrl+K) — search projects and people,
+ * Global command palette (⌘K / Ctrl+K) - search projects and people,
  * then jump straight to them. Wired to the top-bar search box.
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FileText, Search, User, X } from 'lucide-react'
-import { projects, team } from '../lib/mockData'
 import { statusLabel } from '../lib/format'
+import { useProjects, useTeam } from '../lib/data'
 import Chip from './primitives'
 
 interface Result {
@@ -22,6 +22,8 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
   const [q, setQ] = useState('')
   const [active, setActive] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
+  const { projects } = useProjects()
+  const { team } = useTeam()
 
   useEffect(() => {
     if (open) {
@@ -55,7 +57,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
         to: '/profile',
       }))
     return [...projectHits, ...peopleHits]
-  }, [q])
+  }, [q, projects, team])
 
   if (!open) return null
 
@@ -98,7 +100,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
             placeholder="Search projects, people…"
             className="h-12 flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-umber/50"
           />
-          <button onClick={onClose} className="icon-btn !h-7 !w-7" aria-label="Close search">
+          <button onClick={onClose} className="icon-btn icon-btn-sm" aria-label="Close search">
             <X size={14} strokeWidth={2} />
           </button>
         </div>

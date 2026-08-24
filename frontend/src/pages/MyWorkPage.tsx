@@ -2,11 +2,8 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, FolderKanban } from 'lucide-react'
 import Chip, { statusTone, PageHeader } from '../components/primitives'
 import Avatar from '../components/ui'
-import { projects, team } from '../lib/mockData'
 import { statusLabel } from '../lib/format'
-import { useViewer } from '../lib/viewer'
-
-const memberOf = (id: string) => team.find((m) => m.id === id)
+import { useProjects, useTeam, useMe } from '../lib/data'
 
 const GROUPS: { key: string; label: string; hint: string; statuses: string[] }[] = [
   { key: 'active', label: 'In production', hint: 'Being produced', statuses: ['ASSIGNED', 'WAITING_FOR_INPUTS', 'INPUTS_READY', 'IN_PROGRESS'] },
@@ -15,14 +12,17 @@ const GROUPS: { key: string; label: string; hint: string; statuses: string[] }[]
 ]
 
 export default function MyWorkPage() {
-  const viewer = useViewer()
-  const mine = projects.filter((p) => p.assignee === viewer.id && p.status !== 'PUBLISHED' && p.status !== 'CLOSED')
+  const { projects } = useProjects()
+  const { team } = useTeam()
+  const me = useMe()
+  const memberOf = (id: string) => team.find((m) => m.id === id)
+  const mine = projects.filter((p) => p.assignee === (me?.id ?? '') && p.status !== 'PUBLISHED' && p.status !== 'CLOSED')
 
   return (
     <div className="space-y-8">
       <PageHeader
         title="My work"
-        subtitle={`Projects assigned to you — ${mine.length} active`}
+        subtitle={`Projects assigned to you - ${mine.length} active`}
         actions={<Link to="/projects" className="btn-secondary">All projects</Link>}
       />
 
@@ -53,7 +53,7 @@ export default function MyWorkPage() {
                   {['FIRST_DRAFT_SUBMITTED', 'UNDER_REVIEW', 'REVISION_SUBMITTED'].includes(p.status) && (
                     <Link
                       to={`/projects/${p.id}/review`}
-                      className="btn-secondary !h-9 group/btn"
+                      className="btn-secondary btn-sm group/btn"
                     >
                       Open review
                       <ArrowRight size={14} strokeWidth={1.75} className="transition-transform group-hover/btn:translate-x-0.5" />

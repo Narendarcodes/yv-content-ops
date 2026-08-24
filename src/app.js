@@ -24,7 +24,10 @@ const app = express();
 app.use(helmet());
 // CORS: restrict to configured origins in production (CORS_ORIGIN=comma-separated);
 // defaults to reflecting any origin for development convenience.
-app.use(cors({ origin: config.corsOrigin }));
+// credentials:true is required because the frontend sends requests with
+// credentials:'include' (cookie-based session fallback) — without it the browser
+// blocks the response (Access-Control-Allow-Credentials must be 'true').
+app.use(cors({ origin: config.corsOrigin, credentials: true }));
 app.use(express.json());
 
 // global rate limiting (per IP)

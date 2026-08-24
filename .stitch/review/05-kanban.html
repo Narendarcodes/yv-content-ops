@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aaryajanani - Editorial Kanban</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;family=Outfit:wght@600;700&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {},
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {},
+            "fontFamily": {
+                    "headline": [
+                            "Outfit", "sans-serif"
+                    ],
+                    "display": [
+                            "Outfit", "sans-serif"
+                    ],
+                    "body": [
+                            "Geist", "sans-serif"
+                    ],
+                    "label": [
+                            "Public Sans", "sans-serif"
+                    ],
+                    "mono": [
+                            "JetBrains Mono", "monospace"
+                    ]
+            },
+            "fontSize": {}
+          },
+        }
+      }
+    </script>
+<style>
+        body {
+            background-color: #F7F5F2; /* Canvas Paper */
+            color: #1C1917; /* Charcoal Ink */
+        }
+        /* Hide scrollbar for kanban columns but allow scrolling */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="font-body h-full flex antialiased">
+<!-- SideNavBar -->
+<nav class="h-screen w-64 fixed left-0 border-r border-[rgba(28,25,23,0.10)] bg-[#F7F5F2] flex flex-col p-4 z-20">
+<div class="flex items-center gap-3 mb-8 px-2">
+<img alt="Aaryajanani Motif" class="w-8 h-8 rounded" data-alt="A minimalist logo for an editorial studio named Aaryajanani. The logo uses deep teal and charcoal ink colors on a warm paper background. The style is modern, clean, and professional, reflecting a high-end content operations platform. Vector graphic, no text." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9ypsQ8xSdPu7GZdUmU6Caq0J1mhPFXBOtEo_3IXBLbRMzk5nVfh5KbX29AZL7aMbTDw__GXEAsuV6sLskKbwuE2tobXoIQ8R0-PdWYOSy-0tO8lu0eHXyQuaE71ZafFfofe7tTH9-tm06_0oYbC6bNHil4mFgzd_EE_e_y3C9gnfNFDXmYgwZu-2tx2qC0XfvIdGZEIwEhcDufL4y5knAJDe061-hKhxs-krh1DnAaQ9GpOE36xqPp2yzZaLWJCsCVl8c_nZtRSY"/>
+<div>
+<h1 class="font-headline font-bold text-[#1C1917] tracking-tight leading-tight">Editorial Studio</h1>
+<span class="font-mono text-[10px] text-[#78716C] uppercase">v2.4.0</span>
+</div>
+</div>
+<button class="bg-[#0F766E] text-white font-medium rounded-lg px-4 py-2 mb-6 flex items-center justify-center gap-2 hover:bg-[#115E59] active:scale-95 transition-all duration-200">
+<span class="material-symbols-outlined text-[20px]">add</span>
+            New Entry
+        </button>
+<ul class="flex-1 space-y-1">
+<li>
+<a class="flex items-center gap-3 text-[#78716C] px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span>Overview</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-[#78716C] px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">calendar_today</span>
+<span>Calendar</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 bg-[#E6F2F0] text-[#0F766E] font-medium rounded-lg px-4 py-2 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">edit_note</span>
+<span>In Production</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-[#78716C] px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">group</span>
+<span>Team</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-[#78716C] px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">inventory_2</span>
+<span>Library</span>
+</a>
+</li>
+</ul>
+<ul class="space-y-1 mt-auto pt-4 border-t border-[rgba(28,25,23,0.10)]">
+<li>
+<a class="flex items-center gap-3 text-[#78716C] px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+<span>Support</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-[#78716C] px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span>Sign Out</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-64 flex-1 flex flex-col h-screen min-w-0">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky z-10 bg-[#F7F5F2] border-b border-[rgba(28,25,23,0.10)] h-16">
+<div class="flex justify-between items-center max-w-[1440px] mx-auto px-6 h-full">
+<!-- Breadcrumbs & Nav Links -->
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-sm">
+<a class="text-[#78716C] hover:text-[#1C1917] transition-colors" href="#">Projects</a>
+<span class="material-symbols-outlined text-[16px] text-[#78716C]">chevron_right</span>
+<span class="text-[#1C1917] font-medium">Winter Lookbook — Issue 04</span>
+</div>
+<div class="h-6 w-px bg-[rgba(28,25,23,0.10)] mx-2"></div>
+<nav class="hidden md:flex gap-6 h-full items-center">
+<a class="text-[#78716C] hover:text-[#1C1917] transition-colors" href="#">Dashboard</a>
+<a class="text-[#0F766E] font-medium border-b-2 border-[#0F766E] pb-1 translate-y-[2px]" href="#">Projects</a>
+<a class="text-[#78716C] hover:text-[#1C1917] transition-colors" href="#">Editorial</a>
+<a class="text-[#78716C] hover:text-[#1C1917] transition-colors" href="#">Archive</a>
+</nav>
+</div>
+<!-- Actions & Profile -->
+<div class="flex items-center gap-3">
+<button class="w-9 h-9 flex items-center justify-center text-[#78716C] hover:text-[#1C1917] hover:bg-[#E6F2F0] rounded-lg transition-all active:scale-95">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="w-9 h-9 flex items-center justify-center text-[#78716C] hover:text-[#1C1917] hover:bg-[#E6F2F0] rounded-lg transition-all active:scale-95 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-[#0F766E] rounded-full animate-pulse"></span>
+</button>
+<button class="w-9 h-9 flex items-center justify-center text-[#78716C] hover:text-[#1C1917] hover:bg-[#E6F2F0] rounded-lg transition-all active:scale-95 mr-2">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<img alt="Editor profile" class="w-8 h-8 rounded-full object-cover border border-[rgba(28,25,23,0.10)]" data-alt="A professional headshot of an editor. The lighting is soft and natural, against a clean, warm gray background. The subject is looking directly at the camera with a confident, calm expression. The overall tone is sophisticated and fits a high-end editorial context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4gf8MqqGrB9M-GHPetAzDy1vS68y9a5QjOWGorFZ0GVUPbYsuRTMOv0QllfGSLk_9NHJNrUWDyNRcUkHl35OAaoLKqLC83o75H5vXSy9TfNGaIM00_akOG5on25jAPNH__KNf0QCvvrgfXPbQVBqgqNRSnlGWHMdDmFlE2dz_U_hGp3_QnCPlzyT5lkuxL58peLp66_dComEqg6r8EMOGMLGpOaSvjAJcUzFdMg2w9EiI48p_cEs_umc1B30twEEpurk43N0IVjA"/>
+</div>
+</div>
+</header>
+<!-- Project Header Workspace -->
+<div class="flex-1 flex flex-col overflow-hidden">
+<div class="px-8 pt-8 pb-4 flex-shrink-0">
+<h2 class="font-headline font-semibold text-3xl tracking-tight text-[#1C1917] mb-6">Winter Lookbook — Issue 04</h2>
+<!-- Tab Bar -->
+<div class="flex gap-8 border-b border-[rgba(28,25,23,0.10)] px-2">
+<a class="pb-3 text-sm font-medium text-[#78716C] hover:text-[#1C1917] transition-colors" href="#">Overview</a>
+<a class="pb-3 text-sm font-medium text-[#78716C] hover:text-[#1C1917] transition-colors" href="#">Versions</a>
+<a class="pb-3 text-sm font-medium text-[#0F766E] border-b-2 border-[#0F766E]" href="#">Tasks</a>
+<a class="pb-3 text-sm font-medium text-[#78716C] hover:text-[#1C1917] transition-colors" href="#">Brief</a>
+<a class="pb-3 text-sm font-medium text-[#78716C] hover:text-[#1C1917] transition-colors" href="#">Chat</a>
+</div>
+</div>
+<!-- Tab Content Header -->
+<div class="px-8 py-4 flex justify-between items-end flex-shrink-0">
+<div>
+<div class="flex items-center gap-3 mb-1">
+<h3 class="font-headline font-semibold text-xl text-[#1C1917]">Tasks</h3>
+<span class="font-mono text-xs bg-[#E6F2F0] text-[#0F766E] px-2 py-0.5 rounded-full">14</span>
+</div>
+<p class="text-[#78716C] text-sm">Production checklist for this project</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-3 py-1.5 border border-[rgba(28,25,23,0.10)] rounded-lg text-sm text-[#1C1917] bg-white hover:bg-[#F7F5F2] transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px] text-[#78716C]">filter_list</span>
+                        Filter: All assignees
+                        <span class="material-symbols-outlined text-[16px] text-[#78716C]">expand_more</span>
+</button>
+<button class="bg-[#0F766E] text-white font-medium rounded-lg px-4 py-1.5 text-sm flex items-center justify-center hover:bg-[#115E59] active:scale-95 transition-all shadow-sm">
+                        Add task
+                    </button>
+</div>
+</div>
+<!-- Kanban Board -->
+<div class="flex-1 overflow-x-auto overflow-y-hidden px-8 pb-8 pt-4">
+<div class="flex gap-6 h-full min-w-max">
+<!-- Column 1: To do -->
+<div class="w-80 flex flex-col bg-[rgba(28,25,23,0.03)] rounded-xl border border-[rgba(28,25,23,0.05)] p-2">
+<div class="flex items-center justify-between px-2 py-3 mb-2 flex-shrink-0">
+<h4 class="font-headline font-semibold text-sm text-[#1C1917] uppercase tracking-wider">To do</h4>
+<span class="font-mono text-xs text-[#78716C]">4</span>
+</div>
+<div class="flex-1 overflow-y-auto no-scrollbar space-y-3 px-1 pb-2">
+<!-- Card -->
+<div class="bg-white rounded-lg p-4 border border-[rgba(28,25,23,0.10)] shadow-[0_1px_3px_rgba(28,25,23,0.05)] hover:border-[#0F766E] transition-colors cursor-grab active:cursor-grabbing">
+<div class="flex justify-between items-start mb-3">
+<span class="text-[10px] font-mono uppercase bg-[#FEF2F2] text-[#DC2626] px-2 py-0.5 rounded text-center min-w-[40px]">High</span>
+<button class="text-[#78716C] hover:text-[#1C1917] opacity-0 hover:opacity-100 transition-opacity"><span class="material-symbols-outlined text-[16px]">more_horiz</span></button>
+</div>
+<h5 class="text-[#1C1917] font-medium leading-tight mb-4">Draft lookbook intro copy</h5>
+<div class="flex justify-between items-center mt-auto">
+<div class="flex items-center gap-2 text-xs font-mono text-[#78716C]">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                                        Oct 08
+                                    </div>
+<div class="w-6 h-6 rounded-full bg-[#E6F2F0] text-[#0F766E] flex items-center justify-center text-[10px] font-bold border border-white ring-1 ring-[rgba(28,25,23,0.10)]">EK</div>
+</div>
+</div>
+<!-- Card -->
+<div class="bg-white rounded-lg p-4 border border-[rgba(28,25,23,0.10)] shadow-[0_1px_3px_rgba(28,25,23,0.05)] hover:border-[#0F766E] transition-colors cursor-grab active:cursor-grabbing">
+<h5 class="text-[#1C1917] font-medium leading-tight mb-4 mt-2">Select cover image</h5>
+<div class="flex justify-between items-center mt-auto">
+<div class="flex items-center gap-2 text-xs font-mono text-[#78716C]">
+<!-- No date -->
+</div>
+<div class="w-6 h-6 rounded-full bg-[#F5F5F4] text-[#78716C] flex items-center justify-center text-[10px] font-bold border border-white ring-1 ring-[rgba(28,25,23,0.10)]">MR</div>
+</div>
+</div>
+<!-- Card -->
+<div class="bg-white rounded-lg p-4 border border-[rgba(28,25,23,0.10)] shadow-[0_1px_3px_rgba(28,25,23,0.05)] hover:border-[#0F766E] transition-colors cursor-grab active:cursor-grabbing">
+<div class="flex justify-between items-start mb-3">
+<span class="text-[10px] font-mono uppercase bg-[#F3F4F6] text-[#4B5563] px-2 py-0.5 rounded text-center min-w-[40px]">Low</span>
+</div>
+<h5 class="text-[#1C1917] font-medium leading-tight mb-4">Request font licensing</h5>
+<div class="flex justify-between items-center mt-auto">
+<div class="flex items-center gap-2 text-xs font-mono text-[#78716C]">
+<!-- No date -->
+</div>
+</div>
+</div>
+<!-- Card -->
+<div class="bg-white rounded-lg p-4 border border-[rgba(28,25,23,0.10)] shadow-[0_1px_3px_rgba(28,25,23,0.05)] hover:border-[#0F766E] transition-colors cursor-grab active:cursor-grabbing">
+<h5 class="text-[#1C1917] font-medium leading-tight mb-4 mt-2">Confirm print specs</h5>
+<div class="flex justify-between items-center mt-auto">
+<div class="flex items-center gap-2 text-xs font-mono text-[#78716C]">
+<!-- No date -->
+</div>
+<div class="w-6 h-6 rounded-full bg-[#F5F5F4] text-[#78716C] flex items-center justify-center text-[10px] font-bold border border-white ring-1 ring-[rgba(28,25,23,0.10)]">AR</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 2: In progress -->
+<div class="w-80 flex flex-col bg-[rgba(28,25,23,0.03)] rounded-xl border border-[rgba(28,25,23,0.05)] p-2">
+<div class="flex items-center justify-between px-2 py-3 mb-2 flex-shrink-0">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-[#0F766E]"></div>
+<h4 class="font-headline font-semibold text-sm text-[#1C1917] uppercase tracking-wider">In progress</h4>
+</div>
+<span class="font-mono text-xs text-[#78716C]">3</span>
+</div>
+<div class="flex-1 overflow-y-auto no-scrollbar space-y-3 px-1 pb-2">
+<!-- Card -->
+<div class="bg-white rounded-lg p-4 border border-[#0F766E] shadow-[0_2px_8px_rgba(15,118,110,0.15)] transition-colors cursor-grab active:cursor-grabbing relative overflow-hidden">
+<div class="absolute top-0 left-0 h-1 bg-[#E6F2F0] w-full">
+<div class="h-full bg-[#0F766E] w-[60%]"></div>
+</div>
+<div class="flex justify-between items-start mb-3 mt-1">
+<span class="text-[10px] font-mono uppercase bg-[#FEF2F2] text-[#DC2626] px-2 py-0.5 rounded text-center min-w-[40px]">High</span>
+</div>
+<h5 class="text-[#1C1917] font-medium leading-tight mb-4">Shoot retouching — batch 2</h5>
+<div class="flex justify-between items-center mt-auto">
+<div class="flex items-center gap-2 text-xs font-mono text-[#0F766E] font-medium">
+                                        60%
+                                    </div>
+<div class="w-6 h-6 rounded-full bg-[#E6F2F0] text-[#0F766E] flex items-center justify-center text-[10px] font-bold border border-white ring-1 ring-[rgba(28,25,23,0.10)]">EK</div>
+</div>
+</div>
+<!-- Card -->
+<div class="bg-white rounded-lg p-4 border border-[rgba(28,25,23,0.10)] shadow-[0_1px_3px_rgba(28,25,23,0.05)] hover:border-[#0F766E] transition-colors cursor-grab active:cursor-grabbing">
+<h5 class="text-[#1C1917] font-medium leading-tight mb-4 mt-2">Layout spreads 18–24</h5>
+<div class="flex justify-between items-center mt-auto">
+<div class="flex items-center gap-2 text-xs font-mono text-[#78716C]">
+<!-- No date -->
+</div>
+<div class="w-6 h-6 rounded-full bg-[#F5F5F4] text-[#78716C] flex items-center justify-center text-[10px] font-bold border border-white ring-1 ring-[rgba(28,25,23,0.10)]">MR</div>
+</div>
+</div>
+<!-- Card -->
+<div class="bg-white rounded-lg p-4 border border-[rgba(28,25,23,0.10)] shadow-[0_1px_3px_rgba(28,25,23,0.05)] hover:border-[#0F766E] transition-colors cursor-grab active:cursor-grabbing">
+<h5 class="text-[#1C1917] font-medium leading-tight mb-4 mt-2">Write model bios</h5>
+<div class="flex justify-between items-center mt-auto">
+<div class="flex items-center gap-2 text-xs font-mono text-[#78716C]">
+<!-- No date -->
+</div>
+<div class="w-6 h-6 rounded-full bg-[#F5F5F4] text-[#78716C] flex items-center justify-center text-[10px] font-bold border border-white ring-1 ring-[rgba(28,25,23,0.10)]">AR</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 3: In review -->
+<div class="w-80 flex flex-col bg-[rgba(28,25,23,0.03)] rounded-xl border border-[rgba(28,25,23,0.05)] p-2">
+<div class="flex items-center justify-between px-2 py-3 mb-2 flex-shrink-0">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-[#B45309]"></div>
+<h4 class="font-headline font-semibold text-sm text-[#1C1917] uppercase tracking-wider">In review</h4>
+</div>
+<span class="font-mono text-xs text-[#78716C]">2</span>
+</div>
+<div class="flex-1 overflow-y-auto no-scrollbar space-y-3 px-1 pb-2">
+<!-- Card -->
+<div class="bg-white rounded-lg p-4 border border-[rgba(28,25,23,0.10)] shadow-[0_1px_3px_rgba(28,25,23,0.05)] hover:border-[#0F766E] transition-colors cursor-grab active:cursor-grabbing">
+<div class="flex justify-between items-start mb-3">
+<span class="text-[10px] font-mono uppercase bg-[#FEF2F2] text-[#DC2626] px-2 py-0.5 rounded text-center min-w-[40px]">High</span>
+</div>
+<h5 class="text-[#1C1917] font-medium leading-tight mb-4">Final color pass</h5>
+<div class="flex justify-between items-center mt-auto">
+<div class="flex items-center gap-2 text-xs font-mono text-[#78716C]">
+<!-- No date -->
+</div>
+<div class="w-6 h-6 rounded-full bg-[#E6F2F0] text-[#0F766E] flex items-center justify-center text-[10px] font-bold border border-white ring-1 ring-[rgba(28,25,23,0.10)]">EK</div>
+</div>
+</div>
+<!-- Card -->
+<div class="bg-white rounded-lg p-4 border border-[rgba(28,25,23,0.10)] shadow-[0_1px_3px_rgba(28,25,23,0.05)] hover:border-[#0F766E] transition-colors cursor-grab active:cursor-grabbing">
+<h5 class="text-[#1C1917] font-medium leading-tight mb-4 mt-2">Editorial proofread</h5>
+<div class="flex justify-between items-center mt-auto">
+<div class="flex items-center gap-2 text-xs font-mono text-[#78716C]">
+<!-- No date -->
+</div>
+<div class="w-6 h-6 rounded-full bg-[#F5F5F4] text-[#78716C] flex items-center justify-center text-[10px] font-bold border border-white ring-1 ring-[rgba(28,25,23,0.10)]">AR</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 4: Done -->
+<div class="w-80 flex flex-col bg-[rgba(28,25,23,0.03)] rounded-xl border border-[rgba(28,25,23,0.05)] p-2 opacity-70">
+<div class="flex items-center justify-between px-2 py-3 mb-2 flex-shrink-0">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-[#15803D]"></div>
+<h4 class="font-headline font-semibold text-sm text-[#1C1917] uppercase tracking-wider">Done</h4>
+</div>
+<span class="font-mono text-xs text-[#78716C]">5</span>
+</div>
+<div class="flex-1 overflow-y-auto no-scrollbar space-y-3 px-1 pb-2">
+<!-- Card (Muted) -->
+<div class="bg-[rgba(255,255,255,0.6)] rounded-lg p-4 border border-[rgba(28,25,23,0.05)] cursor-default">
+<h5 class="text-[#78716C] font-medium leading-tight line-through decoration-[rgba(120,113,108,0.5)]">Moodboard approval</h5>
+</div>
+<div class="bg-[rgba(255,255,255,0.6)] rounded-lg p-4 border border-[rgba(28,25,23,0.05)] cursor-default">
+<h5 class="text-[#78716C] font-medium leading-tight line-through decoration-[rgba(120,113,108,0.5)]">Location scouting</h5>
+</div>
+<div class="bg-[rgba(255,255,255,0.6)] rounded-lg p-4 border border-[rgba(28,25,23,0.05)] cursor-default">
+<h5 class="text-[#78716C] font-medium leading-tight line-through decoration-[rgba(120,113,108,0.5)]">Contract signed</h5>
+</div>
+<div class="bg-[rgba(255,255,255,0.6)] rounded-lg p-4 border border-[rgba(28,25,23,0.05)] cursor-default">
+<h5 class="text-[#78716C] font-medium leading-tight line-through decoration-[rgba(120,113,108,0.5)]">Team kickoff</h5>
+</div>
+<div class="bg-[rgba(255,255,255,0.6)] rounded-lg p-4 border border-[rgba(28,25,23,0.05)] cursor-default">
+<h5 class="text-[#78716C] font-medium leading-tight line-through decoration-[rgba(120,113,108,0.5)]">Style guide handoff</h5>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Contextual Footer -->
+<div class="px-8 py-3 flex-shrink-0 border-t border-[rgba(28,25,23,0.05)] bg-[#F7F5F2]">
+<p class="font-mono text-[10px] text-[#78716C] text-center">Drag cards between columns to update status</p>
+</div>
+</div>
+</main>
+</body></html>

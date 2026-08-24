@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Calendar, Check, CircleCheck, Clock, MessageSquare, User } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useNotifications, markRead, markAllRead } from '../lib/notifications'
 import { useToast } from '../components/toast'
@@ -7,53 +8,37 @@ const typeMeta: Record<string, { icon: JSX.Element; tone: string }> = {
   review: {
     tone: 'bg-tint text-teal',
     icon: (
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-        <path d="M2.5 13c.5-3 2.5-4.5 5.5-4.5s5 1.5 5.5 4.5" strokeLinecap="round" />
-      </svg>
+      <User size={15} strokeWidth={1.75} />
     ),
   },
   approval: {
     tone: 'bg-success/10 text-success',
     icon: (
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <circle cx="8" cy="8" r="6.5" />
-        <path d="m5 8.5 2 2 4-4.5" strokeLinecap="round" />
-      </svg>
+      <CircleCheck size={15} strokeWidth={1.75} />
     ),
   },
   revision: {
     tone: 'bg-warning/10 text-warning',
     icon: (
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <path d="M8 2.5v4l2.5 2" strokeLinecap="round" />
-        <circle cx="8" cy="8" r="6.5" />
-      </svg>
+      <Clock size={15} strokeWidth={1.75} />
     ),
   },
   schedule: {
     tone: 'bg-ink/5 text-umber',
     icon: (
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <rect x="2" y="3.5" width="12" height="10" rx="1.5" />
-        <path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3" strokeLinecap="round" />
-      </svg>
+      <Calendar size={15} strokeWidth={1.75} />
     ),
   },
   published: {
     tone: 'bg-tint text-teal',
     icon: (
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <path d="M2.5 8.5 6 12l7.5-8" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      <Check size={15} strokeWidth={2} />
     ),
   },
   comment: {
     tone: 'bg-ink/5 text-umber',
     icon: (
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <path d="M1.5 3A1.5 1.5 0 0 1 3 1.5h10A1.5 1.5 0 0 1 14.5 3v6A1.5 1.5 0 0 1 13 10.5H6l-4 3v-9.5Z" strokeLinejoin="round" />
-      </svg>
+      <MessageSquare size={15} strokeWidth={1.75} />
     ),
   },
 }
@@ -75,9 +60,9 @@ export default function NotificationsPage() {
   const [tab, setTab] = useState<'All' | 'Unread'>('All')
   const visible = tab === 'All' ? all : all.filter((n) => n.unread)
 
-  const open = (n: (typeof all)[number]) => {
+  const open = async (n: (typeof all)[number]) => {
     if (n.unread) {
-      markRead(n.id)
+      await markRead(n.id)
       toast('info', 'Marked as read')
     }
     navigate(ROUTES[n.type] ?? '/notifications')
@@ -91,8 +76,8 @@ export default function NotificationsPage() {
           <p className="mt-1 text-sm text-umber">Mentions, approvals and deadlines</p>
         </div>
         <button
-          onClick={() => {
-            markAllRead()
+          onClick={async () => {
+            await markAllRead()
             toast('success', 'All caught up')
           }}
           className="btn-ghost text-teal"

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aaryajanani - Notifications</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&amp;family=Public+Sans:wght@600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        'canvas-paper': '#F7F5F2',
+                        'pure-surface': '#FFFFFF',
+                        'charcoal-ink': '#1C1917',
+                        'muted-umber': '#78716C',
+                        'whisper-line': 'rgba(28,25,23,0.10)',
+                        'deep-teal': '#0F766E',
+                        'deep-teal-press': '#115E59',
+                        'on-accent': '#FFFFFF',
+                        'success': '#15803D',
+                        'warning': '#B45309',
+                        'danger': '#DC2626',
+                        'soft-tint': '#E6F2F0'
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Public Sans", "sans-serif"],
+                        "display": ["Public Sans", "sans-serif"],
+                        "body": ["Geist", "sans-serif"],
+                        "label": ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Geist', sans-serif;
+            background-color: #F7F5F2;
+            color: #1C1917;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Spring Motion Classes */
+        .spring-transition {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition-duration: 300ms;
+        }
+        
+        /* Cascade Reveal Animation */
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .cascade-reveal > * {
+            opacity: 0;
+            animation: slideUpFade 0.4s ease-out forwards;
+        }
+        
+        .cascade-reveal > *:nth-child(1) { animation-delay: 0.05s; }
+        .cascade-reveal > *:nth-child(2) { animation-delay: 0.1s; }
+        .cascade-reveal > *:nth-child(3) { animation-delay: 0.15s; }
+        .cascade-reveal > *:nth-child(4) { animation-delay: 0.2s; }
+        .cascade-reveal > *:nth-child(5) { animation-delay: 0.25s; }
+    </style>
+</head>
+<body class="bg-canvas-paper min-h-screen flex flex-col md:flex-row font-body text-charcoal-ink">
+<!-- TopNavBar (Mobile Only) -->
+<nav class="md:hidden w-full sticky top-0 bg-surface dark:bg-surface border-b border-whisper-line flex justify-between items-center px-6 h-16 z-50">
+<div class="font-headline font-bold text-charcoal-ink dark:text-surface text-lg">Aaryajanani</div>
+<div class="flex items-center gap-4">
+<button class="text-muted-umber hover:text-deep-teal-press transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-muted-umber hover:text-deep-teal-press transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</div>
+</nav>
+<!-- SideNavBar (Desktop Only) -->
+<nav class="hidden md:flex flex-col p-4 gap-6 fixed left-0 top-0 h-screen w-64 bg-canvas-paper border-r border-whisper-line z-40">
+<!-- Header -->
+<div class="flex items-center gap-3 px-3 py-2">
+<div class="w-10 h-10 rounded bg-charcoal-ink text-canvas-paper flex items-center justify-center font-headline font-bold text-lg">
+                AJ
+            </div>
+<div>
+<div class="font-headline font-bold text-charcoal-ink">Aaryajanani</div>
+<div class="text-muted-umber text-xs font-label uppercase tracking-wider">Editorial Studio</div>
+</div>
+</div>
+<!-- CTA -->
+<button class="bg-deep-teal text-on-accent font-body font-medium rounded-lg px-4 py-2.5 mx-3 spring-transition hover:bg-deep-teal-press active:scale-95 shadow-sm text-sm flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+            New Project
+        </button>
+<!-- Main Navigation -->
+<div class="flex-1 overflow-y-auto pt-4 flex flex-col gap-1">
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-all duration-300 spring-physics group" href="#">
+<span class="material-symbols-outlined group-hover:text-deep-teal" data-icon="dashboard">dashboard</span>
+<span class="font-label text-sm uppercase tracking-wider">Workspace</span>
+</a>
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-all duration-300 spring-physics group" href="#">
+<span class="material-symbols-outlined group-hover:text-deep-teal" data-icon="edit_note">edit_note</span>
+<span class="font-label text-sm uppercase tracking-wider">Editorial</span>
+</a>
+<a class="flex items-center gap-3 bg-soft-tint text-deep-teal rounded-lg px-3 py-2 transition-all duration-300 spring-physics" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="font-label text-sm uppercase tracking-wider">Operations</span>
+</a>
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-all duration-300 spring-physics group" href="#">
+<span class="material-symbols-outlined group-hover:text-deep-teal" data-icon="share">share</span>
+<span class="font-label text-sm uppercase tracking-wider">Distribution</span>
+</a>
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-all duration-300 spring-physics group" href="#">
+<span class="material-symbols-outlined group-hover:text-deep-teal" data-icon="forum">forum</span>
+<span class="font-label text-sm uppercase tracking-wider">Comms</span>
+</a>
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-all duration-300 spring-physics group" href="#">
+<span class="material-symbols-outlined group-hover:text-deep-teal" data-icon="inventory_2">inventory_2</span>
+<span class="font-label text-sm uppercase tracking-wider">Archives</span>
+</a>
+</div>
+<!-- Footer Navigation -->
+<div class="mt-auto border-t border-whisper-line pt-4 flex flex-col gap-1">
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-all duration-300 spring-physics group" href="#">
+<span class="material-symbols-outlined group-hover:text-deep-teal" data-icon="help_outline">help_outline</span>
+<span class="font-label text-sm uppercase tracking-wider">Help Center</span>
+</a>
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-all duration-300 spring-physics group" href="#">
+<span class="material-symbols-outlined group-hover:text-deep-teal" data-icon="person_outline">person_outline</span>
+<span class="font-label text-sm uppercase tracking-wider">Account</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 w-full max-w-[1440px] mx-auto p-6 md:p-12 relative min-h-screen flex flex-col">
+<!-- Header Section -->
+<header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-whisper-line">
+<div>
+<div class="flex items-center gap-3 mb-1">
+<span class="text-muted-umber font-label text-xs tracking-widest uppercase">Northern Lights Studio</span>
+</div>
+<div class="flex items-baseline gap-4">
+<h1 class="font-headline font-bold text-4xl text-charcoal-ink tracking-tight">Notifications</h1>
+<span class="font-label text-sm text-deep-teal bg-soft-tint px-2 py-0.5 rounded">5 unread</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-sm font-body font-medium text-muted-umber hover:text-deep-teal border border-transparent hover:border-deep-teal/20 hover:bg-soft-tint px-4 py-2 rounded-lg spring-transition active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="done_all">done_all</span>
+                    Mark all as read
+                </button>
+</div>
+</header>
+<!-- Filters -->
+<div class="flex items-center gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+<button class="px-4 py-1.5 rounded-full bg-deep-teal text-on-accent font-body text-sm font-medium border border-transparent shadow-sm whitespace-nowrap spring-transition">
+                All
+            </button>
+<button class="px-4 py-1.5 rounded-full bg-pure-surface text-charcoal-ink hover:bg-soft-tint hover:text-deep-teal font-body text-sm font-medium border border-whisper-line whitespace-nowrap spring-transition flex items-center gap-2">
+                Unread
+                <span class="font-label text-xs text-muted-umber bg-canvas-paper px-1.5 rounded-sm">5</span>
+</button>
+<button class="px-4 py-1.5 rounded-full bg-pure-surface text-charcoal-ink hover:bg-soft-tint hover:text-deep-teal font-body text-sm font-medium border border-whisper-line whitespace-nowrap spring-transition flex items-center gap-2">
+                Mentions
+                <span class="font-label text-xs text-muted-umber bg-canvas-paper px-1.5 rounded-sm">2</span>
+</button>
+</div>
+<!-- Notification List -->
+<div class="flex-1 flex flex-col gap-10 cascade-reveal">
+<!-- Today Group -->
+<section class="flex flex-col gap-3">
+<h2 class="font-label text-xs uppercase tracking-widest text-muted-umber mb-2 sticky top-16 bg-canvas-paper/90 backdrop-blur py-2 z-10">Today</h2>
+<!-- Notification Item 1 (Unread, Mention) -->
+<div class="group relative bg-pure-surface rounded-lg p-4 border border-whisper-line hover:border-deep-teal/30 shadow-sm hover:shadow-md spring-transition cursor-pointer flex items-start gap-4">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-deep-teal rounded-l-lg"></div>
+<div class="w-10 h-10 rounded flex-shrink-0 bg-soft-tint text-deep-teal flex items-center justify-center relative">
+<span class="material-symbols-outlined" data-icon="alternate_email" data-weight="fill">alternate_email</span>
+</div>
+<div class="flex-1 min-w-0 pt-0.5">
+<div class="flex items-center justify-between gap-4 mb-1">
+<div class="font-body font-medium text-charcoal-ink truncate">Elena K. mentioned you</div>
+<span class="font-label text-xs text-muted-umber whitespace-nowrap">10:42 AM</span>
+</div>
+<p class="font-body text-sm text-muted-umber line-clamp-2 leading-relaxed">
+                            "Can you take a look at the latest proofs for <span class="text-charcoal-ink font-medium"># production</span>? We need to lock this before EOD."
+                        </p>
+</div>
+<div class="hidden md:flex flex-col items-end justify-between self-stretch opacity-0 group-hover:opacity-100 transition-opacity duration-200 pl-4 border-l border-whisper-line">
+<button class="text-xs font-medium text-muted-umber hover:text-deep-teal">Mark read</button>
+<span class="material-symbols-outlined text-muted-umber" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Notification Item 2 (Unread, Upload) -->
+<div class="group relative bg-pure-surface rounded-lg p-4 border border-whisper-line hover:border-deep-teal/30 shadow-sm hover:shadow-md spring-transition cursor-pointer flex items-start gap-4">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-deep-teal rounded-l-lg"></div>
+<div class="w-10 h-10 rounded flex-shrink-0 bg-blue-50 text-blue-600 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="cloud_upload">cloud_upload</span>
+</div>
+<div class="flex-1 min-w-0 pt-0.5">
+<div class="flex items-center justify-between gap-4 mb-1">
+<div class="font-body font-medium text-charcoal-ink truncate">Marcus R. uploaded v0.4</div>
+<span class="font-label text-xs text-muted-umber whitespace-nowrap">09:15 AM</span>
+</div>
+<p class="font-body text-sm text-muted-umber line-clamp-1 leading-relaxed">
+                            New version available for <span class="text-charcoal-ink font-medium">Winter Lookbook — Issue 04</span>
+</p>
+</div>
+<div class="hidden md:flex flex-col items-end justify-between self-stretch opacity-0 group-hover:opacity-100 transition-opacity duration-200 pl-4 border-l border-whisper-line">
+<button class="text-xs font-medium text-muted-umber hover:text-deep-teal">Mark read</button>
+<span class="material-symbols-outlined text-muted-umber" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Notification Item 3 (Alert) -->
+<div class="group relative bg-pure-surface rounded-lg p-4 border border-whisper-line hover:border-deep-teal/30 shadow-sm hover:shadow-md spring-transition cursor-pointer flex items-start gap-4">
+<div class="w-10 h-10 rounded flex-shrink-0 bg-amber-50 text-warning flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+</div>
+<div class="flex-1 min-w-0 pt-0.5">
+<div class="flex items-center justify-between gap-4 mb-1">
+<div class="font-body font-medium text-charcoal-ink truncate">Invoice Due Soon</div>
+<span class="font-label text-xs text-muted-umber whitespace-nowrap">08:00 AM</span>
+</div>
+<p class="font-body text-sm text-muted-umber line-clamp-1 leading-relaxed">
+                            Invoice <span class="font-label text-xs text-charcoal-ink bg-canvas-paper px-1 py-0.5 rounded border border-whisper-line">INV-2041</span> is due in 3 days.
+                        </p>
+</div>
+<div class="hidden md:flex flex-col items-end justify-between self-stretch opacity-0 group-hover:opacity-100 transition-opacity duration-200 pl-4 border-l border-whisper-line">
+<span class="material-symbols-outlined text-muted-umber mt-auto" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Yesterday Group -->
+<section class="flex flex-col gap-3">
+<h2 class="font-label text-xs uppercase tracking-widest text-muted-umber mb-2 sticky top-16 bg-canvas-paper/90 backdrop-blur py-2 z-10">Yesterday</h2>
+<!-- Notification Item 4 (Approval) -->
+<div class="group relative bg-pure-surface rounded-lg p-4 border border-whisper-line hover:border-deep-teal/30 shadow-sm hover:shadow-md spring-transition cursor-pointer flex items-start gap-4 opacity-75 hover:opacity-100">
+<div class="w-10 h-10 rounded flex-shrink-0 bg-green-50 text-success flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="check_circle" data-weight="fill">check_circle</span>
+</div>
+<div class="flex-1 min-w-0 pt-0.5">
+<div class="flex items-center justify-between gap-4 mb-1">
+<div class="font-body font-medium text-charcoal-ink truncate">Ananya Rao approved v0.3</div>
+<span class="font-label text-xs text-muted-umber whitespace-nowrap">Yesterday, 4:30 PM</span>
+</div>
+<p class="font-body text-sm text-muted-umber line-clamp-1 leading-relaxed">
+                            Approval logged for general release.
+                        </p>
+</div>
+<div class="hidden md:flex flex-col items-end justify-between self-stretch opacity-0 group-hover:opacity-100 transition-opacity duration-200 pl-4 border-l border-whisper-line">
+<span class="material-symbols-outlined text-muted-umber mt-auto" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Notification Item 5 (System/Lock) -->
+<div class="group relative bg-pure-surface rounded-lg p-4 border border-whisper-line hover:border-deep-teal/30 shadow-sm hover:shadow-md spring-transition cursor-pointer flex items-start gap-4 opacity-75 hover:opacity-100">
+<div class="w-10 h-10 rounded flex-shrink-0 bg-gray-100 text-muted-umber flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+</div>
+<div class="flex-1 min-w-0 pt-0.5">
+<div class="flex items-center justify-between gap-4 mb-1">
+<div class="font-body font-medium text-charcoal-ink truncate">Review scope locked</div>
+<span class="font-label text-xs text-muted-umber whitespace-nowrap">Yesterday, 2:15 PM</span>
+</div>
+<p class="font-body text-sm text-muted-umber line-clamp-1 leading-relaxed">
+                            Changes are now restricted on <span class="text-charcoal-ink font-medium">Winter Lookbook</span>.
+                        </p>
+</div>
+<div class="hidden md:flex flex-col items-end justify-between self-stretch opacity-0 group-hover:opacity-100 transition-opacity duration-200 pl-4 border-l border-whisper-line">
+<span class="material-symbols-outlined text-muted-umber mt-auto" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Empty State Note -->
+<div class="mt-12 py-8 flex flex-col items-center justify-center text-center border-t border-whisper-line border-dashed">
+<span class="material-symbols-outlined text-muted-umber/30 text-4xl mb-3" data-icon="history">history</span>
+<p class="font-label text-xs text-muted-umber">Notifications are grouped by day and clear once read.</p>
+</div>
+</main>
+</body></html>

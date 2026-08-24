@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aaryajanani - Contracts</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;family=Public+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        canvas: "#F7F5F2",
+                        surface: "#FFFFFF",
+                        charcoal: "#1C1917",
+                        umber: "#78716C",
+                        whisper: "rgba(28,25,23,0.10)",
+                        teal: {
+                            DEFAULT: "#0F766E",
+                            hover: "#115E59",
+                            tint: "#E6F2F0"
+                        },
+                        success: "#15803D",
+                        warning: "#B45309",
+                        danger: "#DC2626"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Public Sans", "sans-serif"],
+                        display: ["Public Sans", "sans-serif"],
+                        body: ["Geist", "sans-serif"],
+                        label: ["Public Sans", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.canvas');
+            color: theme('colors.charcoal');
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.umber');
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.charcoal');
+        }
+    </style>
+</head>
+<body class="font-body antialiased flex h-screen overflow-hidden bg-canvas text-charcoal selection:bg-teal-tint selection:text-teal">
+<!-- Mobile Nav Header -->
+<header class="md:hidden flex items-center justify-between px-6 py-4 bg-canvas border-b border-whisper sticky top-0 z-40">
+<div class="flex items-center gap-3">
+<img alt="Aaryajanani Logo" class="h-8 w-8 rounded object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLssRqkSCquZIdPiD2493q72NtxRcFQxMQzPxhqDYBK4BdlbSS4Tz88y2Bd01Fu2NnmIpZ3r_5dkcRCB4SRjzmzV6RZWA9dkvnvMBlNfcquGUk3uKyB0cBgZyzTMGnr3Y1RbrIcwbgiSBXSsoyqnxAmAJiZbSIwzq4-ZWzh2C9vYvc67tYLNjXUbZQCxPehln9JWx9ln84Hsstf4sRuVHdglxpirwl3y2Oyrkeyy8HO7N4Z0YjORJTJRAQM"/>
+<span class="font-headline font-bold text-charcoal text-lg tracking-tight">Aaryajanani</span>
+</div>
+<button aria-label="Menu" class="text-charcoal p-2 -mr-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+<!-- SideNavBar (from JSON) -->
+<aside class="hidden md:flex flex-col h-screen w-64 border-r border-[#1C19171A] bg-[#F7F5F2] flex-shrink-0">
+<div class="flex flex-col h-full p-6">
+<!-- Brand -->
+<div class="flex items-center gap-3 mb-8">
+<img alt="Aaryajanani Logo" class="h-8 w-8 rounded object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLssRqkSCquZIdPiD2493q72NtxRcFQxMQzPxhqDYBK4BdlbSS4Tz88y2Bd01Fu2NnmIpZ3r_5dkcRCB4SRjzmzV6RZWA9dkvnvMBlNfcquGUk3uKyB0cBgZyzTMGnr3Y1RbrIcwbgiSBXSsoyqnxAmAJiZbSIwzq4-ZWzh2C9vYvc67tYLNjXUbZQCxPehln9JWx9ln84Hsstf4sRuVHdglxpirwl3y2Oyrkeyy8HO7N4Z0YjORJTJRAQM"/>
+<span class="font-headline font-bold text-[#1C1917] text-lg tracking-tight">Aaryajanani</span>
+</div>
+<!-- Profile Info -->
+<div class="mb-8 flex items-center gap-3 p-2 -mx-2 hover:bg-[#1C19170D] rounded-lg transition-colors cursor-pointer">
+<div class="h-10 w-10 rounded-full bg-[#1C19170D] flex items-center justify-center overflow-hidden border border-[#1C19171A]">
+<span class="font-mono text-sm font-medium text-umber">NR</span>
+</div>
+<div>
+<div class="font-headline font-semibold text-charcoal text-sm leading-tight">Northern Lights</div>
+<div class="font-body text-label text-[#78716C] text-xs mt-0.5">Studio</div>
+</div>
+<span class="material-symbols-outlined text-umber text-sm ml-auto">unfold_more</span>
+</div>
+<!-- Navigation -->
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-[#78716C] hover:text-[#1C1917] hover:bg-[#1C19170D] transition-colors rounded-lg active:scale-[0.98] duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-body text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 bg-[#E6F2F0] text-[#0F766E] rounded-lg font-medium active:scale-[0.98] transition-transform duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">folder_open</span>
+<span class="font-body text-sm">Projects</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#78716C] hover:text-[#1C1917] hover:bg-[#1C19170D] transition-colors rounded-lg active:scale-[0.98] duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">auto_stories</span>
+<span class="font-body text-sm font-medium">Library</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#78716C] hover:text-[#1C1917] hover:bg-[#1C19170D] transition-colors rounded-lg active:scale-[0.98] duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="font-body text-sm font-medium">Team</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#78716C] hover:text-[#1C1917] hover:bg-[#1C19170D] transition-colors rounded-lg active:scale-[0.98] duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-body text-sm font-medium">Settings</span>
+</a>
+</nav>
+<!-- CTA -->
+<div class="mt-auto pt-6">
+<button class="w-full flex items-center justify-center gap-2 bg-[#F7F5F2] border border-[#1C19171A] text-charcoal py-2 px-4 rounded-lg font-headline text-sm font-semibold hover:bg-[#1C19170D] transition-colors active:scale-[0.98] duration-200 shadow-[0_1px_2px_rgba(28,25,23,0.05)]">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    New Project
+                </button>
+</div>
+</div>
+</aside>
+<!-- Main Workspace -->
+<main class="flex-1 flex flex-col h-screen overflow-hidden bg-canvas relative">
+<!-- Header Zone -->
+<div class="px-8 pt-10 pb-6 shrink-0 z-10 bg-canvas">
+<div class="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+<div>
+<div class="flex items-baseline gap-3 mb-1">
+<h1 class="font-headline font-bold text-3xl text-charcoal tracking-tight">Contracts</h1>
+<span class="font-mono text-sm text-umber bg-[#1C19170D] px-2 py-0.5 rounded">9</span>
+</div>
+<p class="font-body text-umber text-sm">Agreements with clients and vendors</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 border border-whisper text-charcoal rounded-lg font-headline text-sm font-semibold hover:bg-[#1C19170D] transition-colors active:scale-95 bg-surface">
+<span class="material-symbols-outlined text-[18px]">upload</span>
+                        Import
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-teal text-white rounded-lg font-headline text-sm font-semibold hover:bg-teal-hover transition-colors active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        New contract
+                    </button>
+</div>
+</div>
+</div>
+<!-- Content Area -->
+<div class="flex-1 overflow-y-auto px-8 pb-12">
+<div class="max-w-6xl mx-auto space-y-6">
+<!-- Filters -->
+<div class="flex items-center gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-teal-tint text-teal rounded-full font-headline text-sm font-medium border border-teal/20 whitespace-nowrap transition-transform active:scale-95">
+                        All <span class="font-mono text-xs opacity-70">9</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-umber hover:bg-[#1C19170D] rounded-full font-headline text-sm font-medium transition-colors whitespace-nowrap active:scale-95">
+                        Draft <span class="font-mono text-xs opacity-70">3</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-umber hover:bg-[#1C19170D] rounded-full font-headline text-sm font-medium transition-colors whitespace-nowrap active:scale-95">
+                        Sent <span class="font-mono text-xs opacity-70">2</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-umber hover:bg-[#1C19170D] rounded-full font-headline text-sm font-medium transition-colors whitespace-nowrap active:scale-95">
+                        Signed <span class="font-mono text-xs opacity-70">3</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-umber hover:bg-[#1C19170D] rounded-full font-headline text-sm font-medium transition-colors whitespace-nowrap active:scale-95">
+                        Void <span class="font-mono text-xs opacity-70">1</span>
+</button>
+</div>
+<!-- Table Container -->
+<div class="bg-surface rounded-xl border border-whisper shadow-[0_1px_3px_rgba(28,25,23,0.02)] overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse whitespace-nowrap min-w-[800px]">
+<thead>
+<tr class="border-b border-whisper bg-[#F7F5F2]/50 font-headline text-xs font-semibold text-umber uppercase tracking-wider">
+<th class="px-5 py-4 w-[35%]">Contract</th>
+<th class="px-5 py-4 w-[15%]">Client</th>
+<th class="px-5 py-4 text-right w-[10%]">Value</th>
+<th class="px-5 py-4 w-[15%]">Status</th>
+<th class="px-5 py-4 w-[15%]">Details</th>
+<th class="px-5 py-4 text-right w-[10%]">Action</th>
+</tr>
+</thead>
+<tbody class="font-body text-sm divide-y divide-whisper">
+<!-- Row 1 -->
+<tr class="hover:bg-[#F7F5F2]/50 transition-colors group cursor-default">
+<td class="px-5 py-4">
+<div class="font-medium text-charcoal mb-0.5">Aurora Retail — Lookbook Production</div>
+<div class="font-mono text-xs text-umber">CTR-1024</div>
+</td>
+<td class="px-5 py-4 text-charcoal">Aurora Retail</td>
+<td class="px-5 py-4 font-mono text-right text-charcoal">$12,400</td>
+<td class="px-5 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-success border border-success/20">
+                                            Signed
+                                        </span>
+</td>
+<td class="px-5 py-4 text-umber text-xs space-y-0.5">
+<div><span class="text-charcoal font-medium">A. Rao</span></div>
+<div>2d ago</div>
+</td>
+<td class="px-5 py-4 text-right">
+<button class="font-headline font-semibold text-teal hover:text-teal-hover transition-colors text-sm">View</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-[#F7F5F2]/50 transition-colors group cursor-default">
+<td class="px-5 py-4">
+<div class="font-medium text-charcoal mb-0.5">Model release — Winter shoot</div>
+<div class="font-mono text-xs text-umber">CTR-1023</div>
+</td>
+<td class="px-5 py-4 text-charcoal">North Agency</td>
+<td class="px-5 py-4 font-mono text-right text-charcoal">$2,100</td>
+<td class="px-5 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-teal-tint text-teal border border-teal/20">
+                                            Sent
+                                        </span>
+</td>
+<td class="px-5 py-4 text-umber text-xs space-y-0.5">
+<div>Pending</div>
+<div>5h ago</div>
+</td>
+<td class="px-5 py-4 text-right">
+<button class="font-headline font-semibold text-teal hover:text-teal-hover transition-colors text-sm">View</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-[#F7F5F2]/50 transition-colors group cursor-default">
+<td class="px-5 py-4">
+<div class="font-medium text-charcoal mb-0.5">Font licensing — Editorial</div>
+<div class="font-mono text-xs text-umber">CTR-1022</div>
+</td>
+<td class="px-5 py-4 text-charcoal">Foundry Type</td>
+<td class="px-5 py-4 font-mono text-right text-charcoal">$850</td>
+<td class="px-5 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#1C19170A] text-umber border border-whisper">
+                                            Draft
+                                        </span>
+</td>
+<td class="px-5 py-4 text-umber text-xs space-y-0.5">
+<div>—</div>
+<div>Just now</div>
+</td>
+<td class="px-5 py-4 text-right">
+<button class="inline-flex items-center justify-center px-3 py-1.5 border border-whisper rounded text-xs font-headline font-semibold text-charcoal hover:bg-[#1C19170D] transition-colors active:scale-95 bg-surface shadow-sm">
+                                            Send
+                                        </button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-[#F7F5F2]/50 transition-colors group cursor-default">
+<td class="px-5 py-4">
+<div class="font-medium text-charcoal mb-0.5">Video production — campaign film</div>
+<div class="font-mono text-xs text-umber">CTR-1021</div>
+</td>
+<td class="px-5 py-4 text-charcoal">Frame Works</td>
+<td class="px-5 py-4 font-mono text-right text-charcoal">$18,900</td>
+<td class="px-5 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-success border border-success/20">
+                                            Signed
+                                        </span>
+</td>
+<td class="px-5 py-4 text-umber text-xs space-y-0.5">
+<div><span class="text-charcoal font-medium">T. Lin</span></div>
+<div>1w ago</div>
+</td>
+<td class="px-5 py-4 text-right">
+<button class="font-headline font-semibold text-teal hover:text-teal-hover transition-colors text-sm">View</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-[#F7F5F2]/50 transition-colors group cursor-default">
+<td class="px-5 py-4">
+<div class="font-medium text-charcoal mb-0.5">Photography — behind the scenes</div>
+<div class="font-mono text-xs text-umber">CTR-1020</div>
+</td>
+<td class="px-5 py-4 text-charcoal">North Agency</td>
+<td class="px-5 py-4 font-mono text-right text-charcoal">$3,750</td>
+<td class="px-5 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-teal-tint text-teal border border-teal/20">
+                                            Sent
+                                        </span>
+</td>
+<td class="px-5 py-4 text-umber text-xs space-y-0.5">
+<div>Pending</div>
+<div>2w ago</div>
+</td>
+<td class="px-5 py-4 text-right">
+<button class="font-headline font-semibold text-teal hover:text-teal-hover transition-colors text-sm">View</button>
+</td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-[#F7F5F2]/50 transition-colors group cursor-default opacity-60 hover:opacity-100">
+<td class="px-5 py-4">
+<div class="font-medium text-charcoal mb-0.5 line-through decoration-umber/50">Legacy — 2025 retainer</div>
+<div class="font-mono text-xs text-umber">CTR-1008</div>
+</td>
+<td class="px-5 py-4 text-umber line-through decoration-umber/30">Aurora Retail</td>
+<td class="px-5 py-4 font-mono text-right text-umber line-through decoration-umber/30">$9,000</td>
+<td class="px-5 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500 border border-gray-200">
+                                            Void
+                                        </span>
+</td>
+<td class="px-5 py-4 text-umber text-xs space-y-0.5">
+<div>—</div>
+<div>1mo ago</div>
+</td>
+<td class="px-5 py-4 text-right">
+<button class="font-headline font-semibold text-umber hover:text-charcoal transition-colors text-sm">View</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination -->
+<div class="border-t border-whisper px-5 py-4 flex items-center justify-between bg-surface">
+<span class="font-mono text-xs text-umber">Showing 1–6 of 9</span>
+<div class="flex items-center gap-2">
+<button class="p-1 text-umber hover:text-charcoal hover:bg-canvas rounded transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="p-1 text-umber hover:text-charcoal hover:bg-canvas rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

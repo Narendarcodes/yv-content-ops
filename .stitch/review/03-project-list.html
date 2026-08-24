@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Projects - Aaryajanani</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;family=Outfit:wght@600;700&amp;family=Public+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        canvas: "#F7F5F2",
+                        surface: "#FFFFFF",
+                        ink: "#1C1917",
+                        umber: "#78716C",
+                        whisper: "rgba(28,25,23,0.10)",
+                        teal: {
+                            DEFAULT: "#0F766E",
+                            hover: "#115E59"
+                        },
+                        success: "#15803D",
+                        warning: "#B45309",
+                        danger: "#DC2626",
+                        tint: "#E6F2F0"
+                    },
+                    fontFamily: {
+                        headline: ["Outfit", "sans-serif"],
+                        display: ["Outfit", "sans-serif"],
+                        body: ["Geist", "sans-serif"],
+                        label: ["Public Sans", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.canvas');
+            color: theme('colors.ink');
+            font-family: theme('fontFamily.body');
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="flex bg-canvas min-h-screen">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 border-r border-[rgba(28,25,23,0.10)] bg-[#F7F5F2] flex flex-col p-4 z-20">
+<div class="mb-8 px-4 flex flex-col gap-1">
+<h1 class="font-headline font-bold text-[#1C1917] text-xl tracking-tight">Editorial Studio</h1>
+<span class="font-mono text-xs text-umber">v2.4.0</span>
+</div>
+<button class="mb-6 w-full bg-teal hover:bg-teal-hover text-white font-medium py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+            New Entry
+        </button>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 text-[#78716C] px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body text-[#1C1917]">Overview</span>
+</a>
+<a class="flex items-center gap-3 bg-[#E6F2F0] text-[#0F766E] font-medium rounded-lg px-4 py-2 transition-all duration-200 ease-in-out active:scale-95" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span>Calendar</span>
+</a>
+<a class="flex items-center gap-3 text-[#78716C] px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-body text-[#1C1917]">In Production</span>
+</a>
+<a class="flex items-center gap-3 text-[#78716C] px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body text-[#1C1917]">Team</span>
+</a>
+<a class="flex items-center gap-3 text-[#78716C] px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body text-[#1C1917]">Library</span>
+</a>
+</nav>
+<div class="mt-auto pt-4 border-t border-[rgba(28,25,23,0.10)] space-y-1">
+<a class="flex items-center gap-3 text-[#78716C] px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-body text-[#1C1917]">Support</span>
+</a>
+<a class="flex items-center gap-3 text-[#78716C] px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-body text-[#1C1917]">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky bg-[#F7F5F2] border-b border-[rgba(28,25,23,0.10)] z-10">
+<div class="flex justify-between items-center max-w-[1440px] mx-auto px-6 h-16">
+<div class="flex items-center gap-8">
+<span class="font-headline font-semibold text-xl tracking-tight text-[#1C1917]">Aaryajanani</span>
+<nav class="hidden md:flex gap-6 items-center pt-1">
+<a class="text-[#78716C] hover:text-[#1C1917] transition-colors pb-1 border-b-2 border-transparent" href="#">Dashboard</a>
+<a class="text-[#0F766E] font-medium border-b-2 border-[#0F766E] pb-1" href="#">Projects</a>
+<a class="text-[#78716C] hover:text-[#1C1917] transition-colors pb-1 border-b-2 border-transparent" href="#">Editorial</a>
+<a class="text-[#78716C] hover:text-[#1C1917] transition-colors pb-1 border-b-2 border-transparent" href="#">Archive</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-umber text-sm">search</span>
+<input class="pl-9 pr-4 py-1.5 bg-surface border border-whisper rounded-full text-sm focus:ring-teal focus:border-teal w-64 placeholder-umber" placeholder="Search..." type="text"/>
+</div>
+<button class="p-2 text-umber hover:bg-tint rounded-lg transition-all active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-umber hover:bg-tint rounded-lg transition-all active:scale-95">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-8 w-8 bg-surface border border-whisper rounded-full flex items-center justify-center text-xs font-medium text-ink overflow-hidden ml-2 cursor-pointer">
+<img alt="Editor profile" class="object-cover w-full h-full" data-alt="A close-up studio portrait of a young professional editor with warm lighting and a neutral background. The style is modern, professional, and crisp, fitting an editorial software avatar. Light mode aesthetic with natural skin tones and a clean white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2R435vxVkAmgKm6jbp62EEJDGiUWG8dMTNLHYwp9bP7I0aMFSWCj6pdEQa07HKUMKqQBM5upLd6ARMTBTKWNOX1x7ZqB4-1LGzQG7Sf5CC5Eb-KzOcD-Ykkbx5Zx_D6MBzRjKcuD1BQYFHF5X0kGlE0jCb21yO58yfwT-ZTwVNe7eAwbUAFUGT6YUR8fj9L-bsX4lWQiyrIkCoZOBrSN9yiwms1MkPIfLKq4USCmuHRTdLbqg29B3h3tU2oSxCCpQsoYFsUaynPM"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="flex-1 max-w-[1440px] w-full mx-auto px-6 py-8 flex flex-col gap-8">
+<!-- Header -->
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+<div>
+<div class="flex items-baseline gap-3 mb-1">
+<h2 class="font-headline text-3xl font-semibold tracking-tight text-ink">Projects</h2>
+<span class="font-mono text-sm text-umber bg-whisper px-2 py-0.5 rounded-full">38</span>
+</div>
+<p class="text-umber text-sm">All content projects across your workspace • Northern Lights Studio</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 rounded-lg border border-whisper text-ink font-medium text-sm hover:bg-[rgba(28,25,23,0.05)] transition-colors active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span>
+                        Export
+                    </button>
+<button class="px-4 py-2 rounded-lg bg-teal text-white font-medium text-sm hover:bg-teal-hover transition-colors active:scale-95 shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                        New project
+                    </button>
+</div>
+</div>
+<!-- Filters -->
+<div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-surface p-4 rounded-xl border border-whisper shadow-sm">
+<div class="flex flex-wrap gap-2">
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-tint text-teal font-medium text-sm border border-transparent transition-colors">
+                        All
+                        <span class="font-mono text-[10px] bg-white bg-opacity-50 px-1.5 rounded-full">38</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-canvas text-umber hover:text-ink text-sm border border-whisper transition-colors hover:border-[rgba(28,25,23,0.2)]">
+                        Concept
+                        <span class="font-mono text-[10px] bg-whisper px-1.5 rounded-full text-ink">12</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-canvas text-umber hover:text-ink text-sm border border-whisper transition-colors hover:border-[rgba(28,25,23,0.2)]">
+                        In Progress
+                        <span class="font-mono text-[10px] bg-whisper px-1.5 rounded-full text-ink">8</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-canvas text-umber hover:text-ink text-sm border border-whisper transition-colors hover:border-[rgba(28,25,23,0.2)]">
+                        In Review
+                        <span class="font-mono text-[10px] bg-whisper px-1.5 rounded-full text-ink">5</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-canvas text-umber hover:text-ink text-sm border border-whisper transition-colors hover:border-[rgba(28,25,23,0.2)]">
+                        Approved
+                        <span class="font-mono text-[10px] bg-whisper px-1.5 rounded-full text-ink">4</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-canvas text-umber hover:text-ink text-sm border border-whisper transition-colors hover:border-[rgba(28,25,23,0.2)]">
+                        Scheduled
+                        <span class="font-mono text-[10px] bg-whisper px-1.5 rounded-full text-ink">3</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-canvas text-umber hover:text-ink text-sm border border-whisper transition-colors hover:border-[rgba(28,25,23,0.2)]">
+                        Published
+                        <span class="font-mono text-[10px] bg-whisper px-1.5 rounded-full text-ink">6</span>
+</button>
+</div>
+<div class="flex items-center gap-3 w-full lg:w-auto">
+<div class="relative flex-1 lg:w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-umber text-sm">search</span>
+<input class="w-full pl-9 pr-4 py-2 bg-canvas border border-whisper rounded-lg text-sm focus:ring-teal focus:border-teal placeholder-umber" placeholder="Search projects by title..." type="text"/>
+</div>
+<div class="relative">
+<select class="appearance-none pl-4 pr-10 py-2 bg-canvas border border-whisper rounded-lg text-sm text-ink focus:ring-teal focus:border-teal">
+<option>Sort: Recently updated</option>
+<option>Sort: Due date</option>
+<option>Sort: A-Z</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-umber text-sm pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Table Card -->
+<div class="bg-surface rounded-xl border border-whisper shadow-sm overflow-hidden flex-1 flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-whisper bg-[rgba(28,25,23,0.02)]">
+<th class="py-3 px-6 text-xs font-semibold text-umber uppercase tracking-wider w-1/3">Project</th>
+<th class="py-3 px-6 text-xs font-semibold text-umber uppercase tracking-wider">Status</th>
+<th class="py-3 px-6 text-xs font-semibold text-umber uppercase tracking-wider">Assignee</th>
+<th class="py-3 px-6 text-xs font-semibold text-umber uppercase tracking-wider">Due</th>
+<th class="py-3 px-6 text-xs font-semibold text-umber uppercase tracking-wider text-right">Updated</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-whisper">
+<!-- Row 1 -->
+<tr class="hover:bg-tint/30 transition-colors group cursor-pointer">
+<td class="py-4 px-6">
+<div class="flex flex-col gap-1">
+<span class="font-medium text-ink group-hover:text-teal transition-colors">Winter Lookbook — Issue 04</span>
+<span class="font-mono text-xs text-umber">PRJ-1024</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-warning/10 text-warning">
+<span class="w-1.5 h-1.5 rounded-full bg-warning mr-1.5"></span>
+                                        In Review
+                                    </span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-whisper flex items-center justify-center text-[10px] font-mono font-medium text-ink">EK</div>
+<span class="text-sm text-ink">Elena K.</span>
+</div>
+</td>
+<td class="py-4 px-6 text-sm text-ink">Oct 14</td>
+<td class="py-4 px-6 text-right font-mono text-xs text-umber">2h ago</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-tint/30 transition-colors group cursor-pointer">
+<td class="py-4 px-6">
+<div class="flex flex-col gap-1">
+<span class="font-medium text-ink group-hover:text-teal transition-colors">Podcast Series: Founders</span>
+<span class="font-mono text-xs text-umber">PRJ-1025</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal/10 text-teal">
+<span class="w-1.5 h-1.5 rounded-full bg-teal mr-1.5"></span>
+                                        In Progress
+                                    </span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-whisper flex items-center justify-center text-[10px] font-mono font-medium text-ink">MR</div>
+<span class="text-sm text-ink">Marcus R.</span>
+</div>
+</td>
+<td class="py-4 px-6 text-sm text-ink">Oct 20</td>
+<td class="py-4 px-6 text-right font-mono text-xs text-umber">5h ago</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-tint/30 transition-colors group cursor-pointer">
+<td class="py-4 px-6">
+<div class="flex flex-col gap-1">
+<span class="font-medium text-ink group-hover:text-teal transition-colors">Annual Brand Refresh</span>
+<span class="font-mono text-xs text-umber">PRJ-1026</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success/10 text-success">
+<span class="w-1.5 h-1.5 rounded-full bg-success mr-1.5"></span>
+                                        Approved
+                                    </span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-whisper flex items-center justify-center text-[10px] font-mono font-medium text-ink">SL</div>
+<span class="text-sm text-ink">Sarah L.</span>
+</div>
+</td>
+<td class="py-4 px-6 text-sm text-ink">Nov 01</td>
+<td class="py-4 px-6 text-right font-mono text-xs text-umber">1d ago</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-tint/30 transition-colors group cursor-pointer">
+<td class="py-4 px-6">
+<div class="flex flex-col gap-1">
+<span class="font-medium text-ink group-hover:text-teal transition-colors">Holiday Campaign 2026</span>
+<span class="font-mono text-xs text-umber">PRJ-1027</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[rgba(28,25,23,0.08)] text-ink">
+<span class="material-symbols-outlined text-[12px] mr-1">schedule</span>
+                                        Scheduled
+                                    </span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-whisper flex items-center justify-center text-[10px] font-mono font-medium text-ink">JW</div>
+<span class="text-sm text-ink">James W.</span>
+</div>
+</td>
+<td class="py-4 px-6 text-sm text-ink">Dec 15</td>
+<td class="py-4 px-6 text-right font-mono text-xs text-umber">2d ago</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-tint/30 transition-colors group cursor-pointer">
+<td class="py-4 px-6">
+<div class="flex flex-col gap-1">
+<span class="font-medium text-ink group-hover:text-teal transition-colors">Q4 Newsletter — Week 44</span>
+<span class="font-mono text-xs text-umber">PRJ-1028</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[rgba(28,25,23,0.8)] text-white">
+<span class="material-symbols-outlined text-[12px] mr-1">check_circle</span>
+                                        Published
+                                    </span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-whisper flex items-center justify-center text-[10px] font-mono font-medium text-ink">AT</div>
+<span class="text-sm text-ink">Anna T.</span>
+</div>
+</td>
+<td class="py-4 px-6 text-sm text-ink">Oct 10</td>
+<td class="py-4 px-6 text-right font-mono text-xs text-umber">3d ago</td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-tint/30 transition-colors group cursor-pointer">
+<td class="py-4 px-6">
+<div class="flex flex-col gap-1">
+<span class="font-medium text-ink group-hover:text-teal transition-colors">Product Launch Video</span>
+<span class="font-mono text-xs text-umber">PRJ-1029</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border border-whisper text-umber bg-canvas">
+                                        Concept
+                                    </span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full border border-dashed border-umber flex items-center justify-center text-umber">
+<span class="material-symbols-outlined text-xs">person_add</span>
+</div>
+<span class="text-sm text-umber italic">Unassigned</span>
+</div>
+</td>
+<td class="py-4 px-6 text-sm text-ink">Nov 12</td>
+<td class="py-4 px-6 text-right font-mono text-xs text-umber">4d ago</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="mt-auto px-6 py-4 border-t border-whisper bg-canvas/50 flex items-center justify-between">
+<span class="font-mono text-xs text-umber">Showing 1–10 of 38</span>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 text-sm font-medium text-umber bg-surface border border-whisper rounded hover:bg-canvas hover:text-ink transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled="">
+                            Previous
+                        </button>
+<button class="px-3 py-1.5 text-sm font-medium text-ink bg-surface border border-whisper rounded hover:bg-canvas transition-colors">
+                            Next
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

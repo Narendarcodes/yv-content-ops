@@ -27,4 +27,9 @@ async function addMember({ organizationId, userEmail, roleName }) {
   return membership;
 }
 
-module.exports = { createOrganization, addMember };
+async function listUserOrganizations(userId) {
+  const memberships = await Membership.find({ userId }).populate('organizationId');
+  return memberships.map((m) => m.organizationId).filter(Boolean);
+}
+
+module.exports = { createOrganization, addMember, listUserOrganizations };

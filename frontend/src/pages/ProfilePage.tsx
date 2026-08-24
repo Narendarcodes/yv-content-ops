@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Building2, Check, Mail, Pencil, Shield, Star, Hash, X } from 'lucide-react'
 import Avatar from '../components/ui'
-import { org, projects, team, videoReviews } from '../lib/mockData'
 import { useViewer } from '../lib/viewer'
 import { roleOf, PERMISSION_LABELS } from '../lib/roles'
 import { useToast } from '../components/toast'
+import { useProjects, useTeam, useReviews, useMe } from '../lib/data'
 
 const roleLabel: Record<string, string> = {
   admin: 'Admin',
@@ -21,15 +21,16 @@ export default function ProfilePage() {
   const toast = useToast()
   const [editing, setEditing] = useState(false)
   const [name, setName] = useState(viewer.name)
-  const [title, setTitle] = useState(viewer.title)
+  const [title, setTitle] = useState(viewer.title ?? '')
   const access = roleOf(viewer)
+  const { projects } = useProjects()
+  const { team, org } = useTeam()
+  const me = useMe()
+  const { reviews } = useReviews()
   const activeProjects = projects.filter(
-    (p) => p.assignee === viewer.id && !['PUBLISHED', 'CLOSED'].includes(p.status),
+    (p) => p.assignee === (me?.id ?? '') && !['PUBLISHED', 'CLOSED'].includes(p.status),
   ).length
-  const myComments = Object.values(videoReviews).reduce(
-    (n, r) => n + r.comments.filter((c) => c.author === viewer.id).length,
-    0,
-  )
+  const myComments = reviews.filter((r) => r.author === me?.id).length
   const teammateCount = team.length
 
   const stats = [
@@ -50,7 +51,7 @@ export default function ProfilePage() {
 
       {/* Hero card */}
       <section className="card overflow-hidden">
-        {/* Banner — tonal field, quiet craft */}
+        {/* Banner - tonal field, quiet craft */}
         <div className="relative h-28 overflow-hidden bg-cream">
           <div
             className="absolute inset-0"
@@ -81,7 +82,7 @@ export default function ProfilePage() {
                   onClick={() => {
                     setEditing(false)
                     setName(viewer.name)
-                    setTitle(viewer.title)
+                    setTitle(viewer.title ?? '')
                   }}
                   className="btn-ghost"
                 >
@@ -91,7 +92,7 @@ export default function ProfilePage() {
                 <button
                   onClick={() => {
                     setEditing(false)
-                    // Demo: profile edits are local for now — backend profile API later
+                    // Demo: profile edits are local for now - backend profile API later
                     toast('success', 'Profile updated', `${name.trim() || viewer.name} · ${title.trim() || viewer.title}`)
                   }}
                   className="btn-primary"
@@ -165,8 +166,8 @@ export default function ProfilePage() {
           {[
             { k: 'Email', v: viewer.email, icon: <Mail size={15} strokeWidth={1.75} /> },
             { k: 'Role', v: roleLabel[viewer.role] ?? viewer.role, icon: <Shield size={15} strokeWidth={1.75} /> },
-            { k: 'Organization', v: org.name, icon: <Building2 size={15} strokeWidth={1.75} /> },
-            { k: 'Workspace', v: org.slug, icon: <Hash size={15} strokeWidth={1.75} /> },
+            { k: 'Organization', v: org?.name ?? '-', icon: <Building2 size={15} strokeWidth={1.75} /> },
+            { k: 'Workspace', v: org?.slug ?? '-', icon: <Hash size={15} strokeWidth={1.75} /> },
             { k: 'Member since', v: '2026', icon: <Star size={15} strokeWidth={1.75} /> },
           ].map((d) => (
             <li key={d.k} className="flex items-center gap-3.5 px-6 py-3.5 transition-colors hover:bg-canvas/50">

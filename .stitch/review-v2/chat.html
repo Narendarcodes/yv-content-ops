@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aaryajanani - Chat</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;family=Outfit:wght@600;700&amp;family=Public+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "canvas": "#F7F5F2",
+                        "surface": "#FFFFFF",
+                        "ink": "#1C1917",
+                        "umber": "#78716C",
+                        "whisper": "rgba(28,25,23,0.10)",
+                        "teal": {
+                            "DEFAULT": "#0F766E",
+                            "hover": "#115E59"
+                        },
+                        "soft": "#E6F2F0",
+                        "success": "#15803D",
+                        "warning": "#B45309",
+                        "danger": "#DC2626"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Outfit", "sans-serif"],
+                        "body": ["Geist", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.canvas');
+            color: theme('colors.ink');
+            font-family: theme('fontFamily.body');
+        }
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Custom scrollbar for chat areas */
+        .chat-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background-color: theme('colors.whisper');
+            border-radius: theme('borderRadius.full');
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<nav class="bg-[#F7F5F2] h-screen w-64 fixed left-0 top-0 border-r border-[rgba(28,25,23,0.10)] flex flex-col h-full py-6 z-20">
+<div class="px-6 mb-8 flex items-center space-x-3">
+<div class="w-8 h-8 bg-ink rounded-lg flex items-center justify-center text-surface font-headline font-bold">A</div>
+<div>
+<h1 class="font-headline font-bold text-[#1C1917] tracking-tight text-lg leading-none">Aaryajanani</h1>
+<p class="font-mono text-[10px] text-umber mt-1 uppercase tracking-wider">Editorial Studio</p>
+</div>
+</div>
+<button class="mx-6 mb-8 bg-teal hover:bg-teal-hover text-surface py-2.5 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span>New Draft</span>
+</button>
+<div class="flex-1 flex flex-col gap-1 overflow-y-auto">
+<a class="text-[#78716C] hover:text-[#1C1917] mx-2 px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] transition-colors duration-200 rounded-lg flex items-center space-x-3 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-ink transition-colors duration-200">dashboard</span>
+<span class="font-body text-body font-medium tracking-normal">Dashboard</span>
+</a>
+<a class="bg-[#E6F2F0] text-[#0F766E] rounded-lg mx-2 px-4 py-2 font-semibold flex items-center space-x-3 group" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">chat</span>
+<span class="font-body text-body tracking-normal">Projects</span>
+</a>
+<a class="text-[#78716C] hover:text-[#1C1917] mx-2 px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] transition-colors duration-200 rounded-lg flex items-center space-x-3 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-ink transition-colors duration-200">auto_stories</span>
+<span class="font-body text-body font-medium tracking-normal">Editorial</span>
+</a>
+<a class="text-[#78716C] hover:text-[#1C1917] mx-2 px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] transition-colors duration-200 rounded-lg flex items-center space-x-3 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-ink transition-colors duration-200">archive</span>
+<span class="font-body text-body font-medium tracking-normal">Archive</span>
+</a>
+</div>
+<div class="mt-auto pt-6 border-t border-whisper flex flex-col gap-1">
+<a class="text-[#78716C] hover:text-[#1C1917] mx-2 px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] transition-colors duration-200 rounded-lg flex items-center space-x-3 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-ink transition-colors duration-200">settings</span>
+<span class="font-body text-body font-medium tracking-normal">Settings</span>
+</a>
+<a class="text-[#78716C] hover:text-[#1C1917] mx-2 px-4 py-2 hover:bg-[rgba(28,25,23,0.05)] transition-colors duration-200 rounded-lg flex items-center space-x-3 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-ink transition-colors duration-200">help_outline</span>
+<span class="font-body text-body font-medium tracking-normal">Help</span>
+</a>
+</div>
+</nav>
+<!-- TopNavBar -->
+<header class="bg-[#FFFFFF] fixed top-0 right-0 left-64 h-16 border-b border-[rgba(28,25,23,0.10)] flex justify-between items-center px-8 z-10">
+<div class="flex items-center h-full space-x-8">
+<a class="font-headline font-semibold text-sm tracking-tight text-[#78716C] hover:text-[#115E59] transition-all h-full flex items-center border-b-2 border-transparent hover:border-whisper mt-[2px]" href="#">Drafts</a>
+<a class="font-headline font-semibold text-sm tracking-tight text-[#78716C] hover:text-[#115E59] transition-all h-full flex items-center border-b-2 border-transparent hover:border-whisper mt-[2px]" href="#">Reviews</a>
+<a class="font-headline font-semibold text-sm tracking-tight text-[#78716C] hover:text-[#115E59] transition-all h-full flex items-center border-b-2 border-transparent hover:border-whisper mt-[2px]" href="#">Schedule</a>
+</div>
+<div class="flex items-center space-x-4">
+<button class="text-umber hover:text-teal transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="text-umber hover:text-teal transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-teal rounded-full"></span>
+</button>
+<button class="bg-teal hover:bg-teal-hover text-surface text-sm font-medium px-4 py-1.5 rounded-md transition-colors active:translate-y-[1px]">Publish</button>
+<div class="w-8 h-8 bg-soft text-teal rounded-full flex items-center justify-center font-headline font-bold ml-2 border border-whisper">
+                EK
+            </div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-64 pt-16 h-screen w-full flex flex-col bg-canvas">
+<!-- Page Header -->
+<div class="px-8 py-6 border-b border-whisper flex justify-between items-end flex-shrink-0">
+<div>
+<h2 class="font-headline text-3xl font-bold tracking-tight text-ink">Chat</h2>
+<p class="text-umber mt-1">Team conversations across your workspace</p>
+</div>
+<button class="bg-teal hover:bg-teal-hover text-surface py-2 px-4 rounded-lg font-medium transition-colors flex items-center space-x-2 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>New channel</span>
+</button>
+</div>
+<!-- Chat Interface -->
+<div class="flex-1 flex overflow-hidden p-8 gap-6">
+<!-- Left Column: Channels List -->
+<div class="w-80 bg-surface border border-whisper rounded-xl flex flex-col flex-shrink-0 shadow-[0_2px_8px_-2px_rgba(28,25,23,0.05)]">
+<div class="p-4 border-b border-whisper">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-umber text-[18px]">search</span>
+<input class="w-full pl-9 pr-3 py-2 bg-canvas border border-whisper rounded-md text-sm focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal text-ink placeholder:text-umber transition-all" placeholder="Search channels..." type="text"/>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto chat-scroll p-2">
+<!-- Topic Channels -->
+<div class="mb-6">
+<h3 class="font-mono text-xs text-umber tracking-wider px-3 mb-2 pt-2">TOPIC CHANNELS</h3>
+<div class="space-y-1">
+<button class="w-full flex items-center justify-between px-3 py-2 rounded-md bg-soft text-teal group transition-colors">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-[18px] opacity-70">tag</span>
+<span class="font-medium text-sm">production</span>
+</div>
+<span class="font-mono text-[10px] bg-teal text-surface px-1.5 py-0.5 rounded-full font-bold">3</span>
+</button>
+<button class="w-full flex items-center justify-between px-3 py-2 rounded-md text-umber hover:bg-canvas hover:text-ink group transition-colors">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-[18px] opacity-50">tag</span>
+<span class="font-medium text-sm">announcements</span>
+</div>
+<span class="font-mono text-[10px] text-umber font-medium">1</span>
+</button>
+<button class="w-full flex items-center justify-between px-3 py-2 rounded-md text-umber hover:bg-canvas hover:text-ink group transition-colors">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-[18px] opacity-50">tag</span>
+<span class="font-medium text-sm">design-crit</span>
+</div>
+<!-- No badge for 0 -->
+</button>
+<button class="w-full flex items-center justify-between px-3 py-2 rounded-md text-umber hover:bg-canvas hover:text-ink group transition-colors">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-[18px] opacity-50">tag</span>
+<span class="font-medium text-sm">client-feedback</span>
+</div>
+<span class="font-mono text-[10px] text-umber font-medium">2</span>
+</button>
+</div>
+</div>
+<!-- Direct Messages -->
+<div>
+<h3 class="font-mono text-xs text-umber tracking-wider px-3 mb-2">DIRECT MESSAGES</h3>
+<div class="space-y-1">
+<button class="w-full flex items-center justify-between px-3 py-2 rounded-md text-ink hover:bg-canvas group transition-colors">
+<div class="flex items-center space-x-3">
+<div class="w-6 h-6 rounded-md bg-canvas border border-whisper flex items-center justify-center font-headline text-xs font-bold text-ink">EK</div>
+<span class="font-medium text-sm">Elena K.</span>
+</div>
+<span class="font-mono text-[10px] bg-ink text-surface px-1.5 py-0.5 rounded-full font-bold">1</span>
+</button>
+<button class="w-full flex items-center justify-between px-3 py-2 rounded-md text-umber hover:bg-canvas hover:text-ink group transition-colors">
+<div class="flex items-center space-x-3">
+<div class="w-6 h-6 rounded-md bg-canvas border border-whisper flex items-center justify-center font-headline text-xs font-bold opacity-70">MR</div>
+<span class="font-medium text-sm">Marcus R.</span>
+</div>
+</button>
+<button class="w-full flex items-center justify-between px-3 py-2 rounded-md text-umber hover:bg-canvas hover:text-ink group transition-colors">
+<div class="flex items-center space-x-3">
+<div class="w-6 h-6 rounded-md bg-canvas border border-whisper flex items-center justify-center font-headline text-xs font-bold opacity-70">SL</div>
+<span class="font-medium text-sm">Sarah L.</span>
+</div>
+</button>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-whisper">
+<a class="text-sm font-medium text-teal hover:text-teal-hover flex items-center space-x-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+<span>Invite members</span>
+</a>
+</div>
+</div>
+<!-- Right Column: Message Thread -->
+<div class="flex-1 bg-surface border border-whisper rounded-xl flex flex-col shadow-[0_2px_8px_-2px_rgba(28,25,23,0.05)] relative">
+<!-- Thread Header -->
+<div class="px-6 py-4 border-b border-whisper flex justify-between items-center bg-surface rounded-t-xl z-10">
+<div>
+<h3 class="font-headline font-bold text-lg text-ink flex items-center">
+<span class="material-symbols-outlined text-umber mr-2">tag</span>
+                            production
+                        </h3>
+<div class="flex items-center mt-1 space-x-3">
+<span class="font-mono text-xs text-umber">12 members</span>
+<div class="w-1 h-1 rounded-full bg-whisper"></div>
+<span class="text-xs text-umber">Active 5m ago</span>
+</div>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-md text-umber hover:text-ink hover:bg-canvas transition-colors">
+<span class="material-symbols-outlined">info</span>
+</button>
+</div>
+<!-- Messages Area -->
+<div class="flex-1 overflow-y-auto chat-scroll p-6 flex flex-col gap-6 bg-surface">
+<!-- Date Divider -->
+<div class="flex items-center justify-center my-2">
+<div class="border-t border-whisper flex-1"></div>
+<span class="font-mono text-[10px] text-umber px-4 uppercase tracking-widest bg-surface">Today</span>
+<div class="border-t border-whisper flex-1"></div>
+</div>
+<!-- Message 1 -->
+<div class="flex gap-4 group">
+<div class="w-10 h-10 rounded-lg bg-soft text-teal border border-teal/20 flex items-center justify-center font-headline font-bold flex-shrink-0 mt-1">EK</div>
+<div class="flex-1">
+<div class="flex items-baseline space-x-2 mb-1">
+<span class="font-bold font-headline text-ink">Elena K.</span>
+<span class="font-mono text-[9px] bg-canvas text-umber px-1.5 py-0.5 rounded border border-whisper tracking-wider">EDITOR</span>
+<span class="font-mono text-[10px] text-umber ml-2">09:41 AM</span>
+</div>
+<p class="text-ink text-sm leading-relaxed">
+                                Morning team. I've reviewed the latest drafts for the Q3 editorial piece. We need to align on the visual direction before we send it to layout.
+                            </p>
+</div>
+</div>
+<!-- Message 2 (with attachment) -->
+<div class="flex gap-4 group">
+<div class="w-10 h-10 rounded-lg bg-canvas border border-whisper flex items-center justify-center font-headline font-bold text-ink flex-shrink-0 mt-1">MR</div>
+<div class="flex-1">
+<div class="flex items-baseline space-x-2 mb-1">
+<span class="font-bold font-headline text-ink">Marcus R.</span>
+<span class="font-mono text-[9px] bg-canvas text-umber px-1.5 py-0.5 rounded border border-whisper tracking-wider">DESIGNER</span>
+<span class="font-mono text-[10px] text-umber ml-2">09:55 AM</span>
+</div>
+<p class="text-ink text-sm leading-relaxed mb-3">
+                                I've put together a preliminary moodboard and the updated brief based on yesterday's sync. Let me know if the tone feels right.
+                            </p>
+<!-- Attachment Chip -->
+<div class="inline-flex items-center space-x-3 p-2 pr-4 border border-whisper rounded-lg bg-canvas hover:bg-[#F0EDEA] cursor-pointer transition-colors max-w-sm">
+<div class="w-10 h-10 bg-surface rounded flex items-center justify-center text-danger border border-whisper">
+<span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+</div>
+<div>
+<p class="text-sm font-medium text-ink truncate w-40">brief-v4.pdf</p>
+<p class="font-mono text-[10px] text-umber mt-0.5">2.4 MB</p>
+</div>
+<span class="material-symbols-outlined text-umber text-[18px] ml-auto">download</span>
+</div>
+</div>
+</div>
+<!-- Message 3 (with replies) -->
+<div class="flex gap-4 group">
+<div class="w-10 h-10 rounded-lg bg-canvas border border-whisper flex items-center justify-center font-headline font-bold text-ink flex-shrink-0 mt-1">SL</div>
+<div class="flex-1">
+<div class="flex items-baseline space-x-2 mb-1">
+<span class="font-bold font-headline text-ink">Sarah L.</span>
+<span class="font-mono text-[9px] bg-canvas text-umber px-1.5 py-0.5 rounded border border-whisper tracking-wider">PRODUCER</span>
+<span class="font-mono text-[10px] text-umber ml-2">10:12 AM</span>
+</div>
+<p class="text-ink text-sm leading-relaxed mb-2">
+                                The timeline on page 2 of that brief looks a bit tight if we're doing original photography. Can we push the initial review by 48 hours?
+                            </p>
+<!-- Replies Pill -->
+<button class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-soft text-teal border border-teal/20 text-xs font-medium hover:bg-teal hover:text-surface transition-colors mt-1">
+<div class="flex -space-x-1 mr-1">
+<div class="w-4 h-4 rounded-full bg-surface border border-whisper flex items-center justify-center font-headline text-[8px] font-bold text-ink">EK</div>
+<div class="w-4 h-4 rounded-full bg-surface border border-whisper flex items-center justify-center font-headline text-[8px] font-bold text-ink">MR</div>
+</div>
+                                3 replies
+                                <span class="font-mono text-[10px] text-teal/70 ml-1">Last reply at 10:45 AM</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Composer Area -->
+<div class="p-4 border-t border-whisper bg-surface rounded-b-xl">
+<div class="border border-whisper rounded-lg bg-canvas focus-within:border-teal focus-within:ring-1 focus-within:ring-teal transition-all p-1 flex flex-col">
+<textarea class="w-full bg-transparent border-none resize-none focus:ring-0 text-sm text-ink placeholder:text-umber p-3 min-h-[80px]" placeholder="Message # production..." rows="2"></textarea>
+<div class="flex justify-between items-center px-2 pb-2">
+<div class="flex space-x-1">
+<button class="w-8 h-8 rounded text-umber hover:text-ink hover:bg-surface transition-colors flex items-center justify-center" title="Attach file">
+<span class="material-symbols-outlined text-[20px]">attach_file</span>
+</button>
+<button class="w-8 h-8 rounded text-umber hover:text-ink hover:bg-surface transition-colors flex items-center justify-center" title="Format text">
+<span class="material-symbols-outlined text-[20px]">format_bold</span>
+</button>
+<button class="w-8 h-8 rounded text-umber hover:text-ink hover:bg-surface transition-colors flex items-center justify-center" title="Mention">
+<span class="material-symbols-outlined text-[20px]">alternate_email</span>
+</button>
+</div>
+<div class="flex items-center space-x-3">
+<span class="font-mono text-[10px] text-umber hidden sm:inline-block">Enter to send • Shift+Enter for new line</span>
+<button class="w-8 h-8 rounded-full bg-teal text-surface hover:bg-teal-hover transition-colors flex items-center justify-center active:scale-[0.95] shadow-sm">
+<span class="material-symbols-outlined text-[18px] ml-[2px]" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aaryajanani - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&amp;family=Geist:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        'canvas-paper': '#F7F5F2',
+                        'pure-surface': '#FFFFFF',
+                        'charcoal-ink': '#1C1917',
+                        'muted-umber': '#78716C',
+                        'whisper-line': 'rgba(28,25,23,0.10)',
+                        'deep-teal': '#0F766E',
+                        'deep-teal-press': '#115E59',
+                        'on-accent': '#FFFFFF',
+                        'danger': '#DC2626',
+                        'soft-tint': '#E6F2F0'
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Outfit", "sans-serif"],
+                        "display": ["Outfit", "sans-serif"],
+                        "body": ["Geist", "sans-serif"],
+                        "label": ["JetBrains Mono", "monospace"]
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #F7F5F2; /* canvas-paper */
+        }
+        .pattern-bg {
+            background-image: radial-gradient(#d6d3d1 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="font-body text-charcoal-ink h-screen flex flex-col md:flex-row overflow-hidden bg-canvas-paper">
+<!-- Left Panel (Branding / Value Prop) -->
+<div class="hidden md:flex md:w-[40%] bg-canvas-paper relative flex-col justify-between p-12 lg:p-16 border-r border-whisper-line overflow-hidden pattern-bg">
+<!-- Logo -->
+<div class="z-10">
+<img alt="Aaryajanani Logo" class="h-10 w-auto object-contain mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAR01dLnamFA8Uvm9fELJhR5KguynIbWRaJ6fhlU8G8Gfyi1oCGNCFPHQrAqXRPwoz8NrqKzTWApDKUy-42PswS5tAdMorBFfJJCBn8Cqfq-4owD5pWzCTChKq3OXukj46_SeILM0XDpIqJAiCztgdIqN37OLw5FraGwMZEPSaW9T6sTVcG9vA9agAIpItfunbVENRVAjU5CghilRPNUdBhc0zP4yWP3nS0eNxknJKn3vV2T6pG5r27LJHHAtI_nWDk1rlfARHpGfo"/>
+</div>
+<!-- Positioning Statement -->
+<div class="z-10 mb-24 max-w-md">
+<h1 class="font-display font-semibold text-4xl tracking-tight leading-tight text-charcoal-ink mb-4">
+                Precision content operations and project memory for modern editorial teams.
+            </h1>
+</div>
+<!-- Decorative element (Abstract editorial flow) -->
+<div class="absolute bottom-0 right-0 w-[120%] h-[120%] opacity-10 pointer-events-none transform translate-x-1/4 translate-y-1/4">
+<svg viewbox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<path d="M44.7,-76.4C58.9,-69.2,71.8,-59.1,79.6,-45.8C87.4,-32.6,90.1,-16.3,88.7,-0.8C87.3,14.7,81.8,29.4,73.1,41.9C64.5,54.4,52.7,64.8,39.1,72.4C25.4,80.1,9.8,85,-5.9,86.2C-21.7,87.4,-37.6,85.1,-50.2,76.5C-62.8,67.9,-72,53.2,-78.9,37.6C-85.9,22,-90.6,5.6,-88.4,-10.1C-86.2,-25.8,-77.2,-40.8,-65.2,-52.1C-53.1,-63.4,-38.1,-71,-23.4,-75.7C-8.7,-80.4,5.7,-82.2,20.5,-80.4C35.2,-78.5,50,-73,44.7,-76.4Z" fill="#0F766E" transform="translate(100 100)"></path>
+</svg>
+</div>
+</div>
+<!-- Right Panel (Login Form) -->
+<div class="w-full md:w-[60%] bg-pure-surface flex flex-col justify-center items-center px-6 py-12 lg:px-8 h-full overflow-y-auto">
+<!-- Mobile Logo (Hidden on md and up) -->
+<div class="md:hidden flex justify-center mb-8">
+<img alt="Aaryajanani Logo" class="h-8 w-auto object-contain mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAR01dLnamFA8Uvm9fELJhR5KguynIbWRaJ6fhlU8G8Gfyi1oCGNCFPHQrAqXRPwoz8NrqKzTWApDKUy-42PswS5tAdMorBFfJJCBn8Cqfq-4owD5pWzCTChKq3OXukj46_SeILM0XDpIqJAiCztgdIqN37OLw5FraGwMZEPSaW9T6sTVcG9vA9agAIpItfunbVENRVAjU5CghilRPNUdBhc0zP4yWP3nS0eNxknJKn3vV2T6pG5r27LJHHAtI_nWDk1rlfARHpGfo"/>
+</div>
+<div class="w-full max-w-[420px]">
+<h2 class="font-display font-semibold text-3xl tracking-tight text-charcoal-ink mb-8 text-center md:text-left">
+                Sign in to your workspace
+            </h2>
+<form action="#" class="space-y-6" method="POST">
+<!-- Email Input -->
+<div>
+<label class="block font-body text-sm font-medium text-charcoal-ink mb-2" for="email">Work email</label>
+<div class="relative">
+<input autocomplete="email" class="block w-full rounded-lg border border-danger bg-pure-surface px-4 py-3 text-charcoal-ink shadow-sm focus:border-deep-teal focus:ring-1 focus:ring-deep-teal sm:text-sm outline-none transition-shadow" id="email" name="email" required="" type="email" value="invalid-email@"/>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+<span class="material-symbols-outlined text-danger text-xl">error</span>
+</div>
+</div>
+<p class="mt-2 text-sm text-danger font-body" id="email-error">Enter a valid work email</p>
+</div>
+<!-- Password Input -->
+<div>
+<div class="flex items-center justify-between mb-2">
+<label class="block font-body text-sm font-medium text-charcoal-ink" for="password">Password</label>
+<a class="font-body text-sm font-medium text-deep-teal hover:text-deep-teal-press transition-colors" href="#">Forgot password?</a>
+</div>
+<div class="relative">
+<input autocomplete="current-password" class="block w-full rounded-lg border border-whisper-line bg-pure-surface px-4 py-3 text-charcoal-ink shadow-sm focus:border-deep-teal focus:ring-1 focus:ring-deep-teal sm:text-sm outline-none transition-shadow" id="password" name="password" required="" type="password"/>
+<button class="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-umber hover:text-charcoal-ink focus:outline-none" type="button">
+<span class="material-symbols-outlined text-xl">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center">
+<input class="h-4 w-4 rounded border-whisper-line text-deep-teal focus:ring-deep-teal focus:ring-offset-0 bg-pure-surface cursor-pointer" id="remember-me" name="remember-me" type="checkbox"/>
+<label class="ml-2 block text-sm font-body text-muted-umber cursor-pointer" for="remember-me">Remember me</label>
+</div>
+<!-- Submit Button -->
+<div>
+<button class="flex w-full justify-center rounded-lg bg-deep-teal px-4 py-3 text-sm font-medium text-on-accent shadow-sm hover:bg-deep-teal-press focus:outline-none focus:ring-2 focus:ring-deep-teal focus:ring-offset-2 transition-all active:scale-[0.99]" type="submit">
+                        Sign in
+                    </button>
+</div>
+</form>
+<!-- Divider -->
+<div class="mt-8">
+<div class="relative">
+<div aria-hidden="true" class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-whisper-line"></div>
+</div>
+<div class="relative flex justify-center text-sm font-body">
+<span class="bg-pure-surface px-2 text-muted-umber">New to Aaryajanani?</span>
+</div>
+</div>
+<div class="mt-6 text-center">
+<a class="font-body text-sm font-medium text-deep-teal hover:text-deep-teal-press transition-colors" href="#">Create an account</a>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<div class="mt-auto pt-12 w-full max-w-[420px] text-center">
+<p class="font-label text-xs uppercase tracking-wider text-muted-umber">
+                v2.4.0-alpha • <a class="hover:text-charcoal-ink transition-colors" href="#">Privacy Policy</a> • <a class="hover:text-charcoal-ink transition-colors" href="#">Terms of Service</a>
+</p>
+</div>
+</div>
+</body></html>

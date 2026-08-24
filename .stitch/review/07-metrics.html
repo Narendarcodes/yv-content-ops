@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aaryajanani - Winter Lookbook Metrics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;family=Geist:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        'canvas': '#F7F5F2',
+                        'surface': '#FFFFFF',
+                        'ink': '#1C1917',
+                        'umber': '#78716C',
+                        'whisper': 'rgba(28,25,23,0.10)',
+                        'teal': {
+                            DEFAULT: '#0F766E',
+                            press: '#115E59'
+                        },
+                        'tint': '#E6F2F0',
+                        'success': '#15803D',
+                        'warning': '#B45309',
+                        'danger': '#DC2626'
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Public Sans", "sans-serif"],
+                        display: ["Public Sans", "sans-serif"],
+                        body: ["Geist", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Geist', sans-serif; background-color: #F7F5F2; color: #1C1917; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-headline { font-family: 'Public Sans', sans-serif; letter-spacing: -0.02em; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); }
+    </style>
+</head>
+<body class="flex h-full overflow-hidden bg-canvas text-ink">
+<!-- SideNavBar -->
+<nav class="w-64 h-screen fixed left-0 top-0 bg-[#F7F5F2] border-r border-[rgba(28,23,23,0.10)] flex flex-col p-6 z-20">
+<div class="mb-8">
+<h1 class="text-xl font-headline font-bold text-[#1C1917]">Aaryajanani</h1>
+<p class="text-sm font-body text-umber">Editorial Studio</p>
+</div>
+<button class="mb-8 w-full bg-teal hover:bg-teal-press text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors active:scale-[0.98]">
+<span class="material-symbols-outlined text-sm">add</span>
+            New Project
+        </button>
+<ul class="flex flex-col gap-1 flex-1">
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#78716C] hover:text-[#1C1917] hover:bg-[#E6F2F0] transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-mono text-xs">Overview</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#78716C] hover:text-[#1C1917] hover:bg-[#E6F2F0] transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="font-mono text-xs">Calendar</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#E6F2F0] text-[#0F766E] font-medium transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">movie_edit</span>
+<span class="font-mono text-xs">Production</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#78716C] hover:text-[#1C1917] hover:bg-[#E6F2F0] transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-mono text-xs">Team</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#78716C] hover:text-[#1C1917] hover:bg-[#E6F2F0] transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">library_books</span>
+<span class="font-mono text-xs">Library</span>
+</a>
+</li>
+</ul>
+<ul class="flex flex-col gap-1 mt-auto pt-6 border-t border-whisper">
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#78716C] hover:text-[#1C1917] hover:bg-[#E6F2F0] transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-mono text-xs">Settings</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#78716C] hover:text-[#1C1917] hover:bg-[#E6F2F0] transition-colors duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-mono text-xs">Help</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- TopNavBar -->
+<header class="h-16 fixed top-0 right-0 left-64 z-10 bg-[#FFFFFF] border-b border-[rgba(28,23,23,0.10)] flex items-center justify-between px-8">
+<div class="flex items-center gap-6">
+<span class="text-lg font-headline font-bold text-[#1C1917]">Content Operations</span>
+<div class="h-4 w-px bg-whisper"></div>
+<nav class="flex gap-6">
+<a class="text-[#78716C] font-mono text-sm hover:text-[#115E59] transition-colors active:translate-y-[1px]" href="#">Drafts</a>
+<a class="text-[#0F766E] font-mono text-sm border-b-2 border-[#0F766E] pb-1 transition-colors active:translate-y-[1px]" href="#">Published</a>
+<a class="text-[#78716C] font-mono text-sm hover:text-[#115E59] transition-colors active:translate-y-[1px]" href="#">Archive</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-umber hover:text-ink transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="text-umber hover:text-ink transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-tint flex items-center justify-center text-teal font-mono text-xs font-bold border border-whisper">ED</div>
+</div>
+</header>
+<!-- Main Workspace -->
+<main class="ml-64 mt-16 flex-1 h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden">
+<!-- Project Header Region -->
+<div class="bg-surface border-b border-whisper pt-10 px-10 pb-0 flex flex-col gap-6 sticky top-0 z-0">
+<div class="flex items-start justify-between max-w-[1200px] w-full mx-auto">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3">
+<span class="px-2 py-0.5 rounded-full bg-tint text-teal font-mono text-xs font-medium">Published</span>
+<span class="font-mono text-xs text-umber">ID: PRJ-084</span>
+</div>
+<h2 class="text-3xl font-headline font-bold text-ink">Winter Lookbook — Issue 04</h2>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 border border-whisper rounded-lg font-medium text-ink text-sm hover:bg-canvas transition-colors">Edit</button>
+<button class="px-4 py-2 bg-teal text-white rounded-lg font-medium text-sm hover:bg-teal-press transition-colors">Publish Update</button>
+</div>
+</div>
+<!-- Project Tabs -->
+<nav class="flex gap-8 max-w-[1200px] w-full mx-auto overflow-x-auto no-scrollbar">
+<a class="pb-3 text-sm font-mono text-umber hover:text-ink border-b-2 border-transparent transition-colors" href="#">Overview</a>
+<a class="pb-3 text-sm font-mono text-umber hover:text-ink border-b-2 border-transparent transition-colors" href="#">Versions</a>
+<a class="pb-3 text-sm font-mono text-umber hover:text-ink border-b-2 border-transparent transition-colors" href="#">Inputs</a>
+<a class="pb-3 text-sm font-mono text-umber hover:text-ink border-b-2 border-transparent transition-colors" href="#">Review</a>
+<a class="pb-3 text-sm font-mono text-umber hover:text-ink border-b-2 border-transparent transition-colors" href="#">Tasks</a>
+<a class="pb-3 text-sm font-mono text-umber hover:text-ink border-b-2 border-transparent transition-colors" href="#">Brief</a>
+<a class="pb-3 text-sm font-mono text-umber hover:text-ink border-b-2 border-transparent transition-colors" href="#">Chat</a>
+<a class="pb-3 text-sm font-mono text-umber hover:text-ink border-b-2 border-transparent transition-colors" href="#">Publications</a>
+<a class="pb-3 text-sm font-mono text-teal border-b-2 border-teal transition-colors" href="#">Metrics</a>
+</nav>
+</div>
+<!-- Canvas Content -->
+<div class="p-10 max-w-[1200px] mx-auto flex flex-col gap-8">
+<!-- Tab Content Header -->
+<div class="flex items-center justify-between">
+<div>
+<h3 class="text-xl font-headline font-semibold text-ink">Metrics</h3>
+<p class="text-umber text-sm mt-1">Performance recorded for this project’s publications</p>
+</div>
+<button class="bg-teal hover:bg-teal-press text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-2 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    Record metric
+                </button>
+</div>
+<!-- Metric Summary Strip (Bento/Asymmetric) -->
+<div class="grid grid-cols-12 gap-4">
+<div class="col-span-5 bg-surface border border-whisper rounded-xl p-6 flex flex-col justify-between hover:shadow-[0_2px_12px_rgba(28,25,23,0.04)] transition-shadow">
+<span class="font-mono text-xs text-umber uppercase tracking-wider">Total views</span>
+<div class="mt-4 flex items-end justify-between">
+<span class="text-4xl font-headline font-bold text-ink">184.2K</span>
+<span class="font-mono text-sm text-success bg-green-50 px-2 py-1 rounded">+12.4% vs prior</span>
+</div>
+</div>
+<div class="col-span-4 bg-surface border border-whisper rounded-xl p-6 flex flex-col justify-between hover:shadow-[0_2px_12px_rgba(28,25,23,0.04)] transition-shadow">
+<span class="font-mono text-xs text-umber uppercase tracking-wider">Engagement</span>
+<div class="mt-4 flex items-end justify-between">
+<span class="text-4xl font-headline font-bold text-ink">8.6%</span>
+<span class="font-mono text-sm text-success bg-green-50 px-2 py-1 rounded">+1.2pt</span>
+</div>
+</div>
+<div class="col-span-3 bg-surface border border-whisper rounded-xl p-6 flex flex-col justify-between hover:shadow-[0_2px_12px_rgba(28,25,23,0.04)] transition-shadow">
+<span class="font-mono text-xs text-umber uppercase tracking-wider">Conversion</span>
+<div class="mt-4 flex items-end justify-between">
+<span class="text-4xl font-headline font-bold text-ink">3.1%</span>
+<span class="font-mono text-sm text-warning bg-amber-50 px-2 py-1 rounded">-0.4pt</span>
+</div>
+</div>
+</div>
+<!-- Metrics Table -->
+<div class="bg-surface border border-whisper rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-canvas border-b border-whisper">
+<th class="py-3 px-4 font-mono text-xs text-umber font-normal">Metric</th>
+<th class="py-3 px-4 font-mono text-xs text-umber font-normal text-right">Value</th>
+<th class="py-3 px-4 font-mono text-xs text-umber font-normal">Period</th>
+<th class="py-3 px-4 font-mono text-xs text-umber font-normal">Recorded by</th>
+<th class="py-3 px-4 font-mono text-xs text-umber font-normal text-right">Date</th>
+</tr>
+</thead>
+<tbody class="text-sm">
+<tr class="border-b border-whisper hover:bg-tint transition-colors group">
+<td class="py-3 px-4 font-medium text-ink">Reels views</td>
+<td class="py-3 px-4 font-mono text-ink text-right">124,800</td>
+<td class="py-3 px-4 font-mono text-umber text-xs">Week 42</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-mono text-slate-700">AR</div>
+</div>
+</td>
+<td class="py-3 px-4 font-mono text-umber text-xs text-right">Oct 17</td>
+</tr>
+<tr class="border-b border-whisper hover:bg-tint transition-colors group">
+<td class="py-3 px-4 font-medium text-ink">Lookbook page views</td>
+<td class="py-3 px-4 font-mono text-ink text-right">59,400</td>
+<td class="py-3 px-4 font-mono text-umber text-xs">Week 42</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-[10px] font-mono text-emerald-800">EK</div>
+</div>
+</td>
+<td class="py-3 px-4 font-mono text-umber text-xs text-right">Oct 17</td>
+</tr>
+<tr class="border-b border-whisper hover:bg-tint transition-colors group">
+<td class="py-3 px-4 font-medium text-ink">Avg watch time</td>
+<td class="py-3 px-4 font-mono text-ink text-right">42s</td>
+<td class="py-3 px-4 font-mono text-umber text-xs">Week 42</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-[10px] font-mono text-emerald-800">EK</div>
+</div>
+</td>
+<td class="py-3 px-4 font-mono text-umber text-xs text-right">Oct 16</td>
+</tr>
+<tr class="border-b border-whisper hover:bg-tint transition-colors group">
+<td class="py-3 px-4 font-medium text-ink">Newsletter clicks</td>
+<td class="py-3 px-4 font-mono text-ink text-right">8,210</td>
+<td class="py-3 px-4 font-mono text-umber text-xs">Week 41</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center text-[10px] font-mono text-amber-800">MR</div>
+</div>
+</td>
+<td class="py-3 px-4 font-mono text-umber text-xs text-right">Oct 10</td>
+</tr>
+<tr class="hover:bg-tint transition-colors group">
+<td class="py-3 px-4 font-medium text-ink">Social saves</td>
+<td class="py-3 px-4 font-mono text-ink text-right">3,950</td>
+<td class="py-3 px-4 font-mono text-umber text-xs">Week 41</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-mono text-slate-700">AR</div>
+</div>
+</td>
+<td class="py-3 px-4 font-mono text-umber text-xs text-right">Oct 09</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Footer Hint -->
+<div class="text-center mt-8 pb-12">
+<p class="font-mono text-xs text-umber">Record metrics per publication to track performance over time.</p>
+</div>
+</div>
+</main>
+</body></html>

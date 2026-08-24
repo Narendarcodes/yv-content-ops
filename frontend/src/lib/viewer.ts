@@ -1,51 +1,73 @@
 /**
- * Demo role simulation for the Folio frontend.
- * Lets us walk every role's userflow (admin, editor, reviewer, designer,
- * publisher, member) before backend integration. Backend auth remains the
- * real security boundary — this is a UX verification aid only.
+ * Viewer - the signed-in user's identity & role.
+ *
+ * This used to be a demo "role simulation" store with a localStorage-backed
+ * switcher that let anyone act as any teammate. That is gone: the viewer now
+ * derives strictly from the authenticated backend session (lib/auth.ts).
+ * One login = one identity. Role-based UI (nav items, action buttons) keys
+ * off session.user.role, and the backend remains the security boundary.
  */
 import { useEffect, useState } from 'react'
-import { team, type TeamMember } from './mockData'
+import { useAuth } from './auth'
+import type { RoleName } from './types'
+
+export interface Viewer {
+  id: string
+  name: string
+  email: string
+  role: RoleName
+  title?: string
+  initials: string
+}
+
+function toViewer(user: { id?: string; name?: string; email?: string; role?: string; title?: string } | null | undefined): Viewer | null {
+  if (!user?.id) return null
+  const name = user.name ?? ''
+  const initials =
+    name
+      .split(/\s+/)
+      .map((w) => w[0] || '')
+      .filter(Boolean)
+      .slice(0, 2)
+      .join('')
+      .toUpperCase() || '?'
+  return {
+    id: user.id,
+    name,
+    email: user.email ?? '',
+    role: (user.role as RoleName) || 'member',
+    title: user.title,
+    initials,
+  }
+}
+
+/**
+ * Subscribes a component to the current authenticated viewer. Always returns
+ * a Viewer object so call-sites stay simple; when no session exists yet it
+ * returns a neutral placeholder (pages using this render behind RequireAuth,
+ * so a real session user is present in practice).
+ */
+export function useViewer(): Viewer {
+  const { session } = useAuth()
+  const [viewer, setViewer] = useState<Viewer>(() => toViewer(session?.user) ?? PLACEHOLDER)
+  useEffect(() => {
+    setViewer(toViewer(session?.user) ?? PLACEHOLDER)
+  }, [session])
+  return viewer
+}
+
+const PLACEHOLDER: Viewer = {
+  id: '',
+  name: 'Signed out',
+  email: '',
+  role: 'member',
+  title: '',
+  initials: '?',
+}
+
+export function getViewer(): Viewer | null {
+  return null // intentionally unsupported outside React - use useViewer()
+}
 
 export type { Permission, RoleInfo } from './roles'
 export { can, ROLES, roleOf, PERMISSION_LABELS } from './roles'
-
-const STORAGE_KEY = 'folio.demo-viewer'
-
-function initialUser(): TeamMember {
-  const saved = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null
-  return team.find((m) => m.id === saved) ?? team[0]
-}
-
-const state: { user: TeamMember } = { user: initialUser() }
-
-const listeners = new Set<() => void>()
-
-export function switchViewer(id: string) {
-  const next = team.find((m) => m.id === id)
-  if (!next) return
-  state.user = next
-  try {
-    localStorage.setItem(STORAGE_KEY, next.id)
-  } catch {
-    /* storage unavailable — demo still works in-memory */
-  }
-  listeners.forEach((l) => l())
-}
-
-export function getViewer(): TeamMember {
-  return state.user
-}
-
-/** Subscribes a component to the current viewer. */
-export function useViewer(): TeamMember {
-  const [, force] = useState(0)
-  useEffect(() => {
-    const l = () => force((x) => x + 1)
-    listeners.add(l)
-    return () => {
-      listeners.delete(l)
-    }
-  }, [])
-  return state.user
-}

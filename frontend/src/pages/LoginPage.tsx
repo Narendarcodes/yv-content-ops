@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react'
-import { projects, team } from '../lib/mockData'
-import { loginAs } from '../lib/auth'
 import { useToast } from '../components/toast'
+import { login as apiLogin } from '../services/api'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -12,46 +11,52 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState(false)
+  const [emailError, setEmailError] = useState<string | null>(null)
+  const [passwordError, setPasswordError] = useState<string | null>(null)
+  const [formError, setFormError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
-
-  // A live project card for the brand panel — proof the product works
-  const sample = projects.find((p) => ['FIRST_DRAFT_SUBMITTED', 'UNDER_REVIEW'].includes(p.status)) ?? projects[0]
 
   const from = (location.state as { from?: string } | null)?.from ?? '/'
 
-  const signIn = (memberId: string, label: string) => {
+  const signIn = async (emailAddr: string, passwordVal: string) => {
     setBusy(true)
-    // Brief simulated latency so the flow feels real; backend replaces this later
-    window.setTimeout(() => {
-      loginAs(memberId)
-      toast('success', `Signed in as ${label}`)
+    setFormError(null)
+    try {
+      await apiLogin(emailAddr, passwordVal)
+      toast('success', 'Signed in')
       navigate(from, { replace: true })
-    }, 450)
+    } catch {
+      // Backend unreachable or credentials rejected - say which, inline.
+      setFormError('We could not sign you in. Check your email and password, then try again.')
+    } finally {
+      setBusy(false)
+    }
   }
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
+    let ok = true
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError(true)
-      return
+      setEmailError('Enter a valid work email')
+      ok = false
+    } else {
+      setEmailError(null)
     }
     if (!password) {
-      setError(true)
-      return
+      setPasswordError('Enter your password')
+      ok = false
+    } else {
+      setPasswordError(null)
     }
-    setError(false)
-    // Demo auth: a known team email signs in as that member, anything else
-    // signs in as the workspace admin. Backend integration replaces this.
-    const member = team.find((m) => m.email.toLowerCase() === email.trim().toLowerCase())
-    signIn(member?.id ?? 'ananya', member?.name ?? 'Ananya Rao')
+    if (!ok) return
+    void signIn(email.trim(), password)
   }
 
   return (
     <div className="flex min-h-screen">
       {/* Left branding panel */}
       <div className="relative hidden w-[44%] flex-col justify-between overflow-hidden bg-cream p-12 lg:flex">
-        {/* Soft tonal field, not a gradient — keeps the surface quiet */}
+        {/* Soft tonal field, not a gradient - keeps the surface quiet */}
         <div
           className="pointer-events-none absolute inset-0 opacity-60"
           style={{
@@ -59,7 +64,7 @@ export default function LoginPage() {
           }}
           aria-hidden="true"
         />
-        {/* Fine dotted texture — quiet craft, not noise */}
+        {/* Fine dotted texture - quiet craft, not noise */}
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.35]"
           style={{ backgroundImage: 'radial-gradient(rgba(28,25,23,0.14) 1px, transparent 1px)', backgroundSize: '22px 22px' }}
@@ -77,34 +82,27 @@ export default function LoginPage() {
             Precision content operations and project memory for modern editorial teams
           </h1>
           <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-umber">
-            Concepts, drafts, reviews and published projects — every decision, remembered.
+            Every concept, draft, review and published post in one place.
           </p>
 
-          {/* Live project card — a quiet proof-of-life moment */}
+          {/* Live project card - a quiet proof-of-life moment */}
           <div className="card card-hover mt-10 max-w-sm p-4">
             <div className="flex items-center gap-3">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-tint text-teal">
                 <Lock size={15} strokeWidth={1.75} />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[13px] font-medium text-ink">{sample.title}</p>
-                <p className="text-[11px] text-umber">Last updated {sample.updated}</p>
+                <p className="truncate text-[13px] font-medium text-ink">Your work, in one workspace</p>
+                <p className="text-[11px] text-umber">Concepts, reviews, approvals and publishing</p>
               </div>
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal opacity-60" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-teal" />
-              </span>
             </div>
             <div className="mt-3 flex items-center justify-between border-t border-line pt-3">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-umber/70">In review</span>
-              <span className="font-mono text-[10px] text-teal">2 comments</span>
+              <span className="font-mono text-[10px] uppercase tracking-wider text-umber/70">Secure sign-in</span>
+              <span className="font-mono text-[10px] text-teal">Role-based access</span>
             </div>
           </div>
         </div>
 
-        <p className="relative z-10 font-mono text-[10px] uppercase tracking-[0.2em] text-umber/60">
-          Folio — Content Operations
-        </p>
       </div>
 
       {/* Right form panel */}
@@ -133,12 +131,12 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@studio.com"
-                    className={`input !pl-10 ${error ? 'input-error' : ''}`}
+                    className={`input !pl-10 ${emailError ? 'input-error' : ''}`}
                   />
                 </div>
-                {error && (
+                {emailError && (
                   <p className="mt-1.5 font-mono text-[11px] text-danger" role="alert">
-                    Enter a valid work email
+                    {emailError}
                   </p>
                 )}
               </div>
@@ -157,19 +155,32 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="input !pl-10 !pr-10"
+                    className={`input !pl-10 !pr-10 ${passwordError ? 'input-error' : ''}`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((s) => !s)}
-                    className="icon-btn absolute right-1.5 top-1/2 !h-7 !w-7 -translate-y-1/2"
+                    className="icon-btn icon-btn-sm absolute right-1.5 top-1/2 -translate-y-1/2"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff size={15} strokeWidth={1.75} /> : <Eye size={15} strokeWidth={1.75} />}
                   </button>
                 </div>
               </div>
-              <button type="submit" disabled={busy} className="btn-primary group w-full !h-11 !text-[15px]">
+              {passwordError && (
+                <p className="mt-1.5 font-mono text-[11px] text-danger" role="alert">
+                  {passwordError}
+                </p>
+              )}
+              {formError && (
+                <div
+                  className="rounded-[10px] border border-danger/25 bg-danger/5 px-3.5 py-2.5 text-sm text-danger"
+                  role="alert"
+                >
+                  {formError}
+                </div>
+              )}
+              <button type="submit" disabled={busy} className="btn-primary group w-full btn-lg">
                 {busy ? 'Signing in…' : 'Sign in'}
                 {!busy && <ArrowRight size={16} strokeWidth={2} className="transition-transform group-hover:translate-x-0.5" />}
               </button>
@@ -181,29 +192,6 @@ export default function LoginPage() {
                 Create your organization
               </Link>
             </p>
-
-            <div className="mt-8 rounded-xl border border-dashed border-line bg-canvas/70 px-4 py-3 text-center">
-              <p className="font-mono text-[10px] uppercase tracking-wider text-umber/70">Demo — no password needed</p>
-              <p className="mt-0.5 text-xs text-umber">Any valid email signs you in. Your workspace is waiting.</p>
-            </div>
-
-            <div className="mt-4">
-              <p className="mb-2 text-center font-mono text-[10px] uppercase tracking-wider text-umber/60">
-                Or jump straight in as
-              </p>
-              <div className="flex flex-wrap justify-center gap-1.5">
-                {team.map((m) => (
-                  <button
-                    key={m.id}
-                    disabled={busy}
-                    onClick={() => signIn(m.id, m.name)}
-                    className="rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:border-teal/40 hover:bg-tint/40 disabled:opacity-50"
-                  >
-                    {m.name.split(' ')[0]} · {m.role}
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </div>

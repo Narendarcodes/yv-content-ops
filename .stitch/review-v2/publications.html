@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Project Publications - Winter Lookbook</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;family=Geist:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        canvas: "#F7F5F2",
+                        surface: "#FFFFFF",
+                        charcoal: "#1C1917",
+                        umber: "#78716C",
+                        whisper: "rgba(28,25,23,0.10)",
+                        teal: "#0F766E",
+                        tealHover: "#115E59",
+                        softTint: "#E6F2F0",
+                        success: "#15803D",
+                        warning: "#B45309",
+                        danger: "#DC2626"
+                    },
+                    fontFamily: {
+                        headline: ["Public Sans", "sans-serif"],
+                        body: ["Geist", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"]
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Geist', sans-serif; background-color: #F7F5F2; color: #1C1917; }
+        .font-headline { font-family: 'Public Sans', sans-serif; letter-spacing: -0.02em; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+
+        /* Subtle interactive spring */
+        .interactive-spring {
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .interactive-spring:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body class="bg-canvas text-charcoal h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="w-64 h-screen fixed left-0 top-0 bg-[#F7F5F2] border-r border-[rgba(28,23,23,0.10)] flex flex-col p-6 z-20">
+<!-- Brand -->
+<div class="mb-10 flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-charcoal flex items-center justify-center text-surface font-headline font-bold text-lg">
+                A
+            </div>
+<div>
+<h1 class="font-headline font-bold text-[#1C1917] text-lg leading-tight">Aaryajanani</h1>
+<p class="font-mono text-xs text-umber">Editorial Studio</p>
+</div>
+</div>
+<!-- CTA -->
+<button class="w-full bg-teal text-surface py-2.5 px-4 rounded-lg font-medium interactive-spring hover:bg-tealHover transition-colors duration-200 mb-8 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+            New Project
+        </button>
+<!-- Navigation Tabs -->
+<div class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-[#78716C] hover:text-[#1C1917] hover:bg-[#E6F2F0] rounded-lg transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-teal transition-colors">dashboard</span>
+<span class="font-medium text-sm">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#78716C] hover:text-[#1C1917] hover:bg-[#E6F2F0] rounded-lg transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-teal transition-colors">calendar_month</span>
+<span class="font-medium text-sm">Calendar</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 bg-[#E6F2F0] text-[#0F766E] font-medium rounded-lg interactive-spring" href="#">
+<span class="material-symbols-outlined text-[20px] fill">movie_edit</span>
+<span class="font-medium text-sm">Production</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#78716C] hover:text-[#1C1917] hover:bg-[#E6F2F0] rounded-lg transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-teal transition-colors">group</span>
+<span class="font-medium text-sm">Team</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#78716C] hover:text-[#1C1917] hover:bg-[#E6F2F0] rounded-lg transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-teal transition-colors">library_books</span>
+<span class="font-medium text-sm">Library</span>
+</a>
+</div>
+<!-- Footer Navigation -->
+<div class="mt-auto space-y-1 pt-6 border-t border-whisper">
+<a class="flex items-center gap-3 px-3 py-2 text-[#78716C] hover:text-[#1C1917] hover:bg-[#E6F2F0] rounded-lg transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-teal transition-colors">settings</span>
+<span class="font-medium text-sm">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#78716C] hover:text-[#1C1917] hover:bg-[#E6F2F0] rounded-lg transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-teal transition-colors">help</span>
+<span class="font-medium text-sm">Help</span>
+</a>
+</div>
+</nav>
+<!-- TopNavBar -->
+<nav class="h-16 fixed top-0 right-0 left-64 bg-[#FFFFFF] border-b border-[rgba(28,23,23,0.10)] flex items-center justify-between px-8 z-10">
+<!-- Search (Left aligned as per JSON) -->
+<div class="flex-1 max-w-md relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-umber text-[18px]">search</span>
+<input class="w-full bg-canvas border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-teal placeholder:text-umber/70 transition-all font-body" placeholder="Search operations..." type="text"/>
+</div>
+<!-- Navigation Links & Actions (Right) -->
+<div class="flex items-center gap-8">
+<div class="flex space-x-6 h-full">
+<a class="text-[#78716C] hover:text-[#115E59] transition-colors font-medium text-sm h-16 flex items-center" href="#">Drafts</a>
+<a class="text-[#0F766E] border-b-2 border-[#0F766E] hover:text-[#115E59] transition-colors font-medium text-sm h-16 flex items-center relative top-[1px]" href="#">Published</a>
+<a class="text-[#78716C] hover:text-[#115E59] transition-colors font-medium text-sm h-16 flex items-center" href="#">Archive</a>
+</div>
+<div class="h-6 w-px bg-whisper"></div>
+<div class="flex items-center gap-4">
+<button class="text-umber hover:text-teal transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-teal font-medium text-sm hover:text-tealHover transition-colors">Create Content</button>
+<div class="w-8 h-8 rounded-full bg-softTint border border-whisper overflow-hidden flex items-center justify-center">
+<span class="font-headline font-semibold text-teal text-xs">EU</span>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Workspace -->
+<main class="ml-64 mt-16 flex-1 h-[calc(100vh-4rem)] overflow-y-auto bg-canvas pb-20">
+<!-- Project Header & Local Nav -->
+<header class="bg-surface border-b border-whisper pt-8 px-8 sticky top-0 z-0">
+<div class="max-w-6xl mx-auto">
+<!-- Breadcrumb -->
+<div class="flex items-center gap-2 text-umber font-mono text-xs mb-4">
+<a class="hover:text-charcoal transition-colors" href="#">Production</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-charcoal">Winter Lookbook</span>
+</div>
+<h2 class="font-headline font-bold text-3xl text-charcoal mb-8 tracking-tight">Winter Lookbook — Issue 04</h2>
+<!-- Horizontal Tab Bar -->
+<div class="flex space-x-8 overflow-x-auto scrollbar-hide">
+<a class="text-umber hover:text-charcoal pb-4 text-sm font-medium transition-colors whitespace-nowrap" href="#">Overview</a>
+<a class="text-umber hover:text-charcoal pb-4 text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2" href="#">
+                        Versions <span class="font-mono text-[10px] bg-canvas px-1.5 py-0.5 rounded text-umber">4</span>
+</a>
+<a class="text-umber hover:text-charcoal pb-4 text-sm font-medium transition-colors whitespace-nowrap" href="#">Inputs</a>
+<a class="text-umber hover:text-charcoal pb-4 text-sm font-medium transition-colors whitespace-nowrap" href="#">Review</a>
+<a class="text-umber hover:text-charcoal pb-4 text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2" href="#">
+                        Tasks <span class="font-mono text-[10px] bg-canvas px-1.5 py-0.5 rounded text-umber">12</span>
+</a>
+<a class="text-umber hover:text-charcoal pb-4 text-sm font-medium transition-colors whitespace-nowrap" href="#">Brief</a>
+<a class="text-umber hover:text-charcoal pb-4 text-sm font-medium transition-colors whitespace-nowrap" href="#">Chat</a>
+<a class="text-teal border-b-2 border-teal pb-4 text-sm font-medium transition-colors whitespace-nowrap relative top-[1px] flex items-center gap-2" href="#">
+                        Publications <span class="font-mono text-[10px] bg-softTint text-teal px-1.5 py-0.5 rounded">3</span>
+</a>
+</div>
+</div>
+</header>
+<!-- Tab Content: Publications -->
+<div class="max-w-6xl mx-auto px-8 pt-10">
+<!-- Section Header -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<div class="flex items-center gap-3 mb-1">
+<h3 class="font-headline font-semibold text-xl text-charcoal">Publications</h3>
+<span class="font-mono text-xs bg-surface border border-whisper text-umber px-2 py-0.5 rounded">3</span>
+</div>
+<p class="text-umber text-sm">Where this project has been published</p>
+</div>
+<button class="bg-teal text-surface px-4 py-2 rounded-lg font-medium text-sm interactive-spring hover:bg-tealHover transition-colors flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add_link</span>
+                    Record publication
+                </button>
+</div>
+<!-- Publications List -->
+<div class="space-y-4">
+<!-- Card 1: Instagram -->
+<div class="bg-surface border border-whisper rounded-lg p-5 flex items-center gap-6 hover:shadow-[0_4px_20px_-4px_rgba(28,25,23,0.05)] transition-shadow duration-300 group">
+<div class="w-16 h-16 rounded bg-canvas border border-whisper flex flex-col items-center justify-center text-umber group-hover:border-teal/30 transition-colors">
+<span class="font-headline font-bold text-lg">IG</span>
+<span class="material-symbols-outlined text-[14px] mt-0.5 opacity-50">smart_display</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] font-mono tracking-wider uppercase text-umber bg-canvas px-1.5 py-0.5 rounded border border-whisper">Instagram</span>
+<h4 class="font-headline font-medium text-charcoal truncate text-base">Winter Lookbook — Reels cutdown</h4>
+</div>
+<div class="flex items-center gap-4 text-xs font-mono text-umber mt-2">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                                Oct 16, 2026 09:00
+                            </span>
+<span class="text-whisper">|</span>
+<a class="flex items-center gap-1.5 hover:text-teal transition-colors truncate" href="#">
+<span class="material-symbols-outlined text-[14px]">link</span>
+                                instagram.com/aurora/winter26
+                            </a>
+</div>
+</div>
+<div class="flex items-center gap-4 ml-4">
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/10 text-success border border-success/20">
+<span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+<span class="text-xs font-medium">Live</span>
+</div>
+<button class="text-umber hover:text-charcoal p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Card 2: YouTube -->
+<div class="bg-surface border border-whisper rounded-lg p-5 flex items-center gap-6 hover:shadow-[0_4px_20px_-4px_rgba(28,25,23,0.05)] transition-shadow duration-300 group">
+<div class="w-16 h-16 rounded bg-canvas border border-whisper flex flex-col items-center justify-center text-umber group-hover:border-teal/30 transition-colors">
+<span class="font-headline font-bold text-lg">YT</span>
+<span class="material-symbols-outlined text-[14px] mt-0.5 opacity-50">play_circle</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] font-mono tracking-wider uppercase text-umber bg-canvas px-1.5 py-0.5 rounded border border-whisper">YouTube</span>
+<h4 class="font-headline font-medium text-charcoal truncate text-base">Lookbook film — behind the scenes</h4>
+</div>
+<div class="flex items-center gap-4 text-xs font-mono text-umber mt-2">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                                Oct 14, 2026 14:30
+                            </span>
+<span class="text-whisper">|</span>
+<a class="flex items-center gap-1.5 hover:text-teal transition-colors truncate" href="#">
+<span class="material-symbols-outlined text-[14px]">link</span>
+                                youtube.com/v/aurora-winter
+                            </a>
+</div>
+</div>
+<div class="flex items-center gap-4 ml-4">
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/10 text-success border border-success/20">
+<span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+<span class="text-xs font-medium">Live</span>
+</div>
+<button class="text-umber hover:text-charcoal p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Card 3: Website -->
+<div class="bg-surface border border-whisper rounded-lg p-5 flex items-center gap-6 hover:shadow-[0_4px_20px_-4px_rgba(28,25,23,0.05)] transition-shadow duration-300 group">
+<div class="w-16 h-16 rounded bg-canvas border border-whisper flex flex-col items-center justify-center text-umber group-hover:border-teal/30 transition-colors relative overflow-hidden">
+<!-- Diagonal hatching pattern to indicate scheduled state subtly -->
+<div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #1C1917 0, #1C1917 1px, transparent 1px, transparent 4px);"></div>
+<span class="font-headline font-bold text-lg z-10">WEB</span>
+<span class="material-symbols-outlined text-[14px] mt-0.5 opacity-50 z-10">language</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] font-mono tracking-wider uppercase text-umber bg-canvas px-1.5 py-0.5 rounded border border-whisper">Website</span>
+<h4 class="font-headline font-medium text-charcoal truncate text-base">Winter collection landing page</h4>
+</div>
+<div class="flex items-center gap-4 text-xs font-mono text-umber mt-2">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                                Oct 28, 2026 08:00
+                            </span>
+<span class="text-whisper">|</span>
+<a class="flex items-center gap-1.5 hover:text-teal transition-colors truncate" href="#">
+<span class="material-symbols-outlined text-[14px]">link</span>
+                                aurora.com/winter-lookbook
+                            </a>
+</div>
+</div>
+<div class="flex items-center gap-4 ml-4">
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-softTint text-teal border border-teal/20">
+<span class="material-symbols-outlined text-[14px]">update</span>
+<span class="text-xs font-medium">Scheduled</span>
+</div>
+<button class="text-umber hover:text-charcoal p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer Note -->
+<div class="mt-12 pt-6 border-t border-whisper flex items-start gap-3 text-umber">
+<span class="material-symbols-outlined text-[16px] mt-0.5">info</span>
+<p class="font-mono text-xs leading-relaxed max-w-xl">Publications are recorded after publishing to keep the project memory complete.</p>
+</div>
+</div>
+</main>
+</body></html>

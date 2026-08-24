@@ -1,0 +1,456 @@
+/**
+ * Folio frontend API client.
+ *
+ * Communicates with the Node/Express backend at ${process.env.REACT_APP_API_BASE_URL ||
+ * 'http://localhost:3000/api/v1'}.
+ *
+ * All requests include the Bearer access token obtained from the session.
+ * If the token is missing/expired the client falls back to the demo mock data
+ * so the UI never breaks during the backend rollout.
+ */
+export const API_BASE =
+  typeof process !== 'undefined' && process.env
+    ? (process.env.REACT_APP_API_BASE_URL ||
+        'http://localhost:3000/api/v1')
+    : 'http://localhost:3000/api/v1'
+
+const SESSION_KEY = 'folio.session'
+
+// Read the persisted access token (written on login, mirrors lib/auth.writePersistedSession).
+function getAccessToken(): string | null {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as { accessToken?: string }
+    return parsed.accessToken ?? null
+  } catch {
+    return null
+  }
+}
+
+// fetch wrapper that attaches the Bearer access token (when present) and keeps
+// the cookie-based session fallback via credentials:'include'. On a 401 it
+// transparently refreshes the access token (using the stored refresh token)
+// and retries once, so the UI keeps showing live data past the 15-min TTL.
+function getRefreshToken(): string | null {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY)
+    if (!raw) return null
+    return (JSON.parse(raw) as { refreshToken?: string }).refreshToken ?? null
+  } catch {
+    return null
+  }
+}
+
+function updateStoredTokens(accessToken: string, refreshToken?: string) {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY)
+    if (!raw) return
+    const parsed = JSON.parse(raw) as Record<string, unknown>
+    parsed.accessToken = accessToken
+    if (refreshToken) parsed.refreshToken = refreshToken
+    localStorage.setItem(SESSION_KEY, JSON.stringify(parsed))
+  } catch {
+    /* ignore */
+  }
+}
+
+let refreshInFlight: Promise<string | null> | null = null
+async function tryRefreshToken(): Promise<string | null> {
+  if (refreshInFlight) return refreshInFlight
+  const rt = getRefreshToken()
+  if (!rt) return null
+  refreshInFlight = (async () => {
+    try {
+      const data = (await refreshToken(rt)) as { accessToken: string; refreshToken?: string }
+      updateStoredTokens(data.accessToken, data.refreshToken)
+      return data.accessToken
+    } catch {
+      return null
+    } finally {
+      refreshInFlight = null
+    }
+  })()
+  return refreshInFlight
+}
+
+async function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
+  const token = getAccessToken()
+  const headers = new Headers(options.headers)
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  if (!headers.has('Content-Type') && options.body) headers.set('Content-Type', 'application/json')
+  let res = await fetch(url, { ...options, headers, credentials: 'include' })
+  if (res.status === 401) {
+    const newToken = await tryRefreshToken()
+    if (newToken) {
+      headers.set('Authorization', `Bearer ${newToken}`)
+      res = await fetch(url, { ...options, headers, credentials: 'include' })
+    }
+  }
+  return res
+}
+
+function normalize<T extends Record<string, any>>(doc: T): T & { id: string } {
+  if (!doc || typeof doc !== 'object') return doc as T & { id: string }
+  const { _id, ...rest } = doc as any
+  return { ...rest, id: String(_id ?? rest.id) } as T & { id: string }
+}
+
+function normalizeList<T extends Record<string, any>>(arr: T[] | undefined): (T & { id: string })[] {
+  return Array.isArray(arr) ? arr.map(normalize) : []
+}
+
+export interface SessionUser {
+  id: string
+  name: string
+  email: string
+  role: string
+  title?: string
+  organization?: string
+}
+
+export interface Session {
+  user: SessionUser
+  accessToken: string
+  refreshToken?: string
+  loggedInAt: string
+}
+
+/** Register a new user with name+email+password */
+export async function register(name: string, email: string, password: string): Promise<SessionUser> {
+  const res = await fetch(`${API_BASE}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, password }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => null)
+    throw new Error(body?.error?.message || 'Registration failed')
+  }
+  const body = await res.json()
+  const u = (body.data ?? {}) as SessionUser & { _id?: string }
+  return { ...u, id: u.id ?? u._id ?? '' } as SessionUser
+}
+
+/** Login with email+password; returns { user, accessToken, refreshToken } */
+export async function login(email: string, password: string): Promise<Session> {
+  const res = await fetch(`${API_BASE}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+    credentials: 'include', // cookie-based session fallback
+  })
+  if (!res.ok) {
+    const txt = await res.text()
+    throw new Error(txt || 'Login failed')
+  }
+  const body = (await res.json()) as { data?: Session }
+  const session = body.data ?? (body as Session)
+  // Persist the session so useAuth() picks it up (mirrors lib/auth.writePersistedSession).
+  // Backend users use `_id`; normalize to `id` so readPersistedSession() recognizes it.
+  try {
+    const u = session.user as SessionUser & { _id?: string }
+    const storedUser = { ...u, id: u.id ?? u._id }
+    localStorage.setItem(
+      SESSION_KEY,
+      JSON.stringify({
+        user: storedUser,
+        accessToken: session.accessToken,
+        refreshToken: session.refreshToken,
+        loggedInAt: new Date().toISOString(),
+      }),
+    )
+    // Same-tab sessions never receive native storage events, so notify the
+    // auth hook explicitly - otherwise RequireAuth bounces the user back
+    // to /login even though sign-in succeeded.
+    window.dispatchEvent(new StorageEvent('storage', { key: SESSION_KEY }))
+  } catch {
+    /* storage unavailable - in-memory only */
+  }
+  return session
+}
+
+/** Refresh the access token using a refresh token */
+export async function refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
+  const res = await fetch(`${API_BASE}/auth/refresh`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken }),
+  })
+  if (!res.ok) throw new Error('Token refresh failed')
+  return res.json()
+}
+
+/** Log out - revokes the refresh token on the server */
+export async function logout(refreshToken: string): Promise<{ loggedOut: boolean }> {
+  const res = await fetch(`${API_BASE}/auth/logout`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken }),
+  })
+  return res.json()
+}
+
+/** Get the current user's profile (me endpoint) */
+export async function getMe(): Promise<SessionUser> {
+  const res = await authFetch(`${API_BASE}/auth/me`, {
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error('Failed to fetch profile')
+  const body = (await res.json()) as { data?: SessionUser }
+  const u = body.data ?? (body as SessionUser)
+  // Backend users use `_id`; normalize to `id`.
+  return { ...u, id: (u as SessionUser & { _id?: string }).id ?? (u as SessionUser & { _id?: string })._id }
+}
+
+/** ------------------------------------------------------------------- */
+/* Organizations */
+export interface Org {
+  id: string
+  name: string
+  slug: string
+  createdAt: string
+}
+
+export interface OrgMember {
+  id: string
+  name: string
+  email: string
+  role: string
+  title?: string
+  lastActive?: string
+}
+
+export async function listOrgs(): Promise<Org[]> {
+  const res = await authFetch(`${API_BASE}/organizations`, { credentials: 'include' })
+  if (!res.ok) throw new Error('Failed to list organizations')
+  const body = await res.json()
+  return normalizeList(body.data)
+}
+
+export async function createOrg(name: string, slug: string): Promise<Org> {
+  const res = await authFetch(`${API_BASE}/organizations`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', },
+    body: JSON.stringify({ name, slug }),
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error('Failed to create organization')
+  return res.json()
+}
+
+export async function listMembers(orgId: string): Promise<OrgMember[]> {
+  const res = await authFetch(`${API_BASE}/organizations/${orgId}/members`, {
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error('Failed to list members')
+  const body = await res.json()
+  const items = Array.isArray(body.data) ? body.data : []
+  // Membership docs carry the user under `userId` (populated). Projects
+  // reference the *user* id, so expose that as `id` (not the membership id).
+  return items.map((m: any) => ({
+    id: String(m.userId?._id ?? m._id ?? m.id),
+    name: m.name || m.userId?.name || '',
+    email: m.email || m.userId?.email || '',
+    role: m.role || m.userId?.role || 'member',
+    title: m.title || m.userId?.title || '',
+    lastActive: m.lastActive || '-',
+  }))
+}
+
+export async function addMember(orgId: string, email: string, role: string): Promise<OrgMember> {
+  const res = await authFetch(`${API_BASE}/organizations/${orgId}/members`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', },
+    body: JSON.stringify({ email, role }),
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error('Failed to add member')
+  return res.json()
+}
+
+/** ------------------------------------------------------------------- */
+/* Projects */
+export interface Project {
+  id: string
+  title: string
+  type: string
+  status: string
+  assignee: string
+  creator: string
+  reviewers: string[]
+  updated: string
+  approvedVersion?: string
+}
+
+export async function listProjects(organizationId: string): Promise<Project[]> {
+  const res = await authFetch(`${API_BASE}/projects?organizationId=${encodeURIComponent(organizationId)}`, { credentials: 'include' })
+  if (!res.ok) throw new Error('Failed to list projects')
+  const body = await res.json()
+  // Backend returns { data: [...] } or { data: { items, total } }
+  const arr = Array.isArray(body.data) ? body.data : (body.data?.items ?? [])
+  return normalizeList(arr)
+}
+
+export async function getProject(id: string, organizationId?: string): Promise<any> {
+  const qs = organizationId ? `?organizationId=${encodeURIComponent(organizationId)}` : ''
+  const res = await authFetch(`${API_BASE}/projects/${id}${qs}`, { credentials: 'include' })
+  if (!res.ok) throw new Error('Failed to fetch project')
+  const body = await res.json()
+  return body.data
+}
+
+export async function createProject(input: { title: string; type?: string; organizationId?: string }): Promise<Project> {
+  const res = await authFetch(`${API_BASE}/projects`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error('Failed to create project')
+  const body = await res.json()
+  return normalize(body.data)
+}
+
+/** ------------------------------------------------------------------- */
+/* Notifications */
+export interface AppNotification {
+  id: string
+  type: 'review' | 'comment' | 'revision' | 'approval' | 'schedule' | 'published'
+  title: string
+  desc: string
+  time: string
+  unread: boolean
+}
+
+export async function listNotifications(unreadOnly = false): Promise<AppNotification[]> {
+  const res = await authFetch(`${API_BASE}/notifications?unreadOnly=${unreadOnly}`, {
+    credentials: 'include',
+  })
+  const body = await res.json()
+  if (!res.ok) throw new Error('Failed to list notifications')
+  return (body.data ?? []) as AppNotification[]
+}
+
+export async function markRead(id: string): Promise<AppNotification> {
+  const res = await authFetch(`${API_BASE}/notifications/${id}/read`, {
+    method: 'PATCH',
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error('Failed to mark notification read')
+  return res.json()
+}
+
+export async function markAllRead(): Promise<{ marked: number }> {
+  const res = await authFetch(`${API_BASE}/notifications/read-all`, {
+    method: 'PATCH',
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error('Failed to mark all read')
+  return res.json()
+}
+
+export async function unreadCount(): Promise<{ unread: number }> {
+  const res = await authFetch(`${API_BASE}/notifications/unread-count`, {
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error('Failed to fetch unread count')
+  return res.json()
+}
+
+/** ------------------------------------------------------------------- */
+/* Chat (WhatsApp imports land here, hosted under a "Team Chat" project) */
+export async function listProjectChannels(projectId: string) {
+  const res = await authFetch(`${API_BASE}/projects/${projectId}/channels`, { credentials: 'include' })
+  if (!res.ok) throw new Error('Failed to list channels')
+  const body = await res.json()
+  return normalizeList(body.data)
+}
+
+export async function listChannelMessages(projectId: string, channelId: string) {
+  const res = await authFetch(
+    `${API_BASE}/projects/${projectId}/channels/${channelId}/messages`,
+    { credentials: 'include' },
+  )
+  if (!res.ok) throw new Error('Failed to list messages')
+  const body = await res.json()
+  const items = body.data?.items ?? body.data ?? []
+  return normalizeList(items)
+}
+
+/** ------------------------------------------------------------------- */
+/* Tasks (kanban) */
+export interface TaskItem {
+  id: string
+  projectId: string
+  title: string
+  description?: string
+  status: 'todo' | 'in_progress' | 'in_review' | 'done'
+  priority: 'low' | 'medium' | 'high'
+  assignee: string
+  dueDate?: string | null
+}
+
+export async function listTasks(projectId: string): Promise<TaskItem[]> {
+  const res = await authFetch(`${API_BASE}/projects/${projectId}/tasks`, { credentials: 'include' })
+  if (!res.ok) throw new Error('Failed to list tasks')
+  const body = await res.json()
+  const items = Array.isArray(body.data) ? body.data : (body.data?.items ?? [])
+  return normalizeList(items) as TaskItem[]
+}
+
+/** ------------------------------------------------------------------- */
+/* Comments / reviews */
+export interface CommentItem {
+  id: string
+  projectId: string
+  author: string
+  body: string
+  resolved: boolean
+  createdAt?: string
+}
+
+export async function listComments(projectId: string): Promise<CommentItem[]> {
+  const res = await authFetch(`${API_BASE}/projects/${projectId}/comments`, { credentials: 'include' })
+  if (!res.ok) throw new Error('Failed to list comments')
+  const body = await res.json()
+  const items = Array.isArray(body.data) ? body.data : (body.data?.items ?? [])
+  return normalizeList(items) as CommentItem[]
+}
+
+/** ------------------------------------------------------------------- */
+/* Project sub-resources (inputs, metrics, publications, activity) */
+export async function listInputs(projectId: string) {
+  const res = await authFetch(`${API_BASE}/projects/${projectId}/inputs`, { credentials: 'include' })
+  if (!res.ok) throw new Error('Failed to list inputs')
+  const body = await res.json()
+  return normalizeList(Array.isArray(body.data) ? body.data : (body.data?.items ?? []))
+}
+
+export async function listMetrics(projectId: string) {
+  const res = await authFetch(`${API_BASE}/projects/${projectId}/metrics`, { credentials: 'include' })
+  if (!res.ok) throw new Error('Failed to list metrics')
+  const body = await res.json()
+  return normalizeList(Array.isArray(body.data) ? body.data : (body.data?.items ?? []))
+}
+
+export async function listPublications(projectId: string) {
+  const res = await authFetch(`${API_BASE}/projects/${projectId}/publications`, { credentials: 'include' })
+  if (!res.ok) throw new Error('Failed to list publications')
+  const body = await res.json()
+  return normalizeList(Array.isArray(body.data) ? body.data : (body.data?.items ?? []))
+}
+
+export async function listActivity(projectId: string) {
+  const res = await authFetch(`${API_BASE}/projects/${projectId}/activity`, { credentials: 'include' })
+  if (!res.ok) throw new Error('Failed to list activity')
+  const body = await res.json()
+  return normalizeList(Array.isArray(body.data) ? body.data : (body.data?.items ?? []))
+}
+
+/** ------------------------------------------------------------------- */
+/* Fallback to demo mock data when the backend is unavailable */
+export interface MockResponse<T> {
+  data: T
+  fallback: true
+}

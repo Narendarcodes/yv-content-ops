@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Versions - Winter Lookbook</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;family=Outfit:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        'canvas-paper': '#F7F5F2',
+                        'pure-surface': '#FFFFFF',
+                        'charcoal-ink': '#1C1917',
+                        'muted-umber': '#78716C',
+                        'whisper-line': 'rgba(28,25,23,0.10)',
+                        'deep-teal': '#0F766E',
+                        'deep-teal-press': '#115E59',
+                        'on-accent': '#FFFFFF',
+                        'success': '#15803D',
+                        'warning': '#B45309',
+                        'danger': '#DC2626',
+                        'soft-tint': '#E6F2F0'
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Outfit", "sans-serif"],
+                        display: ["Outfit", "sans-serif"],
+                        body: ["Geist", "sans-serif"],
+                        label: ["JetBrains Mono", "monospace"],
+                        mono: ["JetBrains Mono", "monospace"]
+                    },
+                    boxShadow: {
+                        'diffused': '0 1px 3px 0 rgba(28, 25, 23, 0.05), 0 1px 2px -1px rgba(28, 25, 23, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Spring animation classes */
+        .spring-hover {
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .spring-hover:hover {
+            transform: translateY(-2px);
+        }
+        .spring-active:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body class="bg-canvas-paper text-charcoal-ink font-body min-h-screen flex antialiased">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-screen w-64 border-r border-whisper-line bg-canvas-paper flex flex-col p-4 gap-6 z-20 hidden md:flex">
+<!-- Header -->
+<div class="flex items-center gap-3 mb-2 p-2 hover:bg-soft-tint rounded-lg cursor-pointer transition-colors">
+<div class="w-10 h-10 rounded bg-charcoal-ink flex items-center justify-center text-pure-surface font-headline font-bold text-lg">
+                NL
+            </div>
+<div class="flex-1 overflow-hidden">
+<h1 class="font-headline font-semibold text-charcoal-ink tracking-tight truncate text-sm">Aaryajanani</h1>
+<p class="text-xs text-muted-umber font-body truncate">Northern Lights Studio</p>
+</div>
+<span class="material-symbols-outlined text-muted-umber text-sm">unfold_more</span>
+</div>
+<!-- CTA -->
+<button class="w-full bg-deep-teal hover:bg-deep-teal-press text-on-accent font-headline font-medium py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors spring-active">
+<span class="material-symbols-outlined text-sm">add</span>
+            New Project
+        </button>
+<!-- Main Nav -->
+<div class="flex-1 flex flex-col gap-6 overflow-y-auto mt-2">
+<!-- PROJECTS -->
+<div>
+<h3 class="font-mono text-[10px] uppercase tracking-wider text-muted-umber mb-2 px-3 font-semibold">Projects</h3>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-all duration-300" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-headline text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-soft-tint text-deep-teal rounded-lg px-3 py-2 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">task</span>
+<span class="font-headline text-sm font-medium">Tasks</span>
+</a>
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-all duration-300" href="#">
+<span class="material-symbols-outlined">article</span>
+<span class="font-headline text-sm font-medium">Briefs</span>
+</a>
+</div>
+</div>
+<!-- OPERATIONS -->
+<div>
+<h3 class="font-mono text-[10px] uppercase tracking-wider text-muted-umber mb-2 px-3 font-semibold">Operations</h3>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-all duration-300" href="#">
+<span class="material-symbols-outlined">contract</span>
+<span class="font-headline text-sm font-medium">Contracts</span>
+</a>
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-all duration-300" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-headline text-sm font-medium">Invoices</span>
+</a>
+</div>
+</div>
+<!-- COMMS -->
+<div>
+<h3 class="font-mono text-[10px] uppercase tracking-wider text-muted-umber mb-2 px-3 font-semibold">Comms</h3>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-all duration-300" href="#">
+<span class="material-symbols-outlined">chat</span>
+<span class="font-headline text-sm font-medium">Chat</span>
+</a>
+<a class="flex items-center justify-between text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-all duration-300" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-headline text-sm font-medium">Notifications</span>
+</div>
+<span class="w-5 h-5 rounded-full bg-deep-teal text-pure-surface flex items-center justify-center text-[10px] font-mono font-bold">3</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Footer Nav -->
+<div class="flex flex-col gap-1 border-t border-whisper-line pt-4 mt-auto">
+<div class="flex items-center gap-3 px-2 py-2">
+<div class="w-9 h-9 rounded bg-soft-tint text-deep-teal font-headline font-semibold flex items-center justify-center border border-deep-teal/20 shrink-0">
+                    AR
+                </div>
+<div class="flex-1 overflow-hidden">
+<p class="font-headline text-sm font-semibold text-charcoal-ink truncate">Ananya Rao</p>
+<p class="font-mono text-[10px] text-muted-umber uppercase tracking-wider">Admin</p>
+</div>
+<button class="text-muted-umber hover:text-charcoal-ink transition-colors">
+<span class="material-symbols-outlined text-sm">settings</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-64 min-h-screen">
+<!-- TopNavBar -->
+<header class="w-full sticky top-0 bg-pure-surface border-b border-whisper-line flex justify-between items-center px-6 h-16 z-10">
+<!-- Mobile Brand/Menu (visible on small screens) -->
+<div class="md:hidden flex items-center gap-4">
+<button class="text-charcoal-ink">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<span class="font-headline font-bold text-charcoal-ink">Aaryajanani</span>
+</div>
+<!-- Breadcrumbs / Context (Desktop) -->
+<div class="hidden md:flex items-center text-sm text-muted-umber gap-2">
+<span class="hover:text-deep-teal cursor-pointer font-headline">Projects</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="font-mono text-xs">PRJ-8841</span>
+</div>
+<!-- Global Actions -->
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-umber text-sm">search</span>
+<input class="pl-9 pr-4 py-1.5 bg-canvas-paper border-whisper-line border rounded-full text-sm font-body focus:outline-none focus:ring-1 focus:ring-deep-teal focus:border-deep-teal w-64 transition-all" placeholder="Search..." type="text"/>
+</div>
+<div class="flex items-center gap-2 border-l border-whisper-line pl-4">
+<button class="p-2 text-muted-umber hover:text-deep-teal-press transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-deep-teal rounded-full animate-pulse"></span>
+</button>
+<button class="w-8 h-8 rounded-full bg-soft-tint text-deep-teal font-headline font-semibold flex items-center justify-center border border-deep-teal/20 ml-2">
+                        AR
+                    </button>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 p-6 md:p-8 lg:px-12 max-w-[1440px] mx-auto w-full">
+<!-- Project Header -->
+<div class="mb-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<span class="font-mono text-xs text-muted-umber bg-whisper-line px-2 py-1 rounded">PRJ-8841</span>
+<span class="px-2.5 py-1 rounded-full bg-soft-tint text-deep-teal text-xs font-mono uppercase tracking-wider flex items-center gap-1 font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-deep-teal"></span>
+                                In Review
+                            </span>
+</div>
+<h2 class="font-headline font-bold text-3xl md:text-4xl text-charcoal-ink tracking-tight">Winter Lookbook — Issue 04</h2>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 border border-whisper-line rounded-lg text-charcoal-ink font-headline text-sm font-medium hover:bg-canvas-paper transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">share</span>
+                            Share
+                        </button>
+<button class="px-4 py-2 bg-deep-teal text-pure-surface rounded-lg font-headline text-sm font-medium hover:bg-deep-teal-press transition-colors flex items-center gap-2 spring-active">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            Approve Issue
+                        </button>
+</div>
+</div>
+<!-- Timeline / Workflow Status -->
+<div class="bg-pure-surface border border-whisper-line rounded-lg p-4 mb-8 shadow-diffused">
+<div class="flex items-center justify-between relative">
+<div class="absolute left-6 right-6 top-1/2 h-[1px] bg-whisper-line -z-0"></div>
+<div class="absolute left-6 w-[60%] top-1/2 h-[2px] bg-deep-teal -z-0"></div>
+<!-- Step 1 -->
+<div class="flex flex-col items-center gap-2 z-10 bg-pure-surface px-2">
+<div class="w-6 h-6 rounded-full bg-deep-teal text-pure-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<span class="text-xs font-mono uppercase tracking-wide text-charcoal-ink">Concept</span>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col items-center gap-2 z-10 bg-pure-surface px-2">
+<div class="w-6 h-6 rounded-full bg-deep-teal text-pure-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<span class="text-xs font-mono uppercase tracking-wide text-charcoal-ink">Drafting</span>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col items-center gap-2 z-10 bg-pure-surface px-2">
+<div class="w-6 h-6 rounded-full border-2 border-deep-teal bg-pure-surface text-deep-teal flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-deep-teal"></div>
+</div>
+<span class="text-xs font-mono uppercase tracking-wide text-charcoal-ink font-semibold">Review</span>
+</div>
+<!-- Step 4 -->
+<div class="flex flex-col items-center gap-2 z-10 bg-pure-surface px-2">
+<div class="w-6 h-6 rounded-full border border-whisper-line bg-canvas-paper flex items-center justify-center text-muted-umber">
+<span class="font-mono text-xs">4</span>
+</div>
+<span class="text-xs font-mono uppercase tracking-wide text-muted-umber">Finalize</span>
+</div>
+<!-- Step 5 -->
+<div class="flex flex-col items-center gap-2 z-10 bg-pure-surface px-2">
+<div class="w-6 h-6 rounded-full border border-whisper-line bg-canvas-paper flex items-center justify-center text-muted-umber">
+<span class="font-mono text-xs">5</span>
+</div>
+<span class="text-xs font-mono uppercase tracking-wide text-muted-umber">Publish</span>
+</div>
+</div>
+</div>
+<!-- Tabs -->
+<div class="border-b border-whisper-line flex gap-8">
+<a class="pb-3 text-muted-umber font-headline font-medium hover:text-charcoal-ink transition-colors" href="#">Overview</a>
+<a class="pb-3 text-muted-umber font-headline font-medium hover:text-charcoal-ink transition-colors" href="#">Assets <span class="font-mono text-xs ml-1 bg-whisper-line px-1.5 py-0.5 rounded">24</span></a>
+<a class="pb-3 text-deep-teal border-b-2 border-deep-teal font-headline font-bold" href="#">Versions <span class="font-mono text-xs ml-1 bg-soft-tint px-1.5 py-0.5 rounded">7</span></a>
+<a class="pb-3 text-muted-umber font-headline font-medium hover:text-charcoal-ink transition-colors" href="#">Comments <span class="font-mono text-xs ml-1 bg-whisper-line px-1.5 py-0.5 rounded">12</span></a>
+</div>
+</div>
+<!-- Tab Content: Versions -->
+<div class="max-w-4xl">
+<!-- Tab Header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+<div>
+<h3 class="font-headline font-semibold text-xl text-charcoal-ink mb-1 flex items-center gap-2">
+                            Versions
+                            <span class="font-mono text-sm bg-whisper-line text-muted-umber px-2 py-0.5 rounded-full">7</span>
+</h3>
+<p class="text-sm font-body text-muted-umber">Every uploaded revision of this project.</p>
+</div>
+<button class="px-4 py-2 bg-deep-teal text-pure-surface rounded-lg font-headline text-sm font-medium hover:bg-deep-teal-press transition-colors flex items-center gap-2 spring-active self-start">
+<span class="material-symbols-outlined text-sm">attach_file</span>
+                        Upload version
+                    </button>
+</div>
+<!-- Upload Dropzone -->
+<div class="bg-pure-surface border-2 border-dashed border-whisper-line rounded-xl p-8 mb-10 flex flex-col items-center justify-center text-center hover:bg-soft-tint/30 hover:border-deep-teal/30 transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-full bg-canvas-paper group-hover:bg-soft-tint flex items-center justify-center mb-4 transition-colors">
+<span class="material-symbols-outlined text-muted-umber group-hover:text-deep-teal transition-colors text-2xl">cloud_upload</span>
+</div>
+<h4 class="font-headline font-medium text-charcoal-ink mb-1">Drop files here or browse</h4>
+<p class="text-sm font-body text-muted-umber mb-4">PDF, image or document — up to 50 MB</p>
+<div class="w-full max-w-md bg-canvas-paper rounded-lg p-3 flex items-start gap-3 border border-whisper-line text-left mt-2" onclick="event.stopPropagation()">
+<span class="material-symbols-outlined text-muted-umber mt-0.5 text-sm">edit</span>
+<div class="w-full">
+<label class="sr-only" for="change-summary">Change summary</label>
+<input class="w-full bg-transparent border-none p-0 text-sm font-body focus:ring-0 text-charcoal-ink placeholder:text-muted-umber" id="change-summary" placeholder="Optional: Add a brief change summary for this version..." type="text"/>
+</div>
+</div>
+</div>
+<!-- Version List Stack -->
+<div class="flex flex-col gap-4 relative">
+<!-- Vertical Timeline Line -->
+<div class="absolute left-8 top-8 bottom-8 w-px bg-whisper-line -z-10 hidden sm:block"></div>
+<!-- v0.4 (Current) -->
+<div class="bg-pure-surface border border-deep-teal/20 rounded-xl p-5 shadow-diffused spring-hover relative overflow-hidden">
+<!-- Current Indicator Strip -->
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-deep-teal"></div>
+<div class="flex flex-col md:flex-row gap-5 items-start">
+<div class="flex items-center gap-4 md:w-48 shrink-0">
+<div class="w-16 h-16 bg-soft-tint rounded border border-deep-teal/10 flex flex-col items-center justify-center text-deep-teal shrink-0">
+<span class="font-mono font-bold text-lg">v0.4</span>
+</div>
+<div class="hidden sm:block">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-semibold bg-soft-tint text-deep-teal uppercase tracking-wider mb-1">Current</span>
+<div class="text-xs text-muted-umber font-mono">2h ago</div>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between mb-2">
+<h4 class="font-headline font-semibold text-charcoal-ink truncate pr-4">Revised layouts</h4>
+<!-- Mobile Status -->
+<div class="sm:hidden flex items-center gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-semibold bg-soft-tint text-deep-teal uppercase tracking-wider">Current</span>
+</div>
+</div>
+<p class="text-sm font-body text-muted-umber mb-4 leading-relaxed">Adjusted typography for better readability in the editorial sections.</p>
+<div class="flex flex-wrap items-center gap-4 text-xs">
+<div class="flex items-center gap-2 text-charcoal-ink">
+<div class="w-5 h-5 rounded-full bg-canvas-paper border border-whisper-line flex items-center justify-center text-[10px] font-headline font-bold">AR</div>
+<span class="font-headline">Ananya Rao</span>
+</div>
+<div class="flex items-center gap-1.5 text-muted-umber bg-canvas-paper px-2 py-1 rounded border border-whisper-line max-w-[200px] sm:max-w-xs">
+<span class="material-symbols-outlined text-[14px]">description</span>
+<span class="truncate font-mono">Lookbook-v0.4.pdf</span>
+</div>
+</div>
+</div>
+<div class="shrink-0 flex items-center self-end md:self-auto mt-4 md:mt-0">
+<button class="px-3 py-1.5 border border-whisper-line text-charcoal-ink hover:border-deep-teal hover:text-deep-teal rounded flex items-center gap-1.5 transition-colors text-sm font-headline font-medium">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+                                    View
+                                </button>
+<button class="ml-2 w-8 h-8 flex items-center justify-center rounded text-muted-umber hover:bg-canvas-paper hover:text-charcoal-ink transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- v0.3 (Approved) -->
+<div class="bg-pure-surface border border-whisper-line rounded-xl p-5 shadow-sm hover:shadow-diffused transition-shadow group relative">
+<div class="flex flex-col md:flex-row gap-5 items-start">
+<div class="flex items-center gap-4 md:w-48 shrink-0">
+<div class="w-16 h-16 bg-canvas-paper rounded border border-whisper-line flex flex-col items-center justify-center text-muted-umber shrink-0 group-hover:border-deep-teal/30 transition-colors">
+<span class="font-mono font-bold text-lg">v0.3</span>
+</div>
+<div class="hidden sm:block">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-semibold bg-green-50 text-success uppercase tracking-wider mb-1">Approved</span>
+<div class="text-xs text-muted-umber font-mono">1d ago</div>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between mb-2">
+<h4 class="font-headline font-semibold text-charcoal-ink truncate pr-4">Color correction</h4>
+<!-- Mobile Status -->
+<div class="sm:hidden flex items-center gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-semibold bg-green-50 text-success uppercase tracking-wider">Approved</span>
+</div>
+</div>
+<p class="text-sm font-body text-muted-umber mb-4 leading-relaxed">Updated hero image tones for the Northern Lights collection.</p>
+<div class="flex flex-wrap items-center gap-4 text-xs">
+<div class="flex items-center gap-2 text-charcoal-ink">
+<div class="w-5 h-5 rounded-full bg-canvas-paper border border-whisper-line flex items-center justify-center text-[10px] font-headline font-bold">MR</div>
+<span class="font-headline">Marcus R.</span>
+</div>
+<div class="flex items-center gap-1.5 text-muted-umber bg-canvas-paper px-2 py-1 rounded border border-whisper-line max-w-[200px] sm:max-w-xs">
+<span class="material-symbols-outlined text-[14px]">description</span>
+<span class="truncate font-mono">Lookbook-v0.3.pdf</span>
+</div>
+</div>
+</div>
+<div class="shrink-0 flex items-center self-end md:self-auto mt-4 md:mt-0">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-whisper-line text-muted-umber hover:text-deep-teal hover:border-deep-teal transition-colors" title="Download">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+<button class="ml-2 w-8 h-8 flex items-center justify-center rounded text-muted-umber hover:bg-canvas-paper hover:text-charcoal-ink transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- v0.2 (Superseded) -->
+<div class="bg-pure-surface border border-whisper-line rounded-xl p-5 shadow-sm opacity-80 hover:opacity-100 transition-opacity relative">
+<div class="flex flex-col md:flex-row gap-5 items-start">
+<div class="flex items-center gap-4 md:w-48 shrink-0">
+<div class="w-16 h-16 bg-canvas-paper rounded border border-whisper-line flex flex-col items-center justify-center text-muted-umber shrink-0 opacity-70">
+<span class="font-mono font-bold text-lg">v0.2</span>
+</div>
+<div class="hidden sm:block">
+<span class="inline-flex items-center text-xs font-mono font-semibold text-muted-umber uppercase tracking-wider mb-1">Superseded</span>
+<div class="text-xs text-muted-umber font-mono">3d ago</div>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between mb-2">
+<h4 class="font-headline font-semibold text-charcoal-ink truncate pr-4 text-opacity-90">Client feedback</h4>
+<!-- Mobile Status -->
+<div class="sm:hidden flex items-center gap-2">
+<span class="inline-flex items-center text-xs font-mono font-semibold text-muted-umber uppercase tracking-wider">Superseded</span>
+</div>
+</div>
+<p class="text-sm font-body text-muted-umber mb-4 leading-relaxed">Incorporated revisions from the marketing team regarding product placement.</p>
+<div class="flex flex-wrap items-center gap-4 text-xs">
+<div class="flex items-center gap-2 text-charcoal-ink">
+<div class="w-5 h-5 rounded-full bg-canvas-paper border border-whisper-line flex items-center justify-center text-[10px] font-headline font-bold">EK</div>
+<span class="font-headline">Elena K.</span>
+</div>
+<div class="flex items-center gap-1.5 text-muted-umber bg-canvas-paper px-2 py-1 rounded border border-whisper-line max-w-[200px] sm:max-w-xs">
+<span class="material-symbols-outlined text-[14px]">description</span>
+<span class="truncate font-mono">Lookbook-v0.2.pdf</span>
+</div>
+</div>
+</div>
+<div class="shrink-0 flex items-center self-end md:self-auto mt-4 md:mt-0">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-whisper-line text-muted-umber hover:text-deep-teal hover:border-deep-teal transition-colors" title="Download">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+<button class="ml-2 w-8 h-8 flex items-center justify-center rounded text-muted-umber hover:bg-canvas-paper hover:text-charcoal-ink transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- v0.1 (Superseded) -->
+<div class="bg-pure-surface border border-whisper-line rounded-xl p-5 shadow-sm opacity-80 hover:opacity-100 transition-opacity relative">
+<div class="flex flex-col md:flex-row gap-5 items-start">
+<div class="flex items-center gap-4 md:w-48 shrink-0">
+<div class="w-16 h-16 bg-canvas-paper rounded border border-whisper-line flex flex-col items-center justify-center text-muted-umber shrink-0 opacity-70">
+<span class="font-mono font-bold text-lg">v0.1</span>
+</div>
+<div class="hidden sm:block">
+<span class="inline-flex items-center text-xs font-mono font-semibold text-muted-umber uppercase tracking-wider mb-1">Superseded</span>
+<div class="text-xs text-muted-umber font-mono">5d ago</div>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between mb-2">
+<h4 class="font-headline font-semibold text-charcoal-ink truncate pr-4 text-opacity-90">Initial Draft</h4>
+<!-- Mobile Status -->
+<div class="sm:hidden flex items-center gap-2">
+<span class="inline-flex items-center text-xs font-mono font-semibold text-muted-umber uppercase tracking-wider">Superseded</span>
+</div>
+</div>
+<p class="text-sm font-body text-muted-umber mb-4 leading-relaxed">First complete assembly of winter lookbook elements.</p>
+<div class="flex flex-wrap items-center gap-4 text-xs">
+<div class="flex items-center gap-2 text-charcoal-ink">
+<div class="w-5 h-5 rounded-full bg-canvas-paper border border-whisper-line flex items-center justify-center text-[10px] font-headline font-bold">AR</div>
+<span class="font-headline">Ananya Rao</span>
+</div>
+<div class="flex items-center gap-1.5 text-muted-umber bg-canvas-paper px-2 py-1 rounded border border-whisper-line max-w-[200px] sm:max-w-xs">
+<span class="material-symbols-outlined text-[14px]">description</span>
+<span class="truncate font-mono">Lookbook-v0.1.pdf</span>
+</div>
+</div>
+</div>
+<div class="shrink-0 flex items-center self-end md:self-auto mt-4 md:mt-0">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-whisper-line text-muted-umber hover:text-deep-teal hover:border-deep-teal transition-colors" title="Download">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+<button class="ml-2 w-8 h-8 flex items-center justify-center rounded text-muted-umber hover:bg-canvas-paper hover:text-charcoal-ink transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- v0.0 (Superseded) -->
+<div class="bg-pure-surface border border-whisper-line rounded-xl p-5 shadow-sm opacity-80 hover:opacity-100 transition-opacity relative">
+<div class="flex flex-col md:flex-row gap-5 items-start">
+<div class="flex items-center gap-4 md:w-48 shrink-0">
+<div class="w-16 h-16 bg-canvas-paper rounded border border-whisper-line flex flex-col items-center justify-center text-muted-umber shrink-0 opacity-70">
+<span class="font-mono font-bold text-lg">v0.0</span>
+</div>
+<div class="hidden sm:block">
+<span class="inline-flex items-center text-xs font-mono font-semibold text-muted-umber uppercase tracking-wider mb-1">Superseded</span>
+<div class="text-xs text-muted-umber font-mono">1w ago</div>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between mb-2">
+<h4 class="font-headline font-semibold text-charcoal-ink truncate pr-4 text-opacity-90">Moodboard &amp; Concept</h4>
+<!-- Mobile Status -->
+<div class="sm:hidden flex items-center gap-2">
+<span class="inline-flex items-center text-xs font-mono font-semibold text-muted-umber uppercase tracking-wider">Superseded</span>
+</div>
+</div>
+<p class="text-sm font-body text-muted-umber mb-4 leading-relaxed">Initial concept boards and atmospheric direction.</p>
+<div class="flex flex-wrap items-center gap-4 text-xs">
+<div class="flex items-center gap-2 text-charcoal-ink">
+<div class="w-5 h-5 rounded-full bg-canvas-paper border border-whisper-line flex items-center justify-center text-[10px] font-headline font-bold">MR</div>
+<span class="font-headline">Marcus R.</span>
+</div>
+<div class="flex items-center gap-1.5 text-muted-umber bg-canvas-paper px-2 py-1 rounded border border-whisper-line max-w-[200px] sm:max-w-xs">
+<span class="material-symbols-outlined text-[14px]">grid_view</span>
+<span class="truncate font-mono">Concept-v0.pdf</span>
+</div>
+</div>
+</div>
+<div class="shrink-0 flex items-center self-end md:self-auto mt-4 md:mt-0">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-whisper-line text-muted-umber hover:text-deep-teal hover:border-deep-teal transition-colors" title="Download">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+<button class="ml-2 w-8 h-8 flex items-center justify-center rounded text-muted-umber hover:bg-canvas-paper hover:text-charcoal-ink transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- End of list marker -->
+<div class="py-8 text-center text-xs text-muted-umber font-mono uppercase tracking-wider">
+                    END OF REVISION HISTORY
+                </div>
+</div>
+</main>
+</div>
+</body></html>

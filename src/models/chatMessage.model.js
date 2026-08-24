@@ -12,6 +12,9 @@ const ChatMessageSchema = new mongoose.Schema(
     parentId: { type: mongoose.Schema.Types.ObjectId, ref: 'ChatMessage', default: null },
     body: { type: String, required: true, trim: true, maxlength: 10000 },
     attachments: [{ type: String, maxlength: 2000 }],
+    // Real timestamp of the message (e.g. from a WhatsApp export). Falls back
+    // to `createdAt` (insert time) when not set.
+    sentAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

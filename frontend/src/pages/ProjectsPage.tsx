@@ -1,11 +1,17 @@
 import { Link } from 'react-router-dom'
+import { Plus, Search } from 'lucide-react'
 import { useState } from 'react'
 import Chip, { statusTone, PageHeader, Tabs } from '../components/primitives'
 import Avatar from '../components/ui'
-import { projects, team, type Project } from '../lib/mockData'
+import { type Project } from '../lib/types'
 import { statusLabel } from '../lib/format'
+import { useTeam, useProjects } from '../lib/data'
 
-const memberOf = (id: string) => team.find((m) => m.id === id)
+let teamRef: ReturnType<typeof useTeam>['team'] = []
+export function setTeamRef(t: typeof teamRef) {
+  teamRef = t
+}
+const memberOf = (id: string) => teamRef.find((m) => m.id === id)
 
 const PHASES: { id: string; label: string; match: (p: Project) => boolean }[] = [
   { id: 'all', label: 'All', match: () => true },
@@ -20,6 +26,10 @@ export default function ProjectsPage() {
   const [query, setQuery] = useState('')
   const phase = PHASES.find((x) => x.id === tab)!
 
+  const { projects } = useProjects()
+  const { team } = useTeam()
+  setTeamRef(team)
+
   const filtered = projects.filter((p) => {
     const inTab = phase.match(p)
     const q = query.trim().toLowerCase()
@@ -33,12 +43,10 @@ export default function ProjectsPage() {
     <div className="fade-in">
       <PageHeader
         title="Projects"
-        subtitle="Every content project across its lifecycle — from production to published."
+        subtitle="Every content project, from production through published."
         actions={
           <Link to="/concepts" className="btn-primary">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M7 1.5v11M1.5 7h11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
+            <Plus strokeWidth={2} />
             Start from a concept
           </Link>
         }
@@ -54,10 +62,7 @@ export default function ProjectsPage() {
           />
         </div>
         <div className="relative w-56">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-umber/60">
-            <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.3" />
-            <path d="M9.5 9.5L12.5 12.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-          </svg>
+          <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-umber/60" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -104,7 +109,7 @@ export default function ProjectsPage() {
                       <span className="text-sm text-ink/80">{memberOf(p.assignee)?.name}</span>
                     </span>
                   </td>
-                  <td className="px-5 py-3.5 text-sm text-umber">{p.platform ?? '—'}</td>
+                  <td className="px-5 py-3.5 text-sm text-umber">{p.platform ?? '-'}</td>
                   <td className="px-5 py-3.5 font-mono text-[11px] text-umber/70">{p.updated}</td>
                 </tr>
               ))}

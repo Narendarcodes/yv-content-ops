@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Winter Lookbook — Issue 04 | Brief</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&amp;family=Geist:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        canvas: "#F7F5F2",
+                        surface: "#FFFFFF",
+                        charcoal: "#1C1917",
+                        umber: "#78716C",
+                        whisper: "rgba(28,25,23,0.10)",
+                        accent: {
+                            DEFAULT: "#0F766E",
+                            hover: "#115E59",
+                            on: "#FFFFFF"
+                        },
+                        status: {
+                            success: "#15803D",
+                            warning: "#B45309",
+                            danger: "#DC2626",
+                            tint: "#E6F2F0"
+                        }
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Public Sans", "sans-serif"],
+                        display: ["Public Sans", "sans-serif"],
+                        body: ["Geist", "sans-serif"],
+                        label: ["Public Sans", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"]
+                    },
+                    boxShadow: {
+                        'diffused': '0 1px 3px 0 rgba(28, 25, 23, 0.05), 0 1px 2px -1px rgba(28, 25, 23, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Spring animation classes */
+        .spring-hover {
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .spring-hover:hover {
+            transform: translateY(-2px);
+        }
+        .spring-press:active {
+            transform: scale(0.98);
+        }
+        
+        /* Custom scrollbar for textareas */
+        textarea::-webkit-scrollbar {
+            width: 8px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background-color: rgba(28,25,23,0.2);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-canvas text-charcoal font-body antialiased selection:bg-accent selection:text-white flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<nav class="bg-[#F7F5F2] h-screen w-64 border-r border-[#1C19171A] flex flex-col p-6 hidden md:flex shrink-0">
+<div class="mb-10">
+<h1 class="font-headline font-bold text-[#1C1917] text-lg tracking-tight">Aaryajanani</h1>
+<p class="font-body text-label text-[#78716C] mt-1">Editorial Studio</p>
+</div>
+<div class="flex-1 overflow-y-auto">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 px-3 py-2 text-[#78716C] hover:text-[#1C1917] hover:bg-[#1C19170D] transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-charcoal transition-colors">dashboard</span>
+<span>Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 bg-[#E6F2F0] text-[#0F766E] rounded-lg font-medium" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">folder_open</span>
+<span>Projects</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 text-[#78716C] hover:text-[#1C1917] hover:bg-[#1C19170D] transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-charcoal transition-colors">auto_stories</span>
+<span>Library</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 text-[#78716C] hover:text-[#1C1917] hover:bg-[#1C19170D] transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-charcoal transition-colors">group</span>
+<span>Team</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="mt-auto pt-6 border-t border-whisper space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-[#78716C] hover:text-[#1C1917] hover:bg-[#1C19170D] transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-charcoal transition-colors">settings</span>
+<span>Settings</span>
+</a>
+<button class="w-full mt-4 bg-charcoal text-white rounded-lg px-4 py-2.5 font-medium flex items-center justify-center gap-2 hover:bg-black transition-colors active:scale-[0.98] duration-200">
+<span class="material-symbols-outlined text-sm">add</span>
+                New Project
+            </button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+<!-- TopNavBar (Review Center Style adapted for Project Context) -->
+<header class="bg-white w-full border-b border-[#1C19171A] flex flex-col sticky top-0 z-50 shrink-0">
+<!-- Project Header -->
+<div class="flex justify-between items-center px-8 h-16 border-b border-whisper">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-umber hover:text-charcoal">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-status-tint flex items-center justify-center text-accent">
+<span class="material-symbols-outlined text-sm">auto_awesome_mosaic</span>
+</div>
+<div>
+<h2 class="font-headline font-bold text-charcoal leading-tight">Winter Lookbook — Issue 04</h2>
+<p class="text-xs text-umber font-mono">ID: PRJ-8492</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-umber hover:text-accent transition-colors" title="Notifications">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-umber hover:text-accent transition-colors" title="History">
+<span class="material-symbols-outlined">history</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-canvas border border-whisper overflow-hidden cursor-pointer hover:border-umber transition-colors">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A small circular avatar image showing a minimalist portrait of a woman in an editorial style, warm lighting, neutral background, reflecting a professional creative persona in a bright studio environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqRnn7OF0UqqvtJdexjL-2esSNaduZLB7-EIdTO3EWG8Wv8H4ZPA7hIiJ7oSf7IZwFF9KzvuDEVEAHbOQc6d32NOhTj3le_O9jWiNfP_gBh5T3wFXEZAzqd8AyqEDB9u2BiM7sCcKj0Xxv31gYnNapVh_g7akRZzIBs1ls2llwK2iJaZxL71k_WLUBRRaxnwEk5Sexzu5-EfvAmwf6FkDkG--OtVwyBweUb5NtkeXb4fI_q_WDU7Mmv1Dn6YAXmAWrT0KNdTLoKhI"/>
+</div>
+</div>
+</div>
+<!-- Tab Navigation -->
+<div class="px-8 pt-4 flex gap-6 overflow-x-auto no-scrollbar font-headline text-sm font-semibold">
+<a class="text-[#78716C] hover:text-[#1C1917] pb-4 hover:text-[#0F766E] transition-colors active:opacity-80 transition-opacity whitespace-nowrap" href="#">Overview</a>
+<a class="text-[#78716C] hover:text-[#1C1917] pb-4 hover:text-[#0F766E] transition-colors active:opacity-80 transition-opacity whitespace-nowrap" href="#">Versions</a>
+<a class="text-[#78716C] hover:text-[#1C1917] pb-4 hover:text-[#0F766E] transition-colors active:opacity-80 transition-opacity whitespace-nowrap" href="#">Tasks</a>
+<a class="text-[#0F766E] border-b-2 border-[#0F766E] pb-4 active:opacity-80 transition-opacity whitespace-nowrap" href="#">Brief</a>
+<a class="text-[#78716C] hover:text-[#1C1917] pb-4 hover:text-[#0F766E] transition-colors active:opacity-80 transition-opacity whitespace-nowrap" href="#">Chat</a>
+<a class="text-[#78716C] hover:text-[#1C1917] pb-4 hover:text-[#0F766E] transition-colors active:opacity-80 transition-opacity whitespace-nowrap" href="#">Review</a>
+</div>
+</header>
+<!-- Tab Content Canvas -->
+<div class="flex-1 overflow-y-auto p-8 relative">
+<div class="max-w-6xl mx-auto">
+<!-- Brief Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<h1 class="font-headline font-bold text-3xl tracking-tight text-charcoal">Creative brief</h1>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-canvas text-umber border border-whisper">
+                                Draft
+                            </span>
+</div>
+<p class="text-umber">Last edited by Ananya Rao • 2d ago</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5 text-status-success text-sm font-mono mr-2">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span>Saved</span>
+</div>
+<button class="px-4 py-2 rounded-lg font-medium border border-whisper text-charcoal hover:bg-canvas transition-colors active:scale-[0.98] spring-press">
+                            Preview
+                        </button>
+<button class="px-4 py-2 rounded-lg font-medium bg-accent text-white hover:bg-accent-hover transition-colors active:scale-[0.98] spring-press shadow-sm">
+                            Save brief
+                        </button>
+</div>
+</div>
+<!-- Main Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left Column (Wide) - Form Sections -->
+<div class="lg:col-span-2 space-y-6">
+<!-- 01 Goal -->
+<div class="bg-surface rounded-lg border border-whisper shadow-diffused p-6 relative group focus-within:border-accent transition-colors">
+<div class="absolute top-6 left-6 text-xs font-mono text-umber">01</div>
+<div class="pl-8">
+<label class="block font-headline font-semibold text-charcoal mb-2" for="brief-goal">Goal</label>
+<textarea class="w-full bg-transparent border-0 p-0 text-charcoal placeholder-umber focus:ring-0 resize-none leading-relaxed" id="brief-goal" rows="3">Produce the Winter 2026 lookbook to drive pre-order traffic for the Aurora collection.</textarea>
+</div>
+</div>
+<!-- 02 Audience -->
+<div class="bg-surface rounded-lg border border-whisper shadow-diffused p-6 relative group focus-within:border-accent transition-colors">
+<div class="absolute top-6 left-6 text-xs font-mono text-umber">02</div>
+<div class="pl-8">
+<label class="block font-headline font-semibold text-charcoal mb-2" for="brief-audience">Audience</label>
+<textarea class="w-full bg-transparent border-0 p-0 text-charcoal placeholder-umber focus:ring-0 resize-none leading-relaxed" id="brief-audience" rows="3">Urban women 25–40, style-conscious, existing brand followers plus new cold audience via paid social.</textarea>
+</div>
+</div>
+<!-- 03 Deliverables -->
+<div class="bg-surface rounded-lg border border-whisper shadow-diffused p-6 relative group">
+<div class="absolute top-6 left-6 text-xs font-mono text-umber">03</div>
+<div class="pl-8">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline font-semibold text-charcoal">Deliverables</h3>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-3 rounded-lg border border-whisper bg-canvas group/item hover:border-umber transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-white border border-whisper flex items-center justify-center text-charcoal">
+<span class="material-symbols-outlined text-sm">description</span>
+</div>
+<span class="font-medium">Lookbook PDF</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono bg-white text-umber border border-whisper">Print</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-sm font-mono text-umber">Oct 14</span>
+<button class="text-umber hover:text-status-danger opacity-0 group-hover/item:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg border border-whisper bg-canvas group/item hover:border-umber transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-white border border-whisper flex items-center justify-center text-charcoal">
+<span class="material-symbols-outlined text-sm">movie</span>
+</div>
+<span class="font-medium">Social cutdowns</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono bg-white text-umber border border-whisper">Video</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-sm font-mono text-umber">Oct 20</span>
+<button class="text-umber hover:text-status-danger opacity-0 group-hover/item:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg border border-whisper bg-canvas group/item hover:border-umber transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-white border border-whisper flex items-center justify-center text-charcoal">
+<span class="material-symbols-outlined text-sm">web</span>
+</div>
+<span class="font-medium">Lookbook landing page</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono bg-white text-umber border border-whisper">Web</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-sm font-mono text-umber">Oct 28</span>
+<button class="text-umber hover:text-status-danger opacity-0 group-hover/item:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+</div>
+</div>
+<button class="mt-4 flex items-center gap-2 text-sm font-medium text-accent hover:text-accent-hover transition-colors">
+<span class="material-symbols-outlined text-sm">add</span>
+                                    Add deliverable
+                                </button>
+</div>
+</div>
+<!-- 04 References -->
+<div class="bg-surface rounded-lg border border-whisper shadow-diffused p-6 relative group">
+<div class="absolute top-6 left-6 text-xs font-mono text-umber">04</div>
+<div class="pl-8">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline font-semibold text-charcoal">References</h3>
+<button class="text-sm text-accent hover:underline">Upload assets</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<!-- Reference 1 -->
+<div class="group/ref relative aspect-[4/5] rounded-lg overflow-hidden border border-whisper spring-hover bg-canvas">
+<img alt="Warm neutrals reference" class="w-full h-full object-cover" data-alt="A warm neutral toned fashion editorial photo, minimalist studio setting, soft shadows, featuring a model in layered winter clothing, high key lighting, professional magazine style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyaoUI9GZPzOTFYn1_FGSAHzok0hygpUAjELzD2kmqur630QreLXyV-lHQQDV6rE8PW-mzd3krmF0gzfilcLLyeq1kZlrn73Th3EcnxFBeqFtKgno8Bj4_wcWwkdWp8QnamybIcBmRmBuGEYFMA35vDJXZ1h2MqSMW2rgY7zm5At1yTUeSj1IvX9BRT-PfUzSXWCHCq_krC7r6y4fhdD_OtwprX80ixu0Msb5Bbtmp6vyUaoSFAiP9AwDxqkhuotlCUqt2lG5pTd8"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/ref:opacity-100 transition-opacity flex flex-col justify-end p-3">
+<p class="text-white text-xs font-medium truncate">Mood: warm neutrals</p>
+</div>
+<button class="absolute top-2 right-2 w-6 h-6 bg-white/90 rounded flex items-center justify-center text-charcoal opacity-0 group-hover/ref:opacity-100 transition-opacity hover:bg-white hover:text-status-danger shadow-sm">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+<!-- Reference 2 -->
+<div class="group/ref relative aspect-[4/5] rounded-lg overflow-hidden border border-whisper spring-hover bg-canvas">
+<img alt="Editorial grids reference" class="w-full h-full object-cover" data-alt="A graphic design layout reference showing a clean editorial grid, typography focused, asymmetric image placement on a pristine white background, modern and sophisticated aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANy3YWW3_0a-KhsCW2cuIpTfqrFCPFrq8_tsT1B8aCsISiBvKdUCFee0g_1SttB-D_fvjvSf1KVJvnesoBFuFABv-Bnj_Wgmm2g6zubFQOTv_2L6S3fDP_8I7M7PVwN8QoPSeNhcwMvvFMjL7YABeOSkVNG71238ODw8bS9I2rErJdb8b9uyL_iPYGoAiq6TSQQizMIH19aTSErXT6u7Uc-uny36T32gE_j907A94w3LLylydy1zrVEZ9cP9hroqu-KYdIuRvp4Zo"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/ref:opacity-100 transition-opacity flex flex-col justify-end p-3">
+<p class="text-white text-xs font-medium truncate">Mood: editorial grids</p>
+</div>
+<button class="absolute top-2 right-2 w-6 h-6 bg-white/90 rounded flex items-center justify-center text-charcoal opacity-0 group-hover/ref:opacity-100 transition-opacity hover:bg-white hover:text-status-danger shadow-sm">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+<!-- Reference 3 -->
+<div class="group/ref relative aspect-[4/5] rounded-lg overflow-hidden border border-whisper spring-hover bg-canvas">
+<img alt="Night city reference" class="w-full h-full object-cover" data-alt="A dramatic night city photography shot, moody lighting, neon reflections on wet pavement, cinematic framing, deep shadows contrasting with bright urban lights, evoking a premium urban lifestyle." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCor3NZMGf8yOrjOrwI63F2_JiDS4pW82Ppvqyt4rpsAMfvRNHperV7sEf28MNI84SgI6NkQJyCfttFkbdoh8-Pryq-IKR_J1IB_k1tsql6Q560hBfCQ5cW4Nwg8IWkVKwedxpVEdQH6_0q9kBcQmZlSVE2gJC_pIlZkaIx3NciTUPT8SZQiwB1zKHqojiPXHy9zEsRPeymH6MtEQBVRGH-fzSCE79xxKrjpYFFWSkWygjwmPMophCGNEnYF4WdcmggZgOGCBAoBBE"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/ref:opacity-100 transition-opacity flex flex-col justify-end p-3">
+<p class="text-white text-xs font-medium truncate">Mood: night city</p>
+</div>
+<button class="absolute top-2 right-2 w-6 h-6 bg-white/90 rounded flex items-center justify-center text-charcoal opacity-0 group-hover/ref:opacity-100 transition-opacity hover:bg-white hover:text-status-danger shadow-sm">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 05 Deadline -->
+<div class="bg-surface rounded-lg border border-whisper shadow-diffused p-6 relative group focus-within:border-accent transition-colors">
+<div class="absolute top-6 left-6 text-xs font-mono text-umber">05</div>
+<div class="pl-8">
+<label class="block font-headline font-semibold text-charcoal mb-2" for="brief-deadline">Delivery deadline</label>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-umber">calendar_today</span>
+<input class="bg-transparent border-0 p-0 text-charcoal font-mono focus:ring-0" id="brief-deadline" readonly="" type="text" value="Oct 14, 2026"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column (Narrow) - Meta & Sidebar -->
+<div class="lg:col-span-1 space-y-6">
+<!-- Brief Health Card -->
+<div class="bg-surface rounded-lg border border-whisper shadow-diffused sticky top-6">
+<div class="p-5 border-b border-whisper">
+<h3 class="font-headline font-semibold text-charcoal mb-4">Brief health</h3>
+<div class="flex justify-between text-sm mb-2 font-mono">
+<span class="text-charcoal">Completion</span>
+<span class="text-accent">80%</span>
+</div>
+<div class="w-full h-1.5 bg-canvas rounded-full overflow-hidden">
+<div class="h-full bg-accent w-4/5 rounded-full"></div>
+</div>
+</div>
+<div class="p-5 border-b border-whisper">
+<ul class="space-y-3">
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-status-success text-[18px]">check_circle</span>
+<span class="text-charcoal">Goal defined</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-status-success text-[18px]">check_circle</span>
+<span class="text-charcoal">Audience targeted</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-status-success text-[18px]">check_circle</span>
+<span class="text-charcoal">Deliverables listed</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-status-success text-[18px]">check_circle</span>
+<span class="text-charcoal">References attached</span>
+</li>
+<li class="flex items-center gap-3 text-sm">
+<span class="material-symbols-outlined text-umber text-[18px]">radio_button_unchecked</span>
+<span class="text-umber">Budget allocated</span>
+</li>
+</ul>
+</div>
+<div class="p-5 bg-status-tint/30 rounded-b-lg">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-accent text-[20px] shrink-0">lightbulb</span>
+<p class="text-sm text-charcoal leading-relaxed">
+                                        A complete brief unlocks faster reviews. Consider adding a rough budget estimate before sending for approval.
+                                    </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="h-16"></div> <!-- Bottom padding -->
+</div>
+</div>
+</main>
+</body></html>

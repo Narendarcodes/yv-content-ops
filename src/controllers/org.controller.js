@@ -50,4 +50,13 @@ async function updateMember(req, res, next) {
   }
 }
 
-module.exports = { createOrg, addMember, listMembers, updateMember };
+async function listOrgs(req, res, next) {
+  try {
+    const orgs = await orgService.listUserOrganizations(req.user._id);
+    res.json({ data: orgs });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { createOrg, addMember, listMembers, updateMember, listOrgs };

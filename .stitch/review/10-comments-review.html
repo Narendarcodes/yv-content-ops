@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Review - Winter Lookbook Issue 04</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&amp;family=Geist:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        canvas: "#F7F5F2",
+                        surface: "#FFFFFF",
+                        charcoal: "#1C1917",
+                        umber: "#78716C",
+                        whisper: "rgba(28,25,23,0.10)",
+                        primary: "#0F766E",
+                        "primary-press": "#115E59",
+                        "soft-tint": "#E6F2F0",
+                        success: "#15803D",
+                        warning: "#B45309",
+                        danger: "#DC2626",
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Public Sans", "sans-serif"],
+                        display: ["Public Sans", "sans-serif"],
+                        body: ["Geist", "sans-serif"],
+                        label: ["Public Sans", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"]
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.canvas'); color: theme('colors.charcoal'); font-family: theme('fontFamily.body'); }
+        h1, h2, h3, h4, h5, h6, .font-headline { font-family: theme('fontFamily.headline'); letter-spacing: -0.02em; }
+        .font-mono { font-family: theme('fontFamily.mono'); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.fill-icon { font-variation-settings: 'FILL' 1; }
+        
+        /* Spring Animation for Interactions */
+        .interactive-element { transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease; }
+        .interactive-element:active { transform: scale(0.98); }
+        
+        /* Minimal Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: theme('colors.umber'); border-radius: 3px; opacity: 0.5; }
+        ::-webkit-scrollbar-thumb:hover { background: theme('colors.charcoal'); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row antialiased">
+<!-- JSON Component: SideNavBar (Hidden on Mobile, Visible on Web) -->
+<nav class="hidden md:flex flex-col h-screen w-64 border-r border-[#1C19171A] bg-[#F7F5F2] flex-shrink-0 sticky top-0 z-40 p-6">
+<div class="mb-10 flex items-center gap-3">
+<div class="h-10 w-10 rounded bg-primary flex items-center justify-center text-white font-headline font-bold text-lg shadow-sm">
+                A
+            </div>
+<div>
+<h1 class="font-headline font-bold text-[#1C1917] text-lg leading-tight">Aaryajanani</h1>
+<p class="font-body text-xs text-[#78716C]">Editorial Studio</p>
+</div>
+</div>
+<button class="mb-8 w-full bg-primary hover:bg-primary-press text-white rounded-lg py-2.5 px-4 font-headline font-semibold text-sm flex items-center justify-center gap-2 interactive-element transition-colors">
+<span class="material-symbols-outlined text-lg">add</span>
+            New Project
+        </button>
+<ul class="flex-1 space-y-1 font-body text-label">
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#78716C] hover:text-[#1C1917] hover:bg-[#1C19170D] transition-colors interactive-element" href="#">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<li>
+<!-- Semantic Match: Projects is active because we are in a project detail view -->
+<a class="flex items-center gap-3 px-3 py-2 bg-[#E6F2F0] text-[#0F766E] rounded-lg font-medium interactive-element" href="#">
+<span class="material-symbols-outlined fill-icon text-xl">folder_open</span>
+                    Projects
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#78716C] hover:text-[#1C1917] hover:bg-[#1C19170D] transition-colors interactive-element" href="#">
+<span class="material-symbols-outlined text-xl">auto_stories</span>
+                    Library
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#78716C] hover:text-[#1C1917] hover:bg-[#1C19170D] transition-colors interactive-element" href="#">
+<span class="material-symbols-outlined text-xl">group</span>
+                    Team
+                </a>
+</li>
+</ul>
+<div class="mt-auto pt-6 border-t border-whisper">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#78716C] hover:text-[#1C1917] hover:bg-[#1C19170D] transition-colors interactive-element" href="#">
+<span class="material-symbols-outlined text-xl">settings</span>
+                Settings
+            </a>
+</div>
+</nav>
+<!-- Main Workspace Area -->
+<main class="flex-1 flex flex-col min-w-0 bg-canvas">
+<!-- JSON Component: TopNavBar -->
+<header class="bg-white w-full h-16 border-b border-[#1C19171A] flex justify-between items-center px-8 sticky top-0 z-30">
+<div class="flex items-center gap-6">
+<!-- Mobile Menu Trigger -->
+<button class="md:hidden text-charcoal hover:bg-whisper p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="font-headline font-bold text-[#1C1917] text-lg flex items-center gap-2">
+<span class="text-umber font-normal text-sm block md:hidden">Projects / </span>
+                    Review Center
+                </div>
+<!-- Nav Links (Web) -->
+<nav class="hidden lg:flex items-center h-16 gap-6 ml-8 font-headline text-sm font-semibold">
+<a class="text-[#78716C] hover:text-[#1C1917] h-full flex items-center pt-1 border-b-2 border-transparent hover:border-whisper transition-colors" href="#">Overview</a>
+<a class="text-[#78716C] hover:text-[#1C1917] h-full flex items-center pt-1 border-b-2 border-transparent hover:border-whisper transition-colors" href="#">Versions</a>
+<a class="text-[#78716C] hover:text-[#1C1917] h-full flex items-center pt-1 border-b-2 border-transparent hover:border-whisper transition-colors" href="#">Tasks</a>
+<a class="text-[#78716C] hover:text-[#1C1917] h-full flex items-center pt-1 border-b-2 border-transparent hover:border-whisper transition-colors" href="#">Brief</a>
+<a class="text-[#78716C] hover:text-[#1C1917] h-full flex items-center pt-1 border-b-2 border-transparent hover:border-whisper transition-colors" href="#">Chat</a>
+<!-- Semantic Match: The "Review" tab is explicitly active per instructions -->
+<a class="text-[#0F766E] border-b-2 border-[#0F766E] h-full flex items-center pt-1" href="#">Review</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-umber hover:text-charcoal p-2 rounded-full hover:bg-whisper transition-colors interactive-element relative">
+<span class="material-symbols-outlined text-xl">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+</button>
+<button class="text-umber hover:text-charcoal p-2 rounded-full hover:bg-whisper transition-colors interactive-element hidden sm:block">
+<span class="material-symbols-outlined text-xl">history</span>
+</button>
+<div aria-label="User Profile" class="h-8 w-8 rounded-full bg-soft-tint flex items-center justify-center text-primary font-headline font-semibold text-sm cursor-pointer ml-2 border border-whisper">
+                    AR
+                </div>
+</div>
+</header>
+<!-- Page Content Canvas -->
+<div class="flex-1 overflow-auto">
+<div class="max-w-[1440px] mx-auto p-6 md:p-10 lg:p-12">
+<!-- Page Header Anchor -->
+<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-10 pb-6 border-b border-whisper">
+<div>
+<div class="text-xs font-mono text-umber mb-2 tracking-wide uppercase">Winter Lookbook — Issue 04</div>
+<h2 class="font-headline font-bold text-3xl text-charcoal mb-2">Review</h2>
+<p class="text-umber font-body text-base max-w-2xl">Threaded feedback on version v0.4.</p>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+<button class="w-full sm:w-auto px-4 py-2 rounded border border-whisper text-charcoal hover:bg-whisper bg-surface font-headline font-semibold text-sm flex items-center justify-center gap-2 transition-colors interactive-element">
+<span class="material-symbols-outlined text-lg">lock</span>
+                            Lock review scope
+                        </button>
+<button class="w-full sm:w-auto px-4 py-2 rounded bg-primary hover:bg-primary-press text-white font-headline font-semibold text-sm flex items-center justify-center gap-2 transition-colors interactive-element shadow-sm">
+<span class="material-symbols-outlined text-lg">auto_awesome</span>
+                            Summarize feedback
+                        </button>
+</div>
+</div>
+<!-- Bento / Asymmetric Layout Grid (2:1 Ratio) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+<!-- Left Column (Wide): Comment Thread -->
+<div class="lg:col-span-2 flex flex-col gap-6">
+<!-- Comment Composer -->
+<div class="bg-surface rounded-xl border border-whisper p-5 shadow-sm">
+<div class="flex gap-4 items-start">
+<div class="h-10 w-10 rounded-full bg-charcoal flex-shrink-0 flex items-center justify-center text-white font-headline font-semibold text-sm">
+                                    AR
+                                </div>
+<div class="flex-1 flex flex-col gap-3">
+<textarea class="w-full bg-canvas border border-whisper rounded-lg p-3 text-sm text-charcoal focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none resize-none transition-shadow font-body placeholder-umber" placeholder="Add a comment to v0.4..." rows="2"></textarea>
+<div class="flex justify-between items-center">
+<div class="flex gap-1">
+<button class="p-1.5 text-umber hover:text-charcoal hover:bg-whisper rounded transition-colors" title="Format Text">
+<span class="material-symbols-outlined text-lg">format_bold</span>
+</button>
+<button class="p-1.5 text-umber hover:text-charcoal hover:bg-whisper rounded transition-colors" title="Attach File">
+<span class="material-symbols-outlined text-lg">attach_file</span>
+</button>
+<button class="p-1.5 text-umber hover:text-charcoal hover:bg-whisper rounded transition-colors" title="Mention">
+<span class="material-symbols-outlined text-lg">alternate_email</span>
+</button>
+</div>
+<button class="px-4 py-1.5 bg-primary hover:bg-primary-press text-white text-sm font-semibold font-headline rounded transition-colors interactive-element shadow-sm">
+                                            Comment
+                                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Thread Container -->
+<div class="flex flex-col gap-4">
+<!-- Card 1: Standard Active Comment -->
+<div class="bg-surface rounded-xl border border-whisper p-5 shadow-sm group">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-[#E8E1D9] flex items-center justify-center text-[#5C4D3C] font-headline font-semibold text-xs">
+                                            AR
+                                        </div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline font-semibold text-sm text-charcoal">Ananya Rao</span>
+<span class="text-[10px] font-mono uppercase bg-whisper text-umber px-1.5 py-0.5 rounded">Admin</span>
+</div>
+<div class="text-xs font-mono text-umber mt-0.5">1h ago</div>
+</div>
+</div>
+<label class="flex items-center gap-2 cursor-pointer group-hover:opacity-100 opacity-60 transition-opacity">
+<input class="form-checkbox h-4 w-4 text-primary border-whisper rounded focus:ring-primary" type="checkbox"/>
+<span class="text-xs font-headline font-medium text-umber">Resolve</span>
+</label>
+</div>
+<p class="text-sm text-charcoal leading-relaxed ml-11">The typography in the intro section needs more breathing room.</p>
+<div class="ml-11 mt-3">
+<button class="text-xs font-headline font-semibold text-umber hover:text-primary transition-colors">Reply</button>
+</div>
+</div>
+<!-- Card 2: Resolved Comment -->
+<div class="bg-canvas border border-whisper rounded-xl p-5 opacity-75">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-soft-tint flex items-center justify-center text-primary font-headline font-semibold text-xs">
+                                            MR
+                                        </div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline font-semibold text-sm text-umber line-through">Marcus R.</span>
+<span class="text-[10px] font-mono uppercase bg-whisper text-umber px-1.5 py-0.5 rounded">Designer</span>
+</div>
+<div class="text-xs font-mono text-umber mt-0.5">5h ago</div>
+</div>
+</div>
+<div class="flex items-center gap-1 bg-soft-tint text-primary px-2 py-1 rounded text-xs font-headline font-medium">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+                                        Resolved
+                                    </div>
+</div>
+<p class="text-sm text-umber leading-relaxed ml-11 line-through decoration-whisper">Check the color profile on the cover photo.</p>
+<div class="ml-11 mt-3">
+<button class="text-xs font-headline font-semibold text-umber hover:text-charcoal transition-colors">Unresolve</button>
+</div>
+</div>
+<!-- Card 3: Comment with Nested Reply -->
+<div class="bg-surface rounded-xl border border-whisper p-5 shadow-sm">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-[#E5E7EB] flex items-center justify-center text-[#374151] font-headline font-semibold text-xs">
+                                            EK
+                                        </div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline font-semibold text-sm text-charcoal">Elena K.</span>
+<span class="text-[10px] font-mono uppercase bg-whisper text-umber px-1.5 py-0.5 rounded">Editor</span>
+</div>
+<div class="text-xs font-mono text-umber mt-0.5">1d ago</div>
+</div>
+</div>
+<label class="flex items-center gap-2 cursor-pointer opacity-60 hover:opacity-100 transition-opacity">
+<input class="form-checkbox h-4 w-4 text-primary border-whisper rounded focus:ring-primary" type="checkbox"/>
+<span class="text-xs font-headline font-medium text-umber">Resolve</span>
+</label>
+</div>
+<p class="text-sm text-charcoal leading-relaxed ml-11 mb-4">Check the copy accuracy against the brief.</p>
+<!-- Nested Reply -->
+<div class="ml-11 border-l-2 border-whisper pl-4 py-1">
+<div class="flex items-center gap-2 mb-1">
+<div class="h-5 w-5 rounded-full bg-soft-tint flex items-center justify-center text-primary font-headline font-semibold text-[10px]">
+                                            MR
+                                        </div>
+<span class="font-headline font-semibold text-xs text-charcoal">Marcus R.</span>
+<span class="text-xs font-mono text-umber">replied • 1d ago</span>
+</div>
+<p class="text-sm text-charcoal">On it. Cross-referencing the latest copy doc now.</p>
+</div>
+<div class="ml-11 mt-3">
+<button class="text-xs font-headline font-semibold text-umber hover:text-primary transition-colors">Reply</button>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface rounded-xl border border-whisper p-5 shadow-sm group">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<div class="h-8 w-8 rounded-full bg-[#FEF3C7] flex items-center justify-center text-[#92400E] font-headline font-semibold text-xs">
+                                            SL
+                                        </div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline font-semibold text-sm text-charcoal">Sarah L.</span>
+<span class="text-[10px] font-mono uppercase bg-whisper text-umber px-1.5 py-0.5 rounded">Designer</span>
+</div>
+<div class="text-xs font-mono text-umber mt-0.5">2d ago</div>
+</div>
+</div>
+<label class="flex items-center gap-2 cursor-pointer group-hover:opacity-100 opacity-60 transition-opacity">
+<input class="form-checkbox h-4 w-4 text-primary border-whisper rounded focus:ring-primary" type="checkbox"/>
+<span class="text-xs font-headline font-medium text-umber">Resolve</span>
+</label>
+</div>
+<p class="text-sm text-charcoal leading-relaxed ml-11">Image color accuracy is good.</p>
+<div class="ml-11 mt-3">
+<button class="text-xs font-headline font-semibold text-umber hover:text-primary transition-colors">Reply</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column (Narrow): Review Scope & Meta -->
+<div class="lg:col-span-1 flex flex-col gap-6 sticky top-24">
+<!-- Review Scope Card -->
+<div class="bg-surface rounded-xl border border-whisper shadow-sm overflow-hidden">
+<div class="px-5 py-4 border-b border-whisper bg-canvas/50">
+<h3 class="font-headline font-semibold text-sm text-charcoal flex items-center gap-2">
+<span class="material-symbols-outlined text-lg text-umber">checklist</span>
+                                    Review scope
+                                </h3>
+</div>
+<div class="p-3 flex flex-col gap-1">
+<!-- Checked Item -->
+<label class="flex items-start gap-3 p-2 hover:bg-canvas rounded-lg cursor-pointer transition-colors">
+<input checked="" class="form-checkbox mt-0.5 h-4 w-4 text-primary border-whisper rounded focus:ring-primary" type="checkbox"/>
+<span class="text-sm text-charcoal font-medium">Typography &amp; readability</span>
+</label>
+<!-- Checked Item -->
+<label class="flex items-start gap-3 p-2 hover:bg-canvas rounded-lg cursor-pointer transition-colors">
+<input checked="" class="form-checkbox mt-0.5 h-4 w-4 text-primary border-whisper rounded focus:ring-primary" type="checkbox"/>
+<span class="text-sm text-charcoal font-medium">Image color accuracy</span>
+</label>
+<!-- Unchecked Item -->
+<label class="flex items-start gap-3 p-2 hover:bg-canvas rounded-lg cursor-pointer transition-colors">
+<input class="form-checkbox mt-0.5 h-4 w-4 text-primary border-whisper rounded focus:ring-primary" type="checkbox"/>
+<span class="text-sm text-charcoal font-medium">Copy accuracy against brief</span>
+</label>
+</div>
+</div>
+<!-- Revision Request Mini-Card -->
+<div class="bg-surface rounded-xl border border-whisper shadow-sm p-5 relative overflow-hidden">
+<!-- Subtle top accent line -->
+<div class="absolute top-0 left-0 right-0 h-1 bg-warning"></div>
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-headline font-semibold text-sm text-charcoal">Revision request</h4>
+<span class="bg-[#FEF3C7] text-warning px-2 py-0.5 rounded text-[10px] font-mono font-medium border border-[#FDE68A]">Pending</span>
+</div>
+<p class="text-sm text-charcoal font-medium mb-3">v0.5 pending</p>
+<div class="flex items-center gap-2 mt-4 pt-4 border-t border-whisper">
+<div class="h-6 w-6 rounded-full bg-[#E5E7EB] flex items-center justify-center text-[#374151] font-headline font-semibold text-[10px]">
+                                    EK
+                                </div>
+<span class="text-xs text-umber">Requested by <span class="font-medium text-charcoal">Elena K.</span> • <span class="font-mono">2d ago</span></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Info -->
+<div class="mt-12 pt-6 border-t border-whisper flex justify-center">
+<p class="text-xs font-mono text-umber text-center flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">info</span>
+                        Comments resolve individually; locked scope keeps the review focused.
+                    </p>
+</div>
+</div>
+</div>
+</main>
+</body></html>

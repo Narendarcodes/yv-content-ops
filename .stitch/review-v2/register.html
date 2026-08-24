@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aaryajanani - Registration</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;family=Outfit:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        canvas: '#F7F5F2',
+                        surface: '#FFFFFF',
+                        ink: '#1C1917',
+                        umber: '#78716C',
+                        whisper: 'rgba(28,25,23,0.10)',
+                        teal: {
+                            DEFAULT: '#0F766E',
+                            press: '#115E59'
+                        },
+                        success: '#15803D',
+                        warning: '#B45309',
+                        danger: '#DC2626',
+                        soft: '#E6F2F0'
+                    },
+                    fontFamily: {
+                        headline: ["Outfit", "sans-serif"],
+                        display: ["Outfit", "sans-serif"],
+                        body: ["Geist", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Geist', sans-serif;
+            background-color: #F7F5F2;
+            color: #1C1917;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-canvas text-ink font-body h-screen flex flex-col md:flex-row antialiased overflow-hidden">
+<!-- LEFT PANEL (40%) -->
+<div class="hidden md:flex flex-col w-2/5 bg-canvas p-12 lg:p-24 justify-between border-r border-whisper relative overflow-hidden">
+<!-- Abstract Motif Pattern Background -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#0F766E 1px, transparent 1px); background-size: 24px 24px;"></div>
+<div class="relative z-10">
+<img alt="Aaryajanani Logo" class="h-12 w-auto mb-16" src="https://lh3.googleusercontent.com/aida/AP1WRLssRqkSCquZIdPiD2493q72NtxRcFQxMQzPxhqDYBK4BdlbSS4Tz88y2Bd01Fu2NnmIpZ3r_5dkcRCB4SRjzmzV6RZWA9dkvnvMBlNfcquGUk3uKyB0cBgZyzTMGnr3Y1RbrIcwbgiSBXSsoyqnxAmAJiZbSIwzq4-ZWzh2C9vYvc67tYLNjXUbZQCxPehln9JWx9ln84Hsstf4sRuVHdglxpirwl3y2Oyrkeyy8HO7N4Z0YjORJTJRAQM"/>
+<!-- Abstract Line/Dot Motif Element -->
+<div class="mb-12">
+<svg fill="none" height="40" viewbox="0 0 120 40" width="120" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 20H80" stroke="#0F766E" stroke-width="2"></path>
+<circle cx="95" cy="20" fill="#0F766E" r="4"></circle>
+<circle cx="115" cy="20" fill="#0F766E" r="4"></circle>
+<path d="M40 0V40" stroke="#0F766E" stroke-opacity="0.3" stroke-width="2"></path>
+</svg>
+</div>
+<h1 class="font-headline font-semibold text-3xl lg:text-4xl leading-tight tracking-tight text-ink max-w-sm">
+                Precision content operations and project memory for modern editorial teams.
+            </h1>
+</div>
+<div class="relative z-10 text-umber font-body text-sm mt-auto max-w-xs leading-relaxed">
+            A secure command center designed to replace scattered documents with structured clarity.
+        </div>
+</div>
+<!-- RIGHT PANEL (60%) -->
+<div class="flex-1 bg-surface flex flex-col relative overflow-y-auto">
+<div class="flex-1 flex flex-col justify-center px-6 sm:px-12 py-12">
+<div class="w-full max-w-[420px] mx-auto">
+<!-- Mobile Logo (Hidden on Desktop) -->
+<div class="md:hidden mb-10 flex justify-center">
+<img alt="Aaryajanani Logo" class="h-10 w-auto" src="https://lh3.googleusercontent.com/aida/AP1WRLssRqkSCquZIdPiD2493q72NtxRcFQxMQzPxhqDYBK4BdlbSS4Tz88y2Bd01Fu2NnmIpZ3r_5dkcRCB4SRjzmzV6RZWA9dkvnvMBlNfcquGUk3uKyB0cBgZyzTMGnr3Y1RbrIcwbgiSBXSsoyqnxAmAJiZbSIwzq4-ZWzh2C9vYvc67tYLNjXUbZQCxPehln9JWx9ln84Hsstf4sRuVHdglxpirwl3y2Oyrkeyy8HO7N4Z0YjORJTJRAQM"/>
+</div>
+<div class="mb-10 text-center md:text-left">
+<h2 class="font-headline font-semibold text-2xl tracking-tight text-ink mb-2">Create your account</h2>
+<p class="text-umber font-body text-base">Enter your details to join the workspace.</p>
+</div>
+<form action="#" class="space-y-6" method="POST">
+<!-- Full Name -->
+<div>
+<label class="block text-sm font-medium text-ink mb-1.5" for="name">Full name</label>
+<input class="block w-full rounded-md border-whisper py-2.5 px-3 text-ink shadow-sm focus:border-teal focus:ring-teal sm:text-sm bg-surface transition-colors" id="name" name="name" placeholder="Jane Doe" required="" type="text"/>
+</div>
+<!-- Work Email -->
+<div>
+<label class="block text-sm font-medium text-ink mb-1.5" for="email">Work email</label>
+<input autocomplete="email" class="block w-full rounded-md border-whisper py-2.5 px-3 text-ink shadow-sm focus:border-teal focus:ring-teal sm:text-sm bg-surface transition-colors" id="email" name="email" placeholder="jane@company.com" required="" type="email"/>
+</div>
+<!-- Password -->
+<div>
+<label class="block text-sm font-medium text-ink mb-1.5" for="password">Password</label>
+<div class="relative">
+<input class="block w-full rounded-md border-whisper py-2.5 px-3 text-ink shadow-sm focus:border-teal focus:ring-teal sm:text-sm bg-surface pr-10 transition-colors" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute inset-y-0 right-0 flex items-center pr-3 text-umber hover:text-ink focus:outline-none" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+<p class="mt-1.5 text-xs text-umber">At least 8 characters</p>
+</div>
+<!-- Confirm Password (Error State Example) -->
+<div>
+<label class="block text-sm font-medium text-ink mb-1.5" for="confirm-password">Confirm password</label>
+<div class="relative">
+<input aria-describedby="password-error" aria-invalid="true" class="block w-full rounded-md border-danger py-2.5 px-3 text-ink shadow-sm focus:border-danger focus:ring-danger sm:text-sm bg-surface pr-10 transition-colors" id="confirm-password" name="confirm-password" required="" type="password" value="••••••"/>
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<span class="material-symbols-outlined text-[20px] text-danger">error</span>
+</div>
+</div>
+<p class="mt-1.5 text-xs text-danger flex items-center gap-1" id="password-error">
+                            Passwords do not match
+                        </p>
+</div>
+<!-- Terms Checkbox -->
+<div class="flex items-start mt-4">
+<div class="flex h-5 items-center">
+<input class="h-4 w-4 rounded border-whisper text-teal focus:ring-teal bg-surface" id="terms" name="terms" required="" type="checkbox"/>
+</div>
+<div class="ml-2 text-sm">
+<label class="text-umber" for="terms">
+                                I agree to the <a class="font-medium text-teal hover:text-teal-press transition-colors" href="#">Terms of Service</a> and <a class="font-medium text-teal hover:text-teal-press transition-colors" href="#">Privacy Policy</a>.
+                            </label>
+</div>
+</div>
+<!-- Submit Button -->
+<div class="pt-2">
+<button class="flex w-full justify-center rounded-md bg-teal px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-teal-press focus:outline-none focus:ring-2 focus:ring-teal focus:ring-offset-2 active:scale-[0.99] transition-all duration-200" type="submit">
+                            Create account
+                        </button>
+</div>
+</form>
+<div class="mt-8 text-center text-sm text-umber">
+                    Already have an account? 
+                    <a class="font-medium text-teal hover:text-teal-press transition-colors" href="#">Sign in</a>
+</div>
+</div>
+</div>
+<!-- META FOOTER -->
+<div class="w-full border-t border-whisper py-4 px-6 flex justify-center mt-auto">
+<div class="flex items-center gap-4 text-xs font-mono text-umber uppercase tracking-wider">
+<span>v2.4.0-ALPHA</span>
+<span class="text-whisper">•</span>
+<a class="hover:text-ink transition-colors" href="#">PRIVACY POLICY</a>
+<span class="text-whisper">•</span>
+<a class="hover:text-ink transition-colors" href="#">TERMS OF SERVICE</a>
+</div>
+</div>
+</div>
+</body></html>

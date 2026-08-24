@@ -4,7 +4,12 @@ const Membership = require('../models/membership.model');
 async function getMe(userId) {
   const user = await User.findById(userId);
   if (!user) throw { status: 404, code: 'user_not_found', message: 'User not found' };
-  return user;
+  // Attach the user's primary organization role so role-based UX in the
+  // frontend reflects what the backend actually enforces (membership.role).
+  const membership = await Membership.findOne({ userId, disabled: { $ne: true } }).sort({ createdAt: 1 });
+  const plain = user.toObject();
+  plain.role = membership ? membership.role : 'member';
+  return plain;
 }
 
 async function listMyOrganizations(userId) {

@@ -14,7 +14,13 @@ async function login(req, res, next) {
   try {
     const { email, password } = req.body;
     const { user, accessToken, refreshToken } = await authService.authenticate({ email, password });
-    res.json({ data: { user, accessToken, refreshToken } });
+    // Include the primary org role so the client can render role-based UX
+    // straight from the login response.
+    const Membership = require('../models/membership.model');
+    const membership = await Membership.findOne({ userId: user._id, disabled: { $ne: true } }).sort({ createdAt: 1 });
+    const u = user.toObject();
+    u.role = membership ? membership.role : 'member';
+    res.json({ data: { user: u, accessToken, refreshToken } });
   } catch (err) {
     next(err);
   }

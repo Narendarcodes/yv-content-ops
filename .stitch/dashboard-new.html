@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html class="h-full antialiased bg-[#F7F5F2]" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard - Aaryajanani</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&amp;family=Geist:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;family=Public+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        canvas: "#F7F5F2",
+                        surface: "#FFFFFF",
+                        charcoal: "#1C1917",
+                        umber: "#78716C",
+                        whisper: "rgba(28,25,23,0.10)",
+                        teal: {
+                            DEFAULT: "#0F766E",
+                            hover: "#115E59",
+                            tint: "#E6F2F0"
+                        },
+                        status: {
+                            success: "#15803D",
+                            warning: "#B45309",
+                            danger: "#DC2626"
+                        }
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Outfit", "sans-serif"],
+                        display: ["Outfit", "sans-serif"],
+                        body: ["Geist", "sans-serif"],
+                        label: ["Public Sans", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"]
+                    },
+                    boxShadow: {
+                        'diffused': '0 1px 3px rgba(28,25,23,0.05)'
+                    },
+                    transitionTimingFunction: {
+                        'spring': 'cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Geist', sans-serif; }
+        h1, h2, h3, h4, h5, h6, .font-headline { font-family: 'Outfit', sans-serif; letter-spacing: -0.02em; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .icon-fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-canvas text-charcoal h-full overflow-hidden flex">
+<!-- SideNavBar (Predicted & Rendered from JSON) -->
+<nav class="fixed left-0 top-0 h-full flex flex-col p-6 w-64 border-r border-whisper bg-canvas z-50">
+<!-- Brand & Org Switcher -->
+<div class="flex items-center gap-3 mb-8">
+<img class="w-8 h-8 rounded-lg object-cover" data-alt="A small, high-end minimalist logo for Northern Lights Studio. Light mode aesthetic. Deep charcoal and crisp white palette. Professional and sleek." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDlszJY6pDmtGC6gb3OJOkB_04x2fkDBO_okeQniWdysJz0OWP65LgM2Ez9Bvnjoz5xsKZAM78X0iAUDxtTikgVrKilNpS0vg7yuY4-jWt5Yfp9Btf8wUPQvF2bJyDf3L-lTTzT_6P375UJh_Nr4Dd59Tc_YhAZ42WX_O3KRPJEB3u9q56cqepEDGbEqtgS1FDclaBTUD7lJJAaaO6Mlhspac_AlzO1gn7ro5nDsT_YCDkDMD0IM4W0mHVvOj2fnihPSjRQhcm9tE"/>
+<div>
+<h1 class="font-headline font-bold text-xl text-charcoal leading-tight">Aaryajanani</h1>
+<p class="font-body text-xs text-umber">Northern Lights Studio</p>
+</div>
+</div>
+<!-- CTA -->
+<button class="w-full mb-8 bg-teal hover:bg-teal-hover text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow-diffused active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">add</span>
+            New Project
+        </button>
+<!-- Nav Links -->
+<div class="flex-1 overflow-y-auto pr-2 space-y-6">
+<!-- Projects Group -->
+<div>
+<p class="font-mono text-[10px] uppercase text-umber tracking-wider mb-2 px-4">Projects</p>
+<div class="space-y-1">
+<!-- ACTIVE TAB -->
+<a class="flex items-center gap-3 px-4 py-2 bg-teal-tint text-teal rounded-lg font-medium transition-all duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined icon-fill">dashboard</span>
+                        Dashboard
+                    </a>
+<a class="flex items-center gap-3 px-4 py-2 text-umber hover:text-charcoal hover:bg-charcoal/5 rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">assignment</span>
+                        Tasks
+                    </a>
+<a class="flex items-center gap-3 px-4 py-2 text-umber hover:text-charcoal hover:bg-charcoal/5 rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">description</span>
+                        Briefs
+                    </a>
+</div>
+</div>
+<!-- Operations Group -->
+<div>
+<p class="font-mono text-[10px] uppercase text-umber tracking-wider mb-2 px-4">Operations</p>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-umber hover:text-charcoal hover:bg-charcoal/5 rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+                        Contracts
+                    </a>
+<a class="flex items-center gap-3 px-4 py-2 text-umber hover:text-charcoal hover:bg-charcoal/5 rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+                        Invoices
+                    </a>
+</div>
+</div>
+<!-- Comms Group -->
+<div>
+<p class="font-mono text-[10px] uppercase text-umber tracking-wider mb-2 px-4">Comms</p>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-umber hover:text-charcoal hover:bg-charcoal/5 rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">chat</span>
+                        Chat
+                    </a>
+<a class="flex items-center gap-3 px-4 py-2 text-umber hover:text-charcoal hover:bg-charcoal/5 rounded-lg transition-colors duration-200 justify-between" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">notifications</span>
+                            Notifications
+                        </div>
+<span class="bg-teal text-white text-[10px] font-mono font-medium px-1.5 py-0.5 rounded-full">3</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Footer Nav & User -->
+<div class="pt-4 mt-4 border-t border-whisper space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-umber hover:text-charcoal hover:bg-charcoal/5 rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+<a class="flex items-center gap-3 px-4 py-2 text-umber hover:text-charcoal hover:bg-charcoal/5 rounded-lg transition-colors duration-200 mb-4" href="#">
+<span class="material-symbols-outlined">help</span>
+                Support
+            </a>
+<div class="flex items-center gap-3 px-4 py-2 mt-2">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="Professional avatar portrait of Ananya Rao, a creative director. Bright soft lighting, confident expression. Clean, warm minimalist studio background. High editorial quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOBotAsiF79q0mkMCSY5z0h51M9gfBbsGA9AAVkJCHPHeM03-fjr5dLqYm8Epqxpo6QxNeZuThPOLqkiBdsZxBi97CBQ1okkahoCde07Mx6k6i_Est5mdoPQOi6XSmUWyMoh0rtPvzKo-WAJsjpeXMtPAKSGTKYWN0AaIxYVxGUi9x6Y4ENc1Bmc8ZfIuh_muf16T6AYItLew2aFHo7mY-7cK11RINoZ2vaNfIdPGHR8nv7V3eXVB-3ULu1ZgnGiM0acuE8OpdUKg"/>
+<div class="flex-1 overflow-hidden">
+<p class="font-body text-sm font-medium text-charcoal truncate">Ananya Rao</p>
+<p class="font-mono text-[10px] text-umber truncate">Admin</p>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-64 flex flex-col h-full overflow-hidden">
+<!-- TopAppBar (Predicted & Rendered from JSON) -->
+<header class="sticky top-0 z-40 h-16 w-full border-b border-whisper bg-surface flex items-center justify-between px-8 shrink-0 transition-all duration-200 ease-spring">
+<!-- Breadcrumb -->
+<div class="flex items-center text-sm font-body">
+<span class="text-umber">Dashboard</span>
+<span class="material-symbols-outlined text-umber text-[16px] mx-1">chevron_right</span>
+<span class="text-charcoal font-medium">Overview</span>
+</div>
+<!-- Search & Actions -->
+<div class="flex items-center gap-6">
+<!-- Search -->
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-umber text-[18px]">search</span>
+<input class="bg-canvas border-whisper border rounded-lg pl-9 pr-12 py-1.5 text-sm focus:ring-1 focus:ring-teal focus:border-teal w-64 transition-all duration-200 outline-none" placeholder="Search..." type="text"/>
+<div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5">
+<kbd class="font-mono text-[10px] px-1 border border-whisper rounded bg-surface text-umber">⌘</kbd>
+<kbd class="font-mono text-[10px] px-1 border border-whisper rounded bg-surface text-umber">K</kbd>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-umber hover:text-charcoal hover:bg-canvas p-1.5 rounded-lg transition-colors duration-200">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<button class="text-umber hover:text-charcoal hover:bg-canvas p-1.5 rounded-lg transition-colors duration-200">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<button class="relative text-umber hover:text-charcoal hover:bg-canvas p-1.5 rounded-lg transition-colors duration-200">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-status-danger rounded-full ring-2 ring-surface"></span>
+</button>
+</div>
+</div>
+</header>
+<!-- Scrollable Workspace -->
+<div class="flex-1 overflow-y-auto p-8 lg:px-12 xl:px-16 2xl:max-w-[1440px] 2xl:mx-auto w-full pb-20">
+<!-- Header Section -->
+<div class="mb-10">
+<h2 class="font-headline font-semibold text-3xl text-charcoal mb-2">Welcome back, Ananya</h2>
+<p class="font-body text-umber text-lg">Here's what's happening across your projects</p>
+</div>
+<!-- Metrics Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+<!-- Metric 1 -->
+<div class="bg-surface border border-whisper rounded-lg p-5 shadow-diffused flex flex-col justify-between">
+<div class="flex items-start justify-between mb-4">
+<p class="font-body text-sm font-medium text-umber">Active Projects</p>
+<span class="material-symbols-outlined text-teal text-[20px]">folder</span>
+</div>
+<div class="font-mono text-3xl font-medium text-charcoal">12</div>
+</div>
+<!-- Metric 2 -->
+<div class="bg-surface border border-whisper rounded-lg p-5 shadow-diffused flex flex-col justify-between">
+<div class="flex items-start justify-between mb-4">
+<p class="font-body text-sm font-medium text-umber">Pending Reviews</p>
+<span class="material-symbols-outlined text-status-warning text-[20px]">rate_review</span>
+</div>
+<div class="font-mono text-3xl font-medium text-charcoal">4</div>
+</div>
+<!-- Metric 3 -->
+<div class="bg-surface border border-whisper rounded-lg p-5 shadow-diffused flex flex-col justify-between">
+<div class="flex items-start justify-between mb-4">
+<p class="font-body text-sm font-medium text-umber">Published This Month</p>
+<span class="material-symbols-outlined text-status-success text-[20px]">check_circle</span>
+</div>
+<div class="font-mono text-3xl font-medium text-charcoal">8</div>
+</div>
+<!-- Metric 4 -->
+<div class="bg-surface border border-whisper rounded-lg p-5 shadow-diffused flex flex-col justify-between">
+<div class="flex items-start justify-between mb-4">
+<p class="font-body text-sm font-medium text-umber">Open Invoices</p>
+<span class="material-symbols-outlined text-status-danger text-[20px]">error</span>
+</div>
+<div class="font-mono text-3xl font-medium text-charcoal">3</div>
+</div>
+</div>
+<!-- Content Area (60/40 Split) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left: Recent Activity (60%) -->
+<div class="lg:col-span-7 bg-surface border border-whisper rounded-lg shadow-diffused">
+<div class="p-6 border-b border-whisper flex items-center justify-between">
+<h3 class="font-headline font-medium text-lg text-charcoal">Recent Activity</h3>
+<button class="text-teal font-medium text-sm hover:text-teal-hover transition-colors">View All</button>
+</div>
+<div class="p-6">
+<div class="relative before:absolute before:inset-y-0 before:left-5 before:w-px before:bg-whisper space-y-6">
+<!-- Activity Item 1 -->
+<div class="relative flex gap-4">
+<img class="w-10 h-10 rounded-full object-cover ring-4 ring-surface z-10 shrink-0" data-alt="Avatar portrait of Marcus, a young male designer looking focused. Crisp light, white background, modern minimalist style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmzEdFFSXYJY3zkhZg7HoLELYbqylxUQ1SxRcTOh6eaL8kUBVvQXEZCJfTP14CK17PIROzxUWH0vgo3Aw_EF-q7CIauOzME_LeHVk_MWZsZW5-ylPFo0DFT18JJg7olj0441ogO9LOyK15h2i71Lj9OE4XSetX-FmC1VsPgvKl4C2bcms4WrRaCz0qVaB1NTSVTA3VqIbygrth3xD1l235Xw7j1PV2zI1G8k1g3GUdiNK159Du1vusHO5kxccARSYQKBPqBgB0SQk"/>
+<div class="pt-2">
+<p class="font-body text-sm text-charcoal"><span class="font-medium">Marcus R.</span> uploaded <span class="font-mono text-[13px] bg-canvas px-1 rounded border border-whisper">v0.4</span></p>
+<p class="font-body text-xs text-umber mt-1">Project: Q3 Branding Revisions</p>
+<p class="font-mono text-[11px] text-umber mt-1.5">10:42 AM</p>
+</div>
+</div>
+<!-- Activity Item 2 -->
+<div class="relative flex gap-4">
+<div class="w-10 h-10 rounded-full bg-status-success/10 flex items-center justify-center ring-4 ring-surface z-10 shrink-0 text-status-success">
+<span class="material-symbols-outlined text-[20px]">task_alt</span>
+</div>
+<div class="pt-2">
+<p class="font-body text-sm text-charcoal"><span class="font-medium">Elena S.</span> approved the final brief</p>
+<p class="font-body text-xs text-umber mt-1">Project: Winter Campaign Launch</p>
+<p class="font-mono text-[11px] text-umber mt-1.5">Yesterday, 4:15 PM</p>
+</div>
+</div>
+<!-- Activity Item 3 -->
+<div class="relative flex gap-4">
+<img class="w-10 h-10 rounded-full object-cover ring-4 ring-surface z-10 shrink-0" data-alt="Avatar portrait of David, a senior editor with glasses. Warm lighting, professional studio shot. High clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6MFB2AgLx89NZh5eW0nrOPn-qCb21E_qL9K-7JZS1ViAj5RMj-vOZ0tfaEMVCmE3lTTaAdCg7DaxMvgIZjFZmf7x2cM2yLQRmAOBcMynYCxW_uODTKVMgLUwaZPrxY3V81Jsi_TlI8XNQWHrb9t7FHumSWuqr4nzM5Reqnus_mRkdT-f0_IbyBAIyW574XEJ61r2I8PKO-wqdFN4C4V7_ttr7K1PPcwKkWzMlTHKXZ7NLrzgDUZ82v6KQg_rE8fQsIiz6ZQ1Fi_w"/>
+<div class="pt-2">
+<p class="font-body text-sm text-charcoal"><span class="font-medium">David K.</span> left a comment on <span class="text-teal hover:underline cursor-pointer">Draft 2</span></p>
+<div class="mt-2 p-3 bg-canvas border border-whisper rounded-lg text-sm font-body text-umber italic">
+                                        "Let's make sure the tone here aligns with our primary guidelines..."
+                                    </div>
+<p class="font-mono text-[11px] text-umber mt-1.5">Yesterday, 1:20 PM</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Upcoming Deadlines (40%) -->
+<div class="lg:col-span-5 space-y-6">
+<div class="bg-surface border border-whisper rounded-lg shadow-diffused">
+<div class="p-6 border-b border-whisper flex items-center justify-between">
+<h3 class="font-headline font-medium text-lg text-charcoal">Upcoming Deadlines</h3>
+<button class="p-1 text-umber hover:text-charcoal rounded-md hover:bg-canvas transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="p-0 divide-y divide-whisper">
+<!-- Deadline Item 1 (Urgent) -->
+<div class="p-4 hover:bg-canvas/50 transition-colors duration-200 cursor-pointer group">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-body font-medium text-charcoal group-hover:text-teal transition-colors">Client Presentation Deck</p>
+<p class="font-body text-sm text-umber mt-1">Winter Campaign Launch</p>
+</div>
+<span class="bg-status-danger/10 text-status-danger text-xs font-medium px-2 py-1 rounded-full border border-status-danger/20 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                                        Urgent
+                                    </span>
+</div>
+<div class="mt-3 flex items-center gap-4 text-sm font-mono text-umber">
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">calendar_today</span> Oct 24</span>
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">schedule</span> 14:00 EST</span>
+</div>
+</div>
+<!-- Deadline Item 2 -->
+<div class="p-4 hover:bg-canvas/50 transition-colors duration-200 cursor-pointer group">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-body font-medium text-charcoal group-hover:text-teal transition-colors">Final Asset Delivery</p>
+<p class="font-body text-sm text-umber mt-1">Q3 Branding Revisions</p>
+</div>
+<span class="bg-teal-tint text-teal text-xs font-medium px-2 py-1 rounded-full border border-teal/20">On Track</span>
+</div>
+<div class="mt-3 flex items-center gap-4 text-sm font-mono text-umber">
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">calendar_today</span> Oct 26</span>
+</div>
+</div>
+<!-- Deadline Item 3 -->
+<div class="p-4 hover:bg-canvas/50 transition-colors duration-200 cursor-pointer group">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-body font-medium text-charcoal group-hover:text-teal transition-colors">Review Contract Draft</p>
+<p class="font-body text-sm text-umber mt-1">External Vendor Agreement</p>
+</div>
+<span class="bg-canvas text-umber text-xs font-medium px-2 py-1 rounded-full border border-whisper">Pending</span>
+</div>
+<div class="mt-3 flex items-center gap-4 text-sm font-mono text-umber">
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">calendar_today</span> Oct 29</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -92,7 +92,7 @@ export function PageHeader({
   )
 }
 
-/** Section heading used inside cards — consistent editorial rhythm */
+/** Section heading used inside cards - consistent editorial rhythm */
 export function SectionHeading({
   title,
   action,

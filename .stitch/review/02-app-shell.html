@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html class="h-full antialiased bg-[#F7F5F2]" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aaryajanani - Projects</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+              "canvas-paper": "#F7F5F2",
+              "pure-surface": "#FFFFFF",
+              "charcoal-ink": "#1C1917",
+              "muted-umber": "#78716C",
+              "whisper-line": "rgba(28,25,23,0.10)",
+              "deep-teal": "#0F766E",
+              "deep-teal-press": "#115E59",
+              "on-accent": "#FFFFFF",
+              "success": "#15803D",
+              "warning": "#B45309",
+              "danger": "#DC2626",
+              "soft-tint": "#E6F2F0"
+            },
+            "borderRadius": {
+              "DEFAULT": "0.25rem",
+              "lg": "0.5rem",
+              "xl": "0.75rem",
+              "full": "9999px"
+            },
+            "fontFamily": {
+              "headline": ["Public Sans", "sans-serif"],
+              "display": ["Public Sans", "sans-serif"],
+              "body": ["Geist", "sans-serif"],
+              "label": ["Public Sans", "sans-serif"],
+              "mono": ["JetBrains Mono", "monospace"]
+            },
+            "spacing": {}
+          }
+        }
+      }
+    </script>
+</head>
+<body class="h-full bg-canvas-paper text-charcoal-ink font-body selection:bg-soft-tint selection:text-deep-teal flex overflow-hidden">
+<!-- Sidebar -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-canvas-paper border-r border-whisper-line flex flex-col p-4 gap-6 z-40">
+<!-- Logo Header -->
+<div class="px-2 pt-2 flex items-center justify-center">
+<img alt="Aaryajanani Logo" class="h-10 object-contain w-auto mix-blend-multiply" src="https://lh3.googleusercontent.com/aida/AP1WRLssRqkSCquZIdPiD2493q72NtxRcFQxMQzPxhqDYBK4BdlbSS4Tz88y2Bd01Fu2NnmIpZ3r_5dkcRCB4SRjzmzV6RZWA9dkvnvMBlNfcquGUk3uKyB0cBgZyzTMGnr3Y1RbrIcwbgiSBXSsoyqnxAmAJiZbSIwzq4-ZWzh2C9vYvc67tYLNjXUbZQCxPehln9JWx9ln84Hsstf4sRuVHdglxpirwl3y2Oyrkeyy8HO7N4Z0YjORJTJRAQM"/>
+</div>
+<!-- Org Switcher -->
+<button class="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-colors group">
+<div class="w-8 h-8 rounded bg-pure-surface border border-whisper-line flex items-center justify-center font-mono text-xs font-medium text-charcoal-ink shadow-sm">
+                NL
+            </div>
+<div class="flex-1 overflow-hidden">
+<p class="font-headline font-semibold text-sm truncate">Northern Lights Studio</p>
+<p class="font-mono text-xs text-muted-umber truncate">WORKSPACE</p>
+</div>
+<span class="material-symbols-outlined text-muted-umber text-sm group-hover:text-deep-teal">expand_more</span>
+</button>
+<!-- Navigation Scroll Area -->
+<nav class="flex-1 overflow-y-auto space-y-6">
+<!-- Section: Projects -->
+<div>
+<h3 class="px-3 text-xs font-mono font-medium text-muted-umber uppercase tracking-wider mb-2">Projects</h3>
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 bg-soft-tint text-deep-teal rounded-lg px-3 py-2 font-medium text-sm transition-all duration-300 spring-physics" href="#">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                            Projects
+                        </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-xl">task_alt</span>
+                            Tasks
+                        </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-xl">edit_document</span>
+                            Briefs
+                        </a>
+</li>
+</ul>
+</div>
+<!-- Section: Operations -->
+<div>
+<h3 class="px-3 text-xs font-mono font-medium text-muted-umber uppercase tracking-wider mb-2">Operations</h3>
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-xl">contract</span>
+                            Contracts
+                        </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-colors font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-xl">receipt_long</span>
+                            Invoices
+                        </a>
+</li>
+</ul>
+</div>
+<!-- Section: Comms -->
+<div>
+<h3 class="px-3 text-xs font-mono font-medium text-muted-umber uppercase tracking-wider mb-2">Comms</h3>
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-colors font-medium text-sm justify-between group" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-xl">forum</span>
+                                Chat
+                            </div>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-muted-umber px-3 py-2 rounded-lg hover:bg-soft-tint hover:text-deep-teal-press transition-colors font-medium text-sm justify-between group" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-xl">notifications</span>
+                                Notifications
+                            </div>
+<span class="bg-deep-teal text-on-accent text-[10px] font-mono px-1.5 py-0.5 rounded-full min-w-[20px] text-center opacity-80 group-hover:opacity-100">3</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- User Footer -->
+<div class="mt-auto border-t border-whisper-line pt-4 -mx-4 px-4">
+<button class="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-whisper-line transition-colors text-left group">
+<div class="w-9 h-9 rounded-full bg-deep-teal text-on-accent flex items-center justify-center font-headline font-semibold text-sm shadow-sm">
+                    AR
+                </div>
+<div class="flex-1 overflow-hidden">
+<p class="font-headline font-semibold text-sm truncate text-charcoal-ink">Ananya Rao</p>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="px-1.5 py-0.5 bg-canvas-paper border border-whisper-line rounded text-[10px] font-mono text-muted-umber uppercase tracking-tight">Admin</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-muted-umber text-sm group-hover:text-charcoal-ink">settings</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 flex-1 flex flex-col min-w-0 h-screen bg-canvas-paper relative">
+<!-- Top App Bar -->
+<header class="h-16 flex items-center justify-between px-8 border-b border-whisper-line bg-canvas-paper sticky top-0 z-30 shrink-0">
+<!-- Breadcrumbs & Title -->
+<div class="flex flex-col justify-center">
+<nav class="flex items-center text-xs font-mono text-muted-umber gap-2">
+<a class="hover:text-deep-teal transition-colors" href="#">Northern Lights Studio</a>
+<span>/</span>
+<span class="text-charcoal-ink font-medium">Projects</span>
+</nav>
+<h1 class="font-headline font-semibold text-lg text-charcoal-ink leading-none mt-1">Projects</h1>
+</div>
+<!-- Right Actions -->
+<div class="flex items-center gap-4">
+<!-- Search -->
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-umber text-lg group-focus-within:text-deep-teal transition-colors">search</span>
+<input class="w-64 pl-9 pr-4 py-1.5 bg-pure-surface border border-whisper-line rounded-md text-sm text-charcoal-ink placeholder:text-muted-umber focus:outline-none focus:ring-2 focus:ring-deep-teal focus:border-transparent transition-shadow shadow-sm font-body" placeholder="Search projects, tasks, people..." type="text"/>
+<div class="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded border border-whisper-line bg-canvas-paper text-[10px] font-mono text-muted-umber">
+                        ⌘K
+                    </div>
+</div>
+<div class="h-5 w-px bg-whisper-line mx-1"></div>
+<!-- Notification Bell -->
+<button class="relative p-1.5 text-muted-umber hover:text-deep-teal transition-colors rounded-md hover:bg-soft-tint">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1.5 w-2 h-2 rounded-full bg-danger ring-2 ring-canvas-paper"></span>
+</button>
+<!-- New Project Button -->
+<button class="flex items-center gap-2 bg-deep-teal hover:bg-deep-teal-press text-on-accent px-4 py-2 rounded-md font-headline font-semibold text-sm transition-all duration-200 active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-sm font-bold">add</span>
+                    New
+                </button>
+</div>
+</header>
+<!-- Scrollable Workspace -->
+<div class="flex-1 overflow-y-auto p-8">
+<div class="max-w-[1440px] mx-auto w-full">
+<div class="flex items-baseline justify-between mb-6">
+<h2 class="font-headline font-semibold text-2xl text-charcoal-ink tracking-tight">All projects</h2>
+</div>
+<!-- Two Column Layout -->
+<div class="flex flex-col lg:flex-row gap-8 items-start">
+<!-- Left Column (Main) -->
+<div class="flex-1 w-full min-w-0 space-y-6">
+<!-- Stat Strip -->
+<div class="grid grid-cols-3 gap-4">
+<div class="bg-pure-surface border border-whisper-line rounded-lg p-4 shadow-sm flex flex-col relative overflow-hidden group">
+<span class="font-mono text-xs text-muted-umber mb-1">Active projects</span>
+<div class="flex items-end gap-2">
+<span class="font-headline font-bold text-3xl text-charcoal-ink leading-none">12</span>
+<span class="text-xs font-medium text-success flex items-center"><span class="material-symbols-outlined text-[14px]">trending_up</span> +2</span>
+</div>
+<div class="absolute bottom-0 left-0 h-1 bg-deep-teal w-1/3 group-hover:w-full transition-all duration-500 ease-out"></div>
+</div>
+<div class="bg-pure-surface border border-whisper-line rounded-lg p-4 shadow-sm flex flex-col">
+<span class="font-mono text-xs text-muted-umber mb-1">In review</span>
+<div class="flex items-end gap-2">
+<span class="font-headline font-bold text-3xl text-charcoal-ink leading-none">4</span>
+</div>
+</div>
+<div class="bg-pure-surface border border-whisper-line rounded-lg p-4 shadow-sm flex flex-col">
+<span class="font-mono text-xs text-muted-umber mb-1">Published</span>
+<div class="flex items-end gap-2">
+<span class="font-headline font-bold text-3xl text-charcoal-ink leading-none">38</span>
+<span class="text-xs font-mono text-muted-umber ml-auto">Total</span>
+</div>
+</div>
+</div>
+<!-- Projects Table Card -->
+<div class="bg-pure-surface border border-whisper-line rounded-lg shadow-sm overflow-hidden flex flex-col">
+<!-- Table Header -->
+<div class="grid grid-cols-[2fr_1fr_1fr_1fr_auto] gap-4 p-4 border-b border-whisper-line bg-canvas-paper/50">
+<div class="font-mono text-xs font-medium text-muted-umber uppercase tracking-wider">Project Name</div>
+<div class="font-mono text-xs font-medium text-muted-umber uppercase tracking-wider">Status</div>
+<div class="font-mono text-xs font-medium text-muted-umber uppercase tracking-wider">Assignee</div>
+<div class="font-mono text-xs font-medium text-muted-umber uppercase tracking-wider text-right">Updated</div>
+<div class="w-8"></div>
+</div>
+<!-- Table Rows -->
+<div class="flex flex-col divide-y divide-whisper-line">
+<!-- Row 1 -->
+<div class="grid grid-cols-[2fr_1fr_1fr_1fr_auto] gap-4 p-4 items-center hover:bg-soft-tint/30 transition-colors group cursor-pointer">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded bg-canvas-paper border border-whisper-line flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-muted-umber text-sm">article</span>
+</div>
+<div class="truncate">
+<p class="font-headline font-semibold text-sm text-charcoal-ink truncate group-hover:text-deep-teal transition-colors">Winter Collection Brief</p>
+<p class="font-mono text-[11px] text-muted-umber mt-0.5 truncate">PRJ-0042 • Editorial</p>
+</div>
+</div>
+<div>
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-soft-tint text-deep-teal text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-deep-teal"></span>
+                                            In Progress
+                                        </span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-charcoal-ink text-pure-surface flex items-center justify-center font-headline text-[10px] font-bold">MK</div>
+<span class="text-sm text-charcoal-ink truncate">Maya K.</span>
+</div>
+<div class="text-right">
+<span class="font-mono text-xs text-muted-umber">2h ago</span>
+</div>
+<div class="flex justify-end">
+<button class="p-1 rounded text-muted-umber hover:text-charcoal-ink hover:bg-whisper-line opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-[2fr_1fr_1fr_1fr_auto] gap-4 p-4 items-center hover:bg-soft-tint/30 transition-colors group cursor-pointer">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded bg-canvas-paper border border-whisper-line flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-muted-umber text-sm">campaign</span>
+</div>
+<div class="truncate">
+<p class="font-headline font-semibold text-sm text-charcoal-ink truncate group-hover:text-deep-teal transition-colors">Summer Campaign</p>
+<p class="font-mono text-[11px] text-muted-umber mt-0.5 truncate">PRJ-0041 • Marketing</p>
+</div>
+</div>
+<div>
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-warning/10 text-warning text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-warning"></span>
+                                            In Review
+                                        </span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-deep-teal text-on-accent flex items-center justify-center font-headline text-[10px] font-bold">AR</div>
+<span class="text-sm text-charcoal-ink truncate">Ananya R.</span>
+</div>
+<div class="text-right">
+<span class="font-mono text-xs text-muted-umber">Yesterday</span>
+</div>
+<div class="flex justify-end">
+<button class="p-1 rounded text-muted-umber hover:text-charcoal-ink hover:bg-whisper-line opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="grid grid-cols-[2fr_1fr_1fr_1fr_auto] gap-4 p-4 items-center hover:bg-soft-tint/30 transition-colors group cursor-pointer bg-soft-tint/10">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded bg-canvas-paper border border-whisper-line flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-muted-umber text-sm">mark_email_unread</span>
+</div>
+<div class="truncate">
+<p class="font-headline font-semibold text-sm text-charcoal-ink truncate group-hover:text-deep-teal transition-colors">Newsletter - Week 42</p>
+<p class="font-mono text-[11px] text-muted-umber mt-0.5 truncate">PRJ-0040 • Comms</p>
+</div>
+</div>
+<div>
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-canvas-paper border border-whisper-line text-muted-umber text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-muted-umber"></span>
+                                            Scheduled
+                                        </span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-muted-umber text-pure-surface flex items-center justify-center font-headline text-[10px] font-bold">SJ</div>
+<span class="text-sm text-charcoal-ink truncate">Sam J.</span>
+</div>
+<div class="text-right">
+<span class="font-mono text-xs text-muted-umber">2 days ago</span>
+</div>
+<div class="flex justify-end">
+<button class="p-1 rounded text-muted-umber hover:text-charcoal-ink hover:bg-whisper-line opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Row 4 -->
+<div class="grid grid-cols-[2fr_1fr_1fr_1fr_auto] gap-4 p-4 items-center hover:bg-soft-tint/30 transition-colors group cursor-pointer">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded bg-canvas-paper border border-whisper-line flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-muted-umber text-sm">public</span>
+</div>
+<div class="truncate">
+<p class="font-headline font-semibold text-sm text-charcoal-ink truncate group-hover:text-deep-teal transition-colors">Brand Identity Guidelines</p>
+<p class="font-mono text-[11px] text-muted-umber mt-0.5 truncate">PRJ-0039 • Design</p>
+</div>
+</div>
+<div>
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-success/10 text-success text-xs font-medium">
+<span class="material-symbols-outlined text-[12px]">check_circle</span>
+                                            Approved
+                                        </span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-deep-teal text-on-accent flex items-center justify-center font-headline text-[10px] font-bold">AR</div>
+<span class="text-sm text-charcoal-ink truncate">Ananya R.</span>
+</div>
+<div class="text-right">
+<span class="font-mono text-xs text-muted-umber">Oct 12</span>
+</div>
+<div class="flex justify-end">
+<button class="p-1 rounded text-muted-umber hover:text-charcoal-ink hover:bg-whisper-line opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Row 5 -->
+<div class="grid grid-cols-[2fr_1fr_1fr_1fr_auto] gap-4 p-4 items-center hover:bg-soft-tint/30 transition-colors group cursor-pointer">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded bg-canvas-paper border border-whisper-line flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-muted-umber text-sm">movie</span>
+</div>
+<div class="truncate">
+<p class="font-headline font-semibold text-sm text-charcoal-ink truncate group-hover:text-deep-teal transition-colors">Product Launch Video</p>
+<p class="font-mono text-[11px] text-muted-umber mt-0.5 truncate">PRJ-0038 • Video</p>
+</div>
+</div>
+<div>
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-canvas-paper border border-whisper-line text-muted-umber text-xs font-medium">
+<span class="material-symbols-outlined text-[12px]">done_all</span>
+                                            Published
+                                        </span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-charcoal-ink text-pure-surface flex items-center justify-center font-headline text-[10px] font-bold">MK</div>
+<span class="text-sm text-charcoal-ink truncate">Maya K.</span>
+</div>
+<div class="text-right">
+<span class="font-mono text-xs text-muted-umber">Oct 10</span>
+</div>
+<div class="flex justify-end">
+<button class="p-1 rounded text-muted-umber hover:text-charcoal-ink hover:bg-whisper-line opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column (Sidebar Activity) -->
+<aside class="w-full lg:w-[320px] shrink-0">
+<div class="bg-pure-surface border border-whisper-line rounded-lg shadow-sm p-5 sticky top-8">
+<h3 class="font-mono text-xs font-medium text-muted-umber uppercase tracking-wider mb-5 flex items-center justify-between">
+                                Recent Activity
+                                <button class="text-deep-teal hover:text-deep-teal-press normal-case tracking-normal">View all</button>
+</h3>
+<div class="space-y-6 relative before:absolute before:inset-y-2 before:left-[11px] before:w-px before:bg-whisper-line">
+<!-- Activity Item 1 -->
+<div class="relative pl-8">
+<span class="absolute left-0 top-1 w-6 h-6 bg-soft-tint rounded-full flex items-center justify-center ring-4 ring-pure-surface">
+<span class="material-symbols-outlined text-[12px] text-deep-teal" style="font-variation-settings: 'FILL' 1;">comment</span>
+</span>
+<p class="text-sm text-charcoal-ink font-medium leading-tight">Maya K. left a comment</p>
+<p class="text-sm text-muted-umber mt-1 leading-snug">"The updated assets for the Winter Collection are in the drive folder."</p>
+<p class="font-mono text-[10px] text-muted-umber mt-2">10:42 AM • TODAY</p>
+</div>
+<!-- Activity Item 2 -->
+<div class="relative pl-8">
+<span class="absolute left-0 top-1 w-6 h-6 bg-warning/10 rounded-full flex items-center justify-center ring-4 ring-pure-surface">
+<span class="material-symbols-outlined text-[12px] text-warning">swap_horiz</span>
+</span>
+<p class="text-sm text-charcoal-ink font-medium leading-tight">Status changed to In Review</p>
+<p class="text-sm text-muted-umber mt-1 leading-snug">On <a class="text-charcoal-ink hover:text-deep-teal underline decoration-whisper-line underline-offset-2" href="#">Summer Campaign</a> by Ananya R.</p>
+<p class="font-mono text-[10px] text-muted-umber mt-2">09:15 AM • TODAY</p>
+</div>
+<!-- Activity Item 3 -->
+<div class="relative pl-8">
+<span class="absolute left-0 top-1 w-6 h-6 bg-success/10 rounded-full flex items-center justify-center ring-4 ring-pure-surface">
+<span class="material-symbols-outlined text-[12px] text-success">check</span>
+</span>
+<p class="text-sm text-charcoal-ink font-medium leading-tight">Approved final draft</p>
+<p class="text-sm text-muted-umber mt-1 leading-snug">On <a class="text-charcoal-ink hover:text-deep-teal underline decoration-whisper-line underline-offset-2" href="#">Brand Identity Guidelines</a></p>
+<p class="font-mono text-[10px] text-muted-umber mt-2">16:30 PM • YESTERDAY</p>
+</div>
+<!-- Activity Item 4 -->
+<div class="relative pl-8">
+<span class="absolute left-0 top-1 w-6 h-6 bg-canvas-paper border border-whisper-line rounded-full flex items-center justify-center ring-4 ring-pure-surface">
+<span class="material-symbols-outlined text-[12px] text-muted-umber">add</span>
+</span>
+<p class="text-sm text-charcoal-ink font-medium leading-tight">New project created</p>
+<p class="text-sm text-muted-umber mt-1 leading-snug">Sam J. created <a class="text-charcoal-ink hover:text-deep-teal underline decoration-whisper-line underline-offset-2" href="#">Newsletter - Week 42</a></p>
+<p class="font-mono text-[10px] text-muted-umber mt-2">11:00 AM • YESTERDAY</p>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,15 +1,39 @@
 import { useState } from 'react'
+import { Plus } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Chip, { Modal, PageHeader } from '../components/primitives'
 import Avatar from '../components/ui'
-import { concepts as seedConcepts, team, type Concept } from '../lib/mockData'
 import { useViewer, can } from '../lib/viewer'
+import { useConcepts, useTeam, useMe } from '../lib/data'
 
-const memberOf = (id: string) => team.find((m) => m.id === id)
+interface Concept {
+  id: string
+  title: string
+  proposer: string
+  type: 'New Concept' | 'Experiment' | 'Revision'
+  status: 'IDEA' | 'APPROVED_CONCEPT'
+  submitted: string
+  description: string
+  discussion: string
+}
 
 export default function ConceptsPage() {
   const viewer = useViewer()
-  const [concepts, setConcepts] = useState<Concept[]>(seedConcepts)
+  const { team } = useTeam()
+  const me = useMe()
+  const memberOf = (id: string) => team.find((m) => m.id === id)
+  const { concepts: seedConcepts } = useConcepts()
+  const conceptsMapped: Concept[] = seedConcepts.map((p: any) => ({
+    id: p.id,
+    title: p.title,
+    proposer: p.creator,
+    type: (p.type === 'New Concept' || p.type === 'Experiment' || p.type === 'Revision') ? p.type : 'New Concept',
+    status: p.status === 'IDEA' ? 'IDEA' : 'APPROVED_CONCEPT',
+    submitted: p.updated,
+    description: p.description,
+    discussion: '',
+  }))
+  const [concepts, setConcepts] = useState<Concept[]>(conceptsMapped)
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState('')
   const [type, setType] = useState<Concept['type']>('New Concept')
@@ -28,7 +52,7 @@ export default function ConceptsPage() {
   const submit = () => {
     if (!title.trim() || !description.trim()) return
     setConcepts((prev) => [
-      { id: `cn-${Date.now()}`, title: title.trim(), proposer: viewer.id, type, status: 'IDEA', submitted: 'Just now', description: description.trim(), discussion: 'Newly proposed — waiting for the team to discuss.' },
+      { id: `cn-${Date.now()}`, title: title.trim(), proposer: me?.id ?? viewer.id, type, status: 'IDEA', submitted: 'Just now', description: description.trim(), discussion: 'Newly proposed - waiting for the team to discuss.' },
       ...prev,
     ])
     setTitle('')
@@ -47,9 +71,7 @@ export default function ConceptsPage() {
         actions={
           mayManage ? (
             <button className="btn-primary" onClick={() => setOpen(true)}>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
+              <Plus size={14} strokeWidth={2} />
               Propose a concept
             </button>
           ) : undefined
@@ -64,7 +86,7 @@ export default function ConceptsPage() {
               <div className="flex flex-wrap items-center gap-2">
                 <h3 className="font-headline text-[15px] font-semibold tracking-tight text-ink">{c.title}</h3>
                 <Chip label={c.type} tone="neutral" />
-                <Chip label={c.status === 'APPROVED_CONCEPT' ? 'Approved — ready to assign' : 'Open for discussion'} tone={c.status === 'APPROVED_CONCEPT' ? 'teal' : 'warning'} dot />
+                <Chip label={c.status === 'APPROVED_CONCEPT' ? 'Approved, ready to assign' : 'Open for discussion'} tone={c.status === 'APPROVED_CONCEPT' ? 'teal' : 'warning'} dot />
               </div>
               <p className="mt-1.5 text-sm leading-relaxed text-ink/80">{c.description}</p>
               <p className="mt-2 text-xs text-umber">
@@ -77,11 +99,11 @@ export default function ConceptsPage() {
               <div className="flex items-center gap-2">
                 {c.status === 'IDEA' ? (
                   <>
-                    <button className="btn-secondary !h-9" onClick={() => approve(c.id)}>Approve &amp; start project</button>
-                    <button className="btn-ghost !h-9 text-danger" onClick={() => decline(c.id)}>Decline</button>
+                    <button className="btn-secondary btn-sm" onClick={() => approve(c.id)}>Approve &amp; start project</button>
+                    <button className="btn-ghost btn-sm text-danger" onClick={() => decline(c.id)}>Decline</button>
                   </>
                 ) : (
-                  <Link to="/projects" className="btn-primary !h-9">Create project</Link>
+                  <Link to="/projects" className="btn-primary btn-sm">Create project</Link>
                 )}
               </div>
             )}
@@ -118,7 +140,7 @@ export default function ConceptsPage() {
         </div>
       </Modal>
 
-      {openCount === 0 && <p className="text-center text-xs text-umber/60">All concepts approved — great momentum.</p>}
+      {openCount === 0 && <p className="text-center text-xs text-umber/60">All concepts have been approved.</p>}
     </div>
   )
 }

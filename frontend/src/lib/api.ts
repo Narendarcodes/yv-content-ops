@@ -1,13 +1,7 @@
 /**
- * API client for Folio.
- *
- * MOCK-FIRST: The backend integration comes in a later phase (requires approval).
- * Until then every module consumes `mockApi`, which returns the exact response
- * envelope the real backend uses: `{ data: ... }` on success, `{ error: { code, message } }`
- * on failure. Swapping to `realApi` later is a one-line change per call site.
+ * Thin fetch wrapper for Folio.
+ * All requests go to the real backend - there is no mock mode anymore.
  */
-
-const USE_MOCK = import.meta.env.VITE_USE_MOCK !== 'false'
 
 export interface ApiError {
   code: string
@@ -27,5 +21,3 @@ export async function api<T>(path: string, options?: RequestInit): Promise<T> {
   }
   return body?.data as T
 }
-
-export { USE_MOCK }

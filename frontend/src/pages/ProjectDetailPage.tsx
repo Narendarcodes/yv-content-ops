@@ -1,25 +1,60 @@
 import { useState } from 'react'
+import { Play, CircleCheck, TriangleAlert, Circle } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { UploadCloud } from 'lucide-react'
 import Chip, { statusTone, Modal } from '../components/primitives'
 import Avatar, { AvatarStack } from '../components/ui'
-import { projects, videoReviews, projectInputs, team, activity } from '../lib/mockData'
 import { statusLabel } from '../lib/format'
 import { useViewer, can } from '../lib/viewer'
 import { useToast } from '../components/toast'
+import {
+  useProject, useProjectInputs, useProjectActivity, useProjectPublications, useReviews, useTeam,
+} from '../lib/data'
 
-const memberOf = (id: string) => team.find((m) => m.id === id)
+function strId(v: unknown): string {
+  if (!v) return ''
+  if (typeof v === 'string') return v
+  if (typeof v === 'object' && '_id' in (v as any)) return String((v as any)._id)
+  return String(v)
+}
+function fmtDate(iso?: string | Date): string {
+  if (!iso) return ''
+  const d = new Date(iso as string)
+  if (isNaN(d.getTime())) return ''
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+}
+function describeEvent(e: any): string {
+  const m = e.metadata ?? {}
+  switch (e.action) {
+    case 'created': return 'created this project'
+    case 'transitioned': return `moved it to ${m.to ?? 'a new stage'}`
+    case 'version_uploaded': return `uploaded ${m.label ?? 'a new version'}`
+    case 'comment_added': return 'commented on the draft'
+    case 'revision_requested': return 'requested a revision'
+    case 'approved': return `approved ${m.label ?? 'the draft'}`
+    case 'scheduled': return 'scheduled it for publishing'
+    case 'published': return 'published the project'
+    case 'metric_recorded': return 'recorded metrics'
+    default: return e.action
+  }
+}
 
 export default function ProjectDetailPage() {
-  const { id } = useParams()
+  const { id = '' } = useParams()
   const navigate = useNavigate()
   const toast = useToast()
   const viewer = useViewer()
   const [uploadOpen, setUploadOpen] = useState(false)
   const [uploadNote, setUploadNote] = useState('')
-  const project = projects.find((p) => p.id === id)
+  const { project } = useProject(id)
+  const { team } = useTeam()
+  const { inputs: rawInputs } = useProjectInputs(id)
+  const { activity: activityRaw } = useProjectActivity(id)
+  const { publications } = useProjectPublications(id)
+  const { reviews: allReviews } = useReviews()
+  const memberOf = (mid: string) => team.find((m) => m.id === mid)
 
-  // Unknown project id — a real 404 instead of silently showing the first project
+  // Unknown project id - a real 404 instead of silently showing the first project
   if (!project) {
     return (
       <div className="fade-in card mx-auto max-w-md p-12 text-center">
@@ -30,15 +65,33 @@ export default function ProjectDetailPage() {
     )
   }
 
-  const review = videoReviews[project.id]
-  const inputs = projectInputs[project.id] ?? []
-  const versions = review?.versions ?? [
-    { id: 'v1', label: 'v1.0', uploadedBy: project.assignee, uploadedAt: project.updated, summary: 'Initial draft' },
-  ]
-  const openComments = review?.comments.filter((c) => !c.resolved).length ?? 0
-  const projectActivity = activity.filter((a) => a.project === project.id)
+  const isInReview = ['FIRST_DRAFT_SUBMITTED', 'UNDER_REVIEW', 'REVISION_SUBMITTED', 'REVISION_IN_PROGRESS'].includes(project.status)
+  const reviewsForProject = allReviews.filter((r) => r.projectId === id)
+  const hasReview = reviewsForProject.length > 0 || isInReview
+  const openComments = reviewsForProject.filter((c) => !c.resolved).length
+  const inputs = rawInputs.map((i: any) => ({
+    id: strId(i.id ?? i._id),
+    title: i.title,
+    owner: strId(i.owner),
+    state: i.state,
+    requestedAt: fmtDate(i.requestedAt),
+    receivedAt: i.receivedAt ? fmtDate(i.receivedAt) : undefined,
+  }))
+  const versions = publications.length
+    ? publications.map((pub: any, i: number) => ({
+        id: strId(pub._id ?? pub.id),
+        label: `Pub ${i + 1}`,
+        uploadedBy: project.assignee,
+        uploadedAt: fmtDate(pub.publishedAt) || project.updated,
+        summary: `Published on ${pub.platform}`,
+      }))
+    : [{ id: 'v1', label: project.approvedVersion ?? 'v1.0', uploadedBy: project.assignee, uploadedAt: project.updated, summary: 'Current working draft' }]
+  const projectActivity = activityRaw.map((e: any) => ({
+    actor: strId(e.actor),
+    text: describeEvent(e),
+    time: fmtDate(e.createdAt) || '-',
+  }))
 
-  const isInReview = ['FIRST_DRAFT_SUBMITTED', 'UNDER_REVIEW', 'REVISION_SUBMITTED'].includes(project.status)
   const canComment = can(viewer, 'comment')
   const canUpload = can(viewer, 'upload')
   const canApprove = can(viewer, 'approve')
@@ -69,16 +122,13 @@ export default function ProjectDetailPage() {
               View live post on {project.platform}
             </a>
           )}
-          {review && (
+          {hasReview && (
             <Link to={`/projects/${project.id}/review`} className="btn-primary">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.3" />
-                <path d="M5.5 4.6v4.8l4-2.4-4-2.4Z" fill="currentColor" />
-              </svg>
+              <Play size={14} strokeWidth={1.75} />
               Open review workspace{openComments ? ` (${openComments})` : ''}
             </Link>
           )}
-          {isInReview && canComment && !review && (
+          {isInReview && canComment && !hasReview && (
             <button
               onClick={() => navigate(`/projects/${project.id}/review`)}
               className="btn-primary"
@@ -111,7 +161,7 @@ export default function ProjectDetailPage() {
             e.preventDefault()
             setUploadOpen(false)
             setUploadNote('')
-            // Demo: upload is simulated — the backend storage API handles real files later
+            // Demo: upload is simulated - the backend storage API handles real files later
             toast('success', 'Version uploaded', `${project.title} · ${uploadNote.trim() || 'New cut'}`)
           }}
           className="space-y-4 px-6 py-5"
@@ -121,7 +171,7 @@ export default function ProjectDetailPage() {
               <UploadCloud size={18} strokeWidth={1.75} />
             </span>
             <p className="text-sm font-medium text-ink">Drop your video here</p>
-            <p className="text-[13px] text-umber">MP4 or MOV, up to 2 GB — the review workspace opens automatically.</p>
+            <p className="text-[13px] text-umber">MP4 or MOV, up to 2 GB. The review workspace opens automatically.</p>
           </div>
           <div>
             <label htmlFor="upload-note" className="label">Version note (optional)</label>
@@ -149,7 +199,7 @@ export default function ProjectDetailPage() {
         </div>
         <div className="card p-5">
           <p className="text-[10px] font-mono uppercase tracking-wider text-umber/70">Approved version</p>
-          <p className="mt-2 font-mono text-xl font-medium text-ink">{project.approvedVersion ?? '—'}</p>
+          <p className="mt-2 font-mono text-xl font-medium text-ink">{project.approvedVersion ?? '-'}</p>
           <p className="mt-0.5 text-xs text-umber">{project.approvedVersion ? 'Exact version locked for publishing' : 'Not approved yet'}</p>
         </div>
         <div className="card p-5">
@@ -200,7 +250,7 @@ export default function ProjectDetailPage() {
                 {inputs.map((inp) => (
                   <li key={inp.id} className="flex items-center gap-4 px-5 py-3.5">
                     <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-mono text-[10px] ${inp.state === 'received' ? 'bg-success/10 text-success' : inp.state === 'blocked' ? 'bg-danger/10 text-danger' : 'bg-warning/10 text-warning'}`}>
-                      {inp.state === 'received' ? '✓' : inp.state === 'blocked' ? '!' : '·'}
+                      {inp.state === 'received' ? <CircleCheck size={16} strokeWidth={1.75} /> : inp.state === 'blocked' ? <TriangleAlert size={16} strokeWidth={1.75} /> : <Circle size={14} strokeWidth={1.75} />}
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-ink">{inp.title}</p>
@@ -229,8 +279,7 @@ export default function ProjectDetailPage() {
                     <Avatar initials={memberOf(a.actor)?.initials ?? '?'} size="sm" tone={i % 2 ? 'tint' : 'teal'} />
                     <div className="min-w-0">
                       <p className="text-sm leading-snug text-ink">
-                        <span className="font-medium">{memberOf(a.actor)?.name}</span> {a.verb}{' '}
-                        <span className="font-medium text-teal">{a.target}</span>
+                        <span className="font-medium">{memberOf(a.actor)?.name}</span> {a.text}
                       </p>
                       <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-umber/60">{a.time}</p>
                     </div>
@@ -247,7 +296,7 @@ export default function ProjectDetailPage() {
         <div className="card h-fit p-5">
           <header className="mb-4 flex items-center justify-between">
             <h2 className="font-headline text-base font-semibold tracking-tight text-ink">Versions</h2>
-            {review && <Link to={`/projects/${project.id}/review`} className="text-xs font-medium text-teal hover:underline">Review draft</Link>}
+            {hasReview && <Link to={`/projects/${project.id}/review`} className="text-xs font-medium text-teal hover:underline">Review draft</Link>}
           </header>
           <ol className="relative space-y-5 border-l border-line pl-5">
             {versions.map((v, i) => (

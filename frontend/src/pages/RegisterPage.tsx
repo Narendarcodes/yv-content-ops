@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, ArrowRight, Building2, Check, ChevronDown, Hash,
-  Lock, Mail, Plus, Trash2, User as UserIcon, UserPlus,
+  Lock, Mail, Plus, Trash2, User as UserIcon, UserPlus, Eye, EyeOff,
 } from 'lucide-react'
-import { loginAs } from '../lib/auth'
+import { useToast } from '../components/toast'
+import { login as apiLogin, register as apiRegister, createOrg as apiCreateOrg, addMember as apiAddMember } from '../services/api'
 
 /* ------------------------------------------------------------------ */
-/* Organization signup — three steps: Organization → Admin → Team     */
+/* Organization signup - three steps: Organization → Admin → Team     */
 /* Mirrors the backend flow: register admin, create org, add members. */
 /* ------------------------------------------------------------------ */
 
@@ -54,25 +55,28 @@ export default function RegisterPage() {
   const [step, setStep] = useState(1)
   const [tried, setTried] = useState(false)
 
-  // Step 1 — organization
+  // Step 1 - organization
   const [orgName, setOrgName] = useState('')
   const [orgSlug, setOrgSlug] = useState('')
   const [slugTouched, setSlugTouched] = useState(false)
 
-  // Step 2 — admin account
+  // Step 2 - admin account
   const [adminName, setAdminName] = useState('')
   const [adminEmail, setAdminEmail] = useState('')
   const [adminPassword, setAdminPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
-  // Step 3 — team members (optional)
+  // Step 3 - team members (optional)
   const [members, setMembers] = useState<Member[]>([])
 
   const meter = strength(adminPassword)
   const slugOk = orgSlug.length > 0 && /^[a-z0-9-]+$/.test(orgSlug)
 
   const orgValid = orgName.trim().length > 0 && slugOk
+  const passwordsMatch = confirmPassword.length > 0 && adminPassword === confirmPassword
   const adminValid =
-    adminName.trim().length > 0 && EMAIL_RE.test(adminEmail) && adminPassword.length >= 8
+    adminName.trim().length > 0 && EMAIL_RE.test(adminEmail) && adminPassword.length >= 8 && passwordsMatch
 
   const onOrgName = (v: string) => {
     setOrgName(v)
@@ -99,6 +103,35 @@ export default function RegisterPage() {
     setMembers((m) => m.map((x) => (x.id === id ? { ...x, ...patch } : x)))
 
   const invitedCount = members.filter((m) => m.email.trim().length > 0).length
+  const toast = useToast()
+
+  const createWorkspace = async () => {
+    try {
+      // 1. Register the admin user, then sign in
+      try {
+        await apiRegister(adminName.trim(), adminEmail.trim(), adminPassword)
+      } catch (err: any) {
+        // 409 user_exists is fine - the account already exists; sign in below.
+        const msg = String(err?.message || '')
+        if (!/exist/i.test(msg)) throw err
+      }
+      await apiLogin(adminEmail.trim(), adminPassword)
+      // 2. Create the organization
+      const org = await apiCreateOrg(orgName.trim(), orgSlug)
+      // 3. Invite team members (best-effort)
+      for (const m of members.filter((m) => m.email.trim().length > 0)) {
+        try {
+          await apiAddMember(org.id, m.email.trim(), m.role)
+        } catch {
+          /* ignore individual invite failures */
+        }
+      }
+      toast('success', 'Workspace created', `${orgName.trim()} is ready.`)
+      navigate('/', { replace: true })
+    } catch {
+      toast('danger', 'Could not create workspace', 'Check your details and try again.')
+    }
+  }
 
   return (
     <div className="flex min-h-screen">
@@ -125,7 +158,7 @@ export default function RegisterPage() {
         <div className="relative z-10">
           <span className="auth-rule mb-5 block h-1 w-10" aria-hidden="true" />
           <h1 className="max-w-md font-headline text-[40px] font-semibold leading-[1.08] tracking-[-0.03em] text-ink">
-            Your team&apos;s content memory — from first concept to published
+            One calm home for your team&apos;s concepts, reviews and published work
           </h1>
           <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-umber">
             Set up your organization, add your team, and keep every decision in one calm workspace.
@@ -145,10 +178,6 @@ export default function RegisterPage() {
                   folio.app/{orgSlug || 'your-workspace'}
                 </p>
               </div>
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal opacity-60" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-teal" />
-              </span>
             </div>
             <div className="mt-3 flex items-center justify-between border-t border-line pt-3">
               <span className="font-mono text-[10px] uppercase tracking-wider text-umber/70">Being set up</span>
@@ -159,9 +188,6 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <p className="relative z-10 font-mono text-[10px] uppercase tracking-[0.2em] text-umber/60">
-          Folio — Content Operations
-        </p>
       </div>
 
       {/* Right form panel */}
@@ -212,7 +238,7 @@ export default function RegisterPage() {
                 <h2 className="font-headline text-[28px] font-semibold leading-tight tracking-[-0.03em] text-ink">
                   Name your organization
                 </h2>
-                <p className="mt-2 text-sm text-umber">This is your workspace — your team, projects and memory live here.</p>
+                <p className="mt-2 text-sm text-umber">Your team, projects and content history will live here.</p>
 
                 <form
                   onSubmit={(e) => { e.preventDefault(); next() }}
@@ -255,7 +281,7 @@ export default function RegisterPage() {
                   </div>
 
                   <div className="flex items-center gap-3 pt-2">
-                    <button type="button" onClick={next} className="btn-primary group flex-1 !h-11 !text-[15px]">
+                    <button type="button" onClick={next} className="btn-primary group flex-1 btn-lg">
                       Continue
                       <ArrowRight size={16} strokeWidth={2} className="transition-transform group-hover:translate-x-0.5" />
                     </button>
@@ -317,17 +343,25 @@ export default function RegisterPage() {
                       <Lock size={16} strokeWidth={1.75} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-umber/50" />
                       <input
                         id="adminPassword"
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         value={adminPassword}
                         onChange={(e) => setAdminPassword(e.target.value)}
                         placeholder="At least 8 characters"
-                        className={`input !pl-10 ${tried && adminPassword.length < 8 ? 'input-error' : ''}`}
+                        className={`input !pl-10 !pr-10 ${tried && adminPassword.length < 8 ? 'input-error' : ''}`}
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((s) => !s)}
+                        className="icon-btn icon-btn-sm absolute right-1.5 top-1/2 -translate-y-1/2"
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      >
+                        {showPassword ? <EyeOff size={15} strokeWidth={1.75} /> : <Eye size={15} strokeWidth={1.75} />}
+                      </button>
                     </div>
                     {adminPassword && (
                       <div className="mt-2.5">
                         <div className="h-1 w-full overflow-hidden rounded-full bg-ink/6">
-                          <div className={`h-full rounded-full transition-all duration-300 ${meter.tone}`} style={{ width: `${meter.pct}%` }} />
+                          <div className={`h-full rounded-full transition-[width] duration-300 ${meter.tone}`} style={{ width: `${meter.pct}%` }} />
                         </div>
                         <p className="mt-1.5 font-mono text-[10px] uppercase tracking-wider text-umber/70">{meter.label}</p>
                       </div>
@@ -337,12 +371,30 @@ export default function RegisterPage() {
                     )}
                   </div>
 
+                  <div>
+                    <label htmlFor="confirmPassword" className="label">Confirm password</label>
+                    <div className="relative">
+                      <Lock size={16} strokeWidth={1.75} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-umber/50" />
+                      <input
+                        id="confirmPassword"
+                        type={showPassword ? 'text' : 'password'}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Re-enter your password"
+                        className={`input !pl-10 ${confirmPassword.length > 0 && !passwordsMatch ? 'input-error' : tried && !passwordsMatch ? 'input-error' : ''}`}
+                      />
+                    </div>
+                    {confirmPassword.length > 0 && !passwordsMatch && (
+                      <p className="mt-1.5 font-mono text-[11px] text-danger" role="alert">Passwords don&apos;t match yet</p>
+                    )}
+                  </div>
+
                   <div className="flex items-center gap-3 pt-2">
-                    <button type="button" onClick={back} className="btn-secondary !h-11">
+                    <button type="button" onClick={back} className="btn-secondary btn-lg">
                       <ArrowLeft size={15} strokeWidth={2} />
                       Back
                     </button>
-                    <button type="submit" className="btn-primary group flex-1 !h-11 !text-[15px]">
+                    <button type="submit" className="btn-primary group flex-1 btn-lg">
                       Continue
                       <ArrowRight size={16} strokeWidth={2} className="transition-transform group-hover:translate-x-0.5" />
                     </button>
@@ -356,7 +408,7 @@ export default function RegisterPage() {
                 <h2 className="font-headline text-[28px] font-semibold leading-tight tracking-[-0.03em] text-ink">
                   Invite your team
                 </h2>
-                <p className="mt-2 text-sm text-umber">Add your editors, reviewers and publishers — or skip and invite them later.</p>
+                <p className="mt-2 text-sm text-umber">Add your editors, reviewers and publishers, or skip for now.</p>
 
                 <div className="mt-7 space-y-3">
                   {members.length === 0 && (
@@ -409,7 +461,7 @@ export default function RegisterPage() {
                         <button
                           type="button"
                           onClick={() => removeMember(m.id)}
-                          className="icon-btn !h-8 !w-8 shrink-0"
+                          className="icon-btn icon-btn-sm shrink-0"
                           aria-label="Remove member"
                         >
                           <Trash2 size={14} strokeWidth={1.75} />
@@ -425,11 +477,11 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="mt-6 flex items-center gap-3">
-                  <button type="button" onClick={back} className="btn-secondary !h-11">
+                  <button type="button" onClick={back} className="btn-secondary btn-lg">
                     <ArrowLeft size={15} strokeWidth={2} />
                     Back
                   </button>
-                  <button type="button" onClick={next} className="btn-primary group flex-1 !h-11 !text-[15px]">
+                  <button type="button" onClick={createWorkspace} className="btn-primary group flex-1 btn-lg">
                     Create workspace
                     <ArrowRight size={16} strokeWidth={2} className="transition-transform group-hover:translate-x-0.5" />
                   </button>
@@ -439,7 +491,7 @@ export default function RegisterPage() {
                   onClick={() => setStep(4)}
                   className="mt-4 w-full text-center text-sm text-umber transition-colors hover:text-teal"
                 >
-                  Skip for now — invite them later
+                  Skip for now
                 </button>
               </div>
             )}
@@ -477,12 +529,8 @@ export default function RegisterPage() {
 
                 <button
                   type="button"
-                  onClick={() => {
-                    // Demo: the new org's admin signs in as the workspace admin
-                    loginAs('ananya')
-                    navigate('/', { replace: true })
-                  }}
-                  className="btn-primary group mt-8 w-full !h-11 !text-[15px]"
+                  onClick={() => navigate('/', { replace: true })}
+                  className="btn-primary group mt-8 w-full btn-lg"
                 >
                   Go to your workspace
                   <ArrowRight size={16} strokeWidth={2} className="transition-transform group-hover:translate-x-0.5" />

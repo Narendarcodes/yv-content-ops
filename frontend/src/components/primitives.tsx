@@ -103,7 +103,7 @@ export function Modal({
           <h2 className="font-headline text-lg font-semibold tracking-tight text-ink">{title}</h2>
           <button
             onClick={onClose}
-            className="icon-btn !h-8 !w-8"
+            className="icon-btn icon-btn-sm"
             aria-label="Close"
           >
             <X size={16} strokeWidth={2} />

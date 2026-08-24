@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Profile - Aaryajanani</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;family=Outfit:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "canvas": "#F7F5F2",
+          "surface": "#FFFFFF",
+          "charcoal": "#1C1917",
+          "umber": "#78716C",
+          "whisper": "rgba(28,25,23,0.10)",
+          "teal": {
+            "DEFAULT": "#0F766E",
+            "press": "#115E59"
+          },
+          "success": "#15803D",
+          "warning": "#B45309",
+          "danger": "#DC2626",
+          "soft": "#E6F2F0"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "fontFamily": {
+                "headline": ["Outfit", "sans-serif"],
+                "body": ["Geist", "sans-serif"],
+                "mono": ["JetBrains Mono", "monospace"]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body {
+    background-color: theme('colors.canvas');
+    color: theme('colors.charcoal');
+    font-family: theme('fontFamily.body');
+  }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+</style>
+</head>
+<body class="flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-64 z-50 border-r border-whisper bg-canvas flex flex-col h-full p-4 gap-2 hidden md:flex">
+<div class="px-4 py-3 mb-4">
+<h1 class="font-headline text-lg font-semibold text-charcoal">Editorial Studio</h1>
+<p class="text-xs text-umber font-mono mt-1">Premium Tier</p>
+</div>
+<button class="w-full bg-teal text-surface rounded-lg py-2.5 px-4 font-medium flex items-center justify-center gap-2 hover:bg-teal-press transition-colors duration-200 shadow-sm active:scale-95">
+<span class="material-symbols-outlined text-sm">add</span>
+      New Story
+    </button>
+<nav class="flex-1 mt-6 flex flex-col gap-1">
+<a class="text-umber hover:text-charcoal px-4 py-3 flex items-center gap-3 transition-colors hover:bg-[rgba(28,25,23,0.05)] rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-charcoal transition-colors">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="text-umber hover:text-charcoal px-4 py-3 flex items-center gap-3 transition-colors hover:bg-[rgba(28,25,23,0.05)] rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-charcoal transition-colors">description</span>
+<span class="text-sm font-medium">Stories</span>
+</a>
+<a class="text-umber hover:text-charcoal px-4 py-3 flex items-center gap-3 transition-colors hover:bg-[rgba(28,25,23,0.05)] rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-charcoal transition-colors">folder_open</span>
+<span class="text-sm font-medium">Library</span>
+</a>
+<a class="text-umber hover:text-charcoal px-4 py-3 flex items-center gap-3 transition-colors hover:bg-[rgba(28,25,23,0.05)] rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-charcoal transition-colors">group</span>
+<span class="text-sm font-medium">Team</span>
+</a>
+<a class="bg-soft text-teal rounded-lg font-medium px-4 py-3 flex items-center gap-3" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-sm">Account</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-whisper pt-4 flex flex-col gap-1">
+<a class="text-umber hover:text-charcoal px-4 py-3 flex items-center gap-3 transition-colors hover:bg-[rgba(28,25,23,0.05)] rounded-lg text-sm" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+        Support
+      </a>
+<a class="text-umber hover:text-charcoal px-4 py-3 flex items-center gap-3 transition-colors hover:bg-[rgba(28,25,23,0.05)] rounded-lg text-sm" href="#">
+<span class="material-symbols-outlined">logout</span>
+        Sign Out
+      </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-64 relative min-w-0">
+<!-- TopNavBar -->
+<header class="w-full h-16 sticky top-0 z-40 border-b border-whisper bg-surface/80 backdrop-blur-md flex items-center justify-between px-6">
+<div class="md:hidden flex items-center">
+<span class="text-xl font-headline font-bold text-charcoal tracking-tight">Aaryajanani</span>
+</div>
+<nav class="hidden md:flex items-center gap-8 h-full">
+<a class="text-umber hover:text-charcoal hover:bg-soft transition-colors duration-200 h-full flex items-center px-2 text-sm font-medium active:scale-95" href="#">Drafts</a>
+<a class="text-umber hover:text-charcoal hover:bg-soft transition-colors duration-200 h-full flex items-center px-2 text-sm font-medium active:scale-95" href="#">Published</a>
+<a class="text-umber hover:text-charcoal hover:bg-soft transition-colors duration-200 h-full flex items-center px-2 text-sm font-medium active:scale-95" href="#">Analytics</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-umber hover:text-teal transition-colors p-2 rounded-full hover:bg-soft">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="text-umber hover:text-teal transition-colors p-2 rounded-full hover:bg-soft">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-teal text-surface flex items-center justify-center font-medium text-sm border border-whisper ml-2 cursor-pointer">
+          AR
+        </div>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 overflow-y-auto p-6 lg:p-10">
+<div class="max-w-[720px] mx-auto w-full">
+<!-- Header -->
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+<div>
+<h2 class="font-headline text-3xl font-bold text-charcoal tracking-tight">Profile</h2>
+<p class="text-umber mt-1">Your account details</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 border border-whisper rounded-lg text-sm font-medium hover:bg-canvas transition-colors active:scale-95">Cancel</button>
+<button class="px-4 py-2 bg-teal/50 text-surface/70 rounded-lg text-sm font-medium cursor-not-allowed" disabled="">Save changes</button>
+</div>
+</div>
+<!-- Profile Card -->
+<div class="bg-surface rounded-xl border border-whisper shadow-[0_2px_8px_-2px_rgba(28,25,23,0.05)] overflow-hidden mb-8">
+<div class="p-6 md:p-8 flex flex-col md:flex-row gap-8">
+<!-- Avatar Col -->
+<div class="flex flex-col items-center gap-4 shrink-0">
+<div class="w-24 h-24 rounded-full bg-teal text-surface flex items-center justify-center text-3xl font-headline font-semibold shadow-inner">
+                AR
+              </div>
+<div class="text-center">
+<button class="text-teal text-sm font-medium hover:text-teal-press transition-colors">Change avatar</button>
+<p class="text-xs text-umber font-mono mt-1">PNG or JPG, max 2 MB</p>
+</div>
+</div>
+<!-- Form Col -->
+<div class="flex-1 flex flex-col gap-5">
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-medium text-charcoal" for="fullName">Full name</label>
+<input class="w-full bg-canvas border border-whisper rounded-lg px-3 py-2 text-charcoal focus:ring-2 focus:ring-teal focus:border-teal transition-all outline-none text-sm" id="fullName" type="text" value="Ananya Rao"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-medium text-charcoal" for="email">Work email</label>
+<input class="w-full bg-canvas border border-whisper rounded-lg px-3 py-2 text-charcoal focus:ring-2 focus:ring-teal focus:border-teal transition-all outline-none text-sm" id="email" type="email" value="ananya@northernlights.studio"/>
+<p class="text-xs text-umber mt-0.5">Used for sign-in and notifications</p>
+</div>
+</div>
+</div>
+<div class="border-t border-whisper p-6 md:px-8 md:py-5 bg-canvas/50">
+<div class="flex flex-col gap-3 font-mono text-xs">
+<div class="flex items-start gap-4">
+<span class="text-umber w-32 shrink-0">Member since</span>
+<span class="text-charcoal">— Mar 12, 2026</span>
+</div>
+<div class="flex items-start gap-4">
+<span class="text-umber w-32 shrink-0">Organizations</span>
+<span class="text-charcoal leading-relaxed">— Northern Lights Studio (Admin)<br/>— Aurora Partners (Editor)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Danger Zone -->
+<div class="bg-surface rounded-xl border border-danger/20 p-6 md:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<h3 class="font-headline font-semibold text-danger mb-1">Danger zone</h3>
+<p class="text-sm text-umber">Deactivate your account — this removes access for all workspaces.</p>
+</div>
+<button class="shrink-0 px-4 py-2 border border-danger text-danger rounded-lg text-sm font-medium hover:bg-danger/5 transition-colors active:scale-95 whitespace-nowrap">
+            Deactivate account
+          </button>
+</div>
+<!-- Footer Note -->
+<div class="mt-8 text-center">
+<p class="font-mono text-xs text-umber">Email changes take effect on your next sign-in.</p>
+</div>
+</div>
+</main>
+</div>
+</body></html>

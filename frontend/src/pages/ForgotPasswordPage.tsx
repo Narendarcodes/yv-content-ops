@@ -66,7 +66,7 @@ export default function ForgotPasswordPage() {
                   </p>
                 )}
               </div>
-              <button type="submit" className="btn-primary w-full !h-11">
+              <button type="submit" className="btn-primary w-full btn-lg">
                 Send reset link
               </button>
             </form>
