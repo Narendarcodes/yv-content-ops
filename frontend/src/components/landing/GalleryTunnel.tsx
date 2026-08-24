@@ -16,12 +16,24 @@ import type * as THREE from 'three' // types only; runtime import is dynamic bel
 
 type Three = typeof import('three')
 
-const SEGMENTS = 15
-const SEG_LEN = 1
-const HALF_W = 0.9
-const HALF_H = 0.5
+// ---- OriginKit control-panel configuration (mapped to our engine) ----
+// Grid Opacity: 50%   -> line material opacity 0.50
+// Grid Count:  4      -> GRID (cells per face)
+// Tunnel Size: 1      -> corridor scale multiplier (1 = default footprint)
+// Speed: 100          -> base forward speed
+// Click Boost: 100    -> hold-pointer accelerate multiplier
+// Middle Fade: 100%   -> fog strength at the far end
+const LINE_OPACITY = 0.5
 const GRID = 4
-const SPEED = 0.05 // constant, calm
+const TUNNEL_SIZE = 1
+const BASE_SPEED = 0.05 // units/sec at Speed=100
+const CLICK_BOOST = 4.5 // hold-to-accelerate multiplier at Boost=100
+const MIDDLE_FADE = 100 // % - drives fog near/far
+
+const SEGMENTS = Math.max(8, Math.round(15 * TUNNEL_SIZE))
+const SEG_LEN = 1
+const HALF_W = 0.9 * TUNNEL_SIZE
+const HALF_H = 0.5 * TUNNEL_SIZE
 
 const SLAB_STOPS: [string, string, string][] = [
   ['#e6f2f0', '#7fb8b0', '#0f766e'],
@@ -73,7 +85,9 @@ export default function GalleryTunnel({
 
       const scene = new T3.Scene()
       scene.background = new T3.Color(background)
-      scene.fog = new T3.Fog(new T3.Color(background), 4.2, 8.8)
+      const fade = MIDDLE_FADE / 100
+      const FOG_FAR = 6 + (13 - 6) * fade // higher fade -> deeper visibility falloff
+      scene.fog = new T3.Fog(new T3.Color(background), FOG_FAR * 0.48, FOG_FAR)
 
       const camera = new T3.PerspectiveCamera(45, 1, 0.1, 100)
 
@@ -83,7 +97,7 @@ export default function GalleryTunnel({
       host.appendChild(renderer.domElement)
 
       // ---------- shared materials & geometry (created ONCE, never disposed) ----------
-      const lineMat = new T3.MeshBasicMaterial({ color: new T3.Color(lineColor), transparent: true, opacity: 0.55 })
+      const lineMat = new T3.MeshBasicMaterial({ color: new T3.Color(lineColor), transparent: true, opacity: LINE_OPACITY })
       const slabMats = SLAB_STOPS.map((_, i) => new T3.MeshBasicMaterial({ map: makeSlabTexture(T3, i), side: T3.DoubleSide }))
 
       const faceW = (HALF_W * 2) / GRID
@@ -191,6 +205,11 @@ export default function GalleryTunnel({
       const onVis = () => { if (document.hidden) visible = false }
       document.addEventListener('visibilitychange', onVis)
 
+      // Click Boost: hold the pointer down on the hero to accelerate.
+      let pressed = false
+      host.addEventListener('pointerdown', () => { pressed = true })
+      window.addEventListener('pointerup', () => { pressed = false })
+
       let camZ = 0
       let last = 0
       let raf = 0
@@ -200,7 +219,8 @@ export default function GalleryTunnel({
         last = t
         if (!visible) return // paused off-screen → no scroll flicker
 
-        if (!reduced) camZ += SPEED * dt
+        const speed = pressed ? BASE_SPEED * CLICK_BOOST : BASE_SPEED
+        if (!reduced) camZ += speed * dt
         camera.position.z = camZ
 
         // teleport far-passed segments to the front; re-skin, never rebuild
