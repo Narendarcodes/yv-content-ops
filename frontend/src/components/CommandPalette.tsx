@@ -69,17 +69,10 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
     return [...projectHits, ...peopleHits]
   }, [q, projects, team])
 
-  if (!open) return null
-
-  const go = (to: string) => {
-    onClose()
-    navigate(to)
-  }
-
   const onKey = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault()
-      setActive((a) => Math.min(a + 1, results.length - 1))
+      setActive((a) => Math.min(a + 1, Math.max(results.length - 1, 0)))
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
       setActive((a) => Math.max(a - 1, 0))
@@ -90,9 +83,19 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
   }
 
   // Keep the highlight inside bounds when the result set shrinks.
+  // NOTE: hooks must run unconditionally - this lives BEFORE the `!open`
+  // early return below (Rules of Hooks).
   useEffect(() => {
     setActive((a) => Math.min(a, Math.max(results.length - 1, 0)))
   }, [results.length])
+
+  const go = (to: string) => {
+    onClose()
+    navigate(to)
+  }
+
+  if (!open) return null
+
 
   return (
     <div className="fixed inset-0 z-[60] flex items-start justify-center p-4 pt-[12vh]">
