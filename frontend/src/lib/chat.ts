@@ -165,7 +165,7 @@ export function useChat() {
   const createChannel = useCallback(
     async (name: string) => {
       const chatProject = channels[0]?.projectId
-      if (!chatProject) throw new Error('chat not loaded')
+      if (!chatProject) throw new Error('Chat is still loading — try again in a moment.')
       const created = await api.createChannel(chatProject, name)
       const chan: ChatChannel = {
         id: String(created.id),

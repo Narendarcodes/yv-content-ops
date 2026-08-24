@@ -18,6 +18,7 @@ export default function ChatPage() {
   const [newChannelOpen, setNewChannelOpen] = useState(false)
   const [newChannelName, setNewChannelName] = useState('')
   const [creatingChannel, setCreatingChannel] = useState(false)
+  const [channelError, setChannelError] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const active: ChatChannel | undefined =
@@ -42,15 +43,16 @@ export default function ChatPage() {
   }
 
   const createChannel = async () => {
-    if (!newChannelName.trim() || creatingChannel) return
+    if (!newChannelName.trim() || creatingChannel || chat.loading) return
     setCreatingChannel(true)
+    setChannelError(null)
     try {
       const chan = await chat.createChannel(newChannelName.trim())
       setChannelId(chan.id)
       setNewChannelOpen(false)
       setNewChannelName('')
-    } catch {
-      /* channel create errors surface via toast-less state; keep form open */
+    } catch (err: any) {
+      setChannelError(String(err?.message || 'Could not create channel.'))
     } finally {
       setCreatingChannel(false)
     }
@@ -84,11 +86,14 @@ export default function ChatPage() {
             />
             <button
               onClick={() => void createChannel()}
-              disabled={!newChannelName.trim() || creatingChannel}
+              disabled={!newChannelName.trim() || creatingChannel || chat.loading}
               className="btn-primary mt-1.5 !h-7 w-full text-[11px]"
             >
-              {creatingChannel ? 'Creating…' : 'Create channel'}
+              {chat.loading ? 'Loading…' : creatingChannel ? 'Creating…' : 'Create channel'}
             </button>
+            {channelError && (
+              <p className="mt-1 font-mono text-[10px] text-danger" role="alert">{channelError}</p>
+            )}
           </div>
         )}
 
