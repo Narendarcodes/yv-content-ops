@@ -29,7 +29,15 @@ const CFG = {
 }
 
 // OriginKit variant-3 palette (kept exactly; Folio-neutral enough on white)
-const COLORS = ['#FF6A00', '#AB54F7', '#EA3737', '#0072E3', '#00AA3C', '#FFB200']
+// Folio application theme colors (from index.css @theme tokens)
+const COLORS = [
+  '#0f766e', // Deep Teal — accent
+  '#115e59', // Teal press
+  '#e6f2f0', // Soft Tint
+  '#efebe3', // Warm Cream
+  '#f7f5f2', // Canvas Paper
+  '#78716c', // Muted Umber
+]
 
 // engine constants — identical to the published module
 const TUNNEL_WIDTH = 2 * CFG.tunnelSize
@@ -80,10 +88,10 @@ export default function GalleryTunnel({ className = '' }: { className?: string }
         c.width = c.height = 128
         const ctx = c.getContext('2d')!
         const stops: [string, string][] = [
-          ['#e6f2f0', '#0f766e'],
-          ['#f7f0dd', '#c09a4e'],
-          ['#efe9df', '#78716c'],
-          ['#ffffff', '#d8d0bf'],
+          ['#e6f2f0', '#0f766e'], // tint -> deep teal
+          ['#d1e5e2', '#115e59'], // teal wash -> teal press
+          ['#f7f5f2', '#efebe3'], // canvas -> cream
+          ['#efebe3', '#78716c'], // cream -> umber
         ]
         const [a, b] = stops[index % stops.length]
         const g = ctx.createLinearGradient(0, 0, 128, 128)
