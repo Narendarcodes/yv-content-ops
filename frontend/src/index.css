@@ -27,7 +27,8 @@
 
   /* Typography */
   --font-headline: 'Outfit', sans-serif;
-  --font-body: 'Geist', sans-serif;
+  --font-body: 'Figtree', sans-serif;
+  --font-display: 'Instrument Serif', Georgia, serif;
   --font-mono: 'JetBrains Mono', monospace;
 
   /* Radii */
@@ -117,7 +118,13 @@ body {
     box-shadow: var(--shadow-card-hover);
   }
 
-  .btn {
+  /* Variant classes are self-sufficient: using "btn-primary" alone still gets
+     the full base recipe. ".btn" stays available for un-skinned custom buttons. */
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost,
+  .btn-danger {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -129,6 +136,7 @@ body {
     font-size: 14px;
     font-weight: 500;
     letter-spacing: -0.005em;
+    line-height: 1;
     white-space: nowrap;
     user-select: none;
     cursor: pointer;
@@ -136,30 +144,53 @@ body {
     transition: background-color 0.15s var(--ease-out), border-color 0.15s var(--ease-out),
       color 0.15s var(--ease-out), transform 0.12s var(--ease-press), box-shadow 0.15s var(--ease-out);
   }
-  .btn:active {
+  /* One standard icon size + alignment inside every button - no per-instance guessing */
+  .btn svg,
+  .btn-primary svg,
+  .btn-secondary svg,
+  .btn-ghost svg,
+  .btn-danger svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+  .btn:active,
+  .btn-primary:active,
+  .btn-secondary:active,
+  .btn-ghost:active,
+  .btn-danger:active {
     transform: scale(0.97);
   }
-  .btn:disabled {
-    opacity: 0.4;
+  .btn:disabled,
+  .btn-primary:disabled,
+  .btn-secondary:disabled,
+  .btn-ghost:disabled,
+  .btn-danger:disabled {
+    opacity: 0.45;
     pointer-events: none;
   }
   .btn-primary {
     background: var(--color-teal);
     color: var(--color-on-accent);
-    box-shadow: 0 1px 2px rgba(15, 118, 110, 0.25);
+    box-shadow: 0 1px 2px rgba(15, 118, 110, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.14);
   }
   .btn-primary:hover {
     background: var(--color-teal-press);
-    box-shadow: 0 2px 8px rgba(15, 118, 110, 0.30);
+    box-shadow: 0 2px 8px rgba(15, 118, 110, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+  .btn-primary:active {
+    box-shadow: inset 0 2px 4px rgba(15, 118, 110, 0.40);
   }
   .btn-secondary {
     background: var(--color-surface);
     color: var(--color-ink);
-    border-color: var(--color-line);
+    border-color: var(--color-line-strong);
+    box-shadow: 0 1px 2px rgba(28, 25, 23, 0.05);
   }
   .btn-secondary:hover {
-    border-color: var(--color-line-strong);
     background: var(--color-canvas);
+    border-color: rgba(28, 25, 23, 0.24);
+    box-shadow: 0 1px 3px rgba(28, 25, 23, 0.09);
   }
   .btn-ghost {
     background: transparent;
@@ -167,14 +198,48 @@ body {
   }
   .btn-ghost:hover {
     color: var(--color-ink);
-    background: rgba(28, 25, 23, 0.05);
+    background: rgba(28, 25, 23, 0.06);
   }
   .btn-danger {
     background: var(--color-danger);
     color: #fff;
+    box-shadow: 0 1px 2px rgba(220, 38, 38, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.14);
   }
   .btn-danger:hover {
-    opacity: 0.9;
+    background: #b91c1c;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+
+  /* Size scale — replaces ad-hoc !h-* overrides so heights stay consistent */
+  .btn-sm {
+    height: 36px;
+    padding: 0 14px;
+    font-size: 13px;
+    gap: 6px;
+  }
+  .btn-sm svg {
+    width: 15px;
+    height: 15px;
+  }
+  .btn-lg {
+    height: 44px;
+    padding: 0 20px;
+    font-size: 15px;
+    gap: 10px;
+  }
+  .btn-lg svg {
+    width: 18px;
+    height: 18px;
+  }
+  .btn-xs {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 13px;
+    gap: 6px;
+  }
+  .btn-xs svg {
+    width: 14px;
+    height: 14px;
   }
 
   /* Icon button — quiet square control for topbars/toolbars */
@@ -191,12 +256,26 @@ body {
     cursor: pointer;
     transition: background-color 0.15s var(--ease-out), color 0.15s var(--ease-out), transform 0.12s var(--ease-press);
   }
+  .icon-btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
   .icon-btn:hover {
     color: var(--color-ink);
     background: rgba(28, 25, 23, 0.05);
   }
   .icon-btn:active {
     transform: scale(0.92);
+  }
+  .icon-btn-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+  }
+  .icon-btn-sm svg {
+    width: 16px;
+    height: 16px;
   }
 
   .input {
@@ -318,7 +397,7 @@ body {
   }
   .table-row {
     border-top: 1px solid var(--color-line);
-    transition: background-color 0.15s ease;
+    transition: background-color 0.15s var(--ease-out);
   }
   .table-row:hover {
     background: rgba(247, 245, 242, 0.6);
@@ -423,4 +502,82 @@ body {
 .auth-rule {
   background: var(--color-teal);
   border-radius: 999px;
+}
+
+/* ============================================================
+   Landing page (route /landing) — Folio marketing system
+   ============================================================ */
+
+.landing {
+  font-family: var(--font-body);
+}
+
+/* Instrument Serif display utility */
+.landing .font-display,
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+
+/* Film-grain overlay (hero-06/20/cta-02 materiality layer) */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Cursor-spotlight dot grid (hero-15) */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(28, 25, 23, 0.10) 1px, transparent 1px);
+  background-size: 26px 26px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent 75%);
+}
+
+/* Gradient-border hairline shell — the collection's premium-edge signature.
+   NOTE: wrapper only (1px gradient padding); children MUST carry their own
+   bg + padding + radius via Tailwind utilities. No forced child styles here,
+   so utilities always win. */
+.shell-teal {
+  position: relative;
+  border-radius: 26px;
+  padding: 1px;
+  background:
+    linear-gradient(160deg, rgba(15, 118, 110, 0.45), rgba(28, 25, 23, 0.08) 40%, rgba(15, 118, 110, 0.30));
+}
+
+/* Teal accent-glow button shadow (CoinCompass recipe, re-tinted) */
+.shadow-glow {
+  box-shadow: 0 8px 24px -6px rgba(15, 118, 110, 0.5);
+}
+
+/* Warm elevated card shadow used across landing sections */
+.landing .shadow-card {
+  box-shadow:
+    0 1px 2px rgba(28, 25, 23, 0.04),
+    0 20px 40px -18px rgba(28, 25, 23, 0.16);
+}
+
+/* Proof-strip marquee */
+.marquee {
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+}
+.marquee-track {
+  animation: marquee-scroll 32s linear infinite;
+}
+@keyframes marquee-scroll {
+  to { transform: translateX(-50%); }
+}
+
+/* Floating nav compact state */
+.landing-nav .rounded-full { transition: box-shadow 0.3s ease; }
+.landing-nav.is-compact .rounded-full {
+  box-shadow: var(--shadow-pop);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+  .landing * { transition-duration: 0.01ms !important; }
 }

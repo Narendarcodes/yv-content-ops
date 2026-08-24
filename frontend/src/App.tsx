@@ -20,8 +20,9 @@ import ChatPage from './pages/ChatPage'
 import MembersPage from './pages/MembersPage'
 import SettingsPage from './pages/SettingsPage'
 import ProfilePage from './pages/ProfilePage'
+import LandingPage from './pages/LandingPage'
 
-/** Blocks the app shell until a session exists — redirects to /login. */
+/** Blocks the app shell until a session exists - redirects to /login. */
 function RequireAuth({ children }: { children: ReactNode }) {
   const { authenticated } = useAuth()
   const location = useLocation()
@@ -31,7 +32,7 @@ function RequireAuth({ children }: { children: ReactNode }) {
   return <>{children}</>
 }
 
-/** Keeps signed-in users out of the auth screens — returns them to where they were headed. */
+/** Keeps signed-in users out of the auth screens - returns them to where they were headed. */
 function RedirectIfAuthed({ children }: { children: ReactNode }) {
   const { authenticated } = useAuth()
   const location = useLocation()
@@ -46,6 +47,7 @@ export default function App() {
   return (
     <Routes>
       {/* Public (redirect to app when already signed in) */}
+      <Route path="/landing" element={<LandingPage />} />
       <Route path="/login" element={<RedirectIfAuthed><LoginPage /></RedirectIfAuthed>} />
       <Route path="/register" element={<RedirectIfAuthed><RegisterPage /></RedirectIfAuthed>} />
       <Route path="/forgot-password" element={<RedirectIfAuthed><ForgotPasswordPage /></RedirectIfAuthed>} />
