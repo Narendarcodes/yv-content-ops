@@ -164,6 +164,21 @@ export async function login(email: string, password: string): Promise<BackendSes
 }
 
 /** ------------------------------------------------------------------- */
+/** Update the persisted session's user fields (e.g. after a profile edit). */
+export function updateSessionUser(patch: Partial<SessionUser>): void {
+  const session = readPersistedSession()
+  if (!session) return
+  const next = { ...session, user: { ...session.user, ...patch } }
+  writePersistedSession(next)
+  // Notify every hook (same-tab storage writes don't fire native events).
+  try {
+    window.dispatchEvent(new StorageEvent('storage', { key: 'folio.session' }))
+  } catch {
+    /* noop */
+  }
+}
+
+/** ------------------------------------------------------------------- */
 /** Sign out - backend first, then cleanup. */
 export async function logout(): Promise<void> {
   await logoutBackend()

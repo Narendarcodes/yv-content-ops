@@ -179,6 +179,23 @@ export async function login(email: string, password: string): Promise<Session> {
   return session
 }
 
+/** Update the signed-in user's profile (name and/or email). */
+export async function updateMe(patch: { name?: string; email?: string }): Promise<SessionUser> {
+  const res = await authFetch(`${API_BASE}/users/me`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(patch),
+    credentials: 'include',
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => null)
+    throw new Error(body?.error?.message || 'Profile update failed')
+  }
+  const body = await res.json()
+  const u = (body.data ?? {}) as SessionUser & { _id?: string }
+  return { ...u, id: u.id ?? u._id ?? '' } as SessionUser
+}
+
 /** Refresh the access token using a refresh token */
 export async function refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
   const res = await fetch(`${API_BASE}/auth/refresh`, {

@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Building2, Check, Mail, Pencil, Shield, Star, Hash, X } from 'lucide-react'
+import { Building2, Check, Mail, Pencil, Shield, Star, Hash, X, AlertTriangle } from 'lucide-react'
 import Avatar from '../components/ui'
 import { useViewer } from '../lib/viewer'
 import { roleOf, PERMISSION_LABELS } from '../lib/roles'
 import { useToast } from '../components/toast'
+import { updateSessionUser } from '../lib/auth'
+import { updateMe } from '../services/api'
 import { useProjects, useTeam, useReviews, useMe } from '../lib/data'
 
 const roleLabel: Record<string, string> = {
@@ -21,7 +23,8 @@ export default function ProfilePage() {
   const toast = useToast()
   const [editing, setEditing] = useState(false)
   const [name, setName] = useState(viewer.name)
-  const [title, setTitle] = useState(viewer.title ?? '')
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
   const access = roleOf(viewer)
   const { projects } = useProjects()
   const { team, org } = useTeam()
@@ -83,8 +86,8 @@ export default function ProfilePage() {
                 <button
                   onClick={() => {
                     setEditing(false)
+                    setSaveError(null)
                     setName(viewer.name)
-                    setTitle(viewer.title ?? '')
                   }}
                   className="btn-ghost"
                 >
@@ -92,15 +95,27 @@ export default function ProfilePage() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => {
-                    setEditing(false)
-                    // Demo: profile edits are local for now - backend profile API later
-                    toast('success', 'Profile updated', `${name.trim() || viewer.name} · ${title.trim() || viewer.title}`)
+                  id="profile-save-btn"
+                  disabled={saving || !name.trim()}
+                  onClick={async () => {
+                    if (saving) return
+                    setSaving(true)
+                    setSaveError(null)
+                    try {
+                      const updated = await updateMe({ name: name.trim() })
+                      updateSessionUser({ name: updated.name })
+                      toast('success', 'Profile updated', `You are now saved as ${updated.name}.`)
+                      setEditing(false)
+                    } catch (err: any) {
+                      setSaveError(String(err?.message || 'Could not save. Try again.'))
+                    } finally {
+                      setSaving(false)
+                    }
                   }}
                   className="btn-primary"
                 >
                   <Check size={14} strokeWidth={2} />
-                  Save
+                  {saving ? 'Saving…' : 'Save'}
                 </button>
               </div>
             ) : (
@@ -112,27 +127,28 @@ export default function ProfilePage() {
           </div>
 
           {editing ? (
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <div>
-                <label htmlFor="profile-name" className="label">Full name</label>
-                <input
-                  id="profile-name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="input"
-                  placeholder="Your name"
-                />
-              </div>
-              <div>
-                <label htmlFor="profile-title" className="label">Title</label>
-                <input
-                  id="profile-title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="input"
-                  placeholder="What do you do?"
-                />
-              </div>
+            <div className="mt-4">
+              <label htmlFor="profile-name" className="label">Full name</label>
+              <input
+                id="profile-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && name.trim() && !saving) {
+                    e.currentTarget.blur()
+                    const btn = document.getElementById('profile-save-btn')
+                    btn?.click()
+                  }
+                }}
+                className="input"
+                placeholder="Your name"
+              />
+              {saveError && (
+                <div className="mt-3 flex items-center gap-2 rounded-[10px] border border-danger/25 bg-danger/5 px-3.5 py-2.5 text-sm text-danger" role="alert">
+                  <AlertTriangle size={15} strokeWidth={1.75} />
+                  {saveError}
+                </div>
+              )}
             </div>
           ) : (
             <>
@@ -143,7 +159,7 @@ export default function ProfilePage() {
                   {roleLabel[viewer.role] ?? viewer.role}
                 </span>
               </div>
-              <p className="mt-1 text-sm text-umber">{viewer.title}</p>
+              {viewer.title && <p className="mt-1 text-sm text-umber">{viewer.title}</p>}
             </>
           )}
 
