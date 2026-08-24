@@ -14,6 +14,10 @@ async function start() {
       logger.info({ port: PORT }, 'Server started');
     });
 
+    // Real-time layer (team chat) rides on the same HTTP server.
+    const { initSocketServer } = require('./realtime/socket');
+    initSocketServer(server);
+
     process.on('SIGINT', async () => {
       logger.info('SIGINT received, shutting down');
       server.close(async () => {

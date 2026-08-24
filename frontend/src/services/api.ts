@@ -404,6 +404,41 @@ export async function listChannelMessages(projectId: string, channelId: string) 
   return normalizeList(items)
 }
 
+/** Send a chat message to a channel (persisted server-side). */
+export async function sendChannelMessage(projectId: string, channelId: string, body: string) {
+  const res = await authFetch(
+    `${API_BASE}/projects/${projectId}/channels/${channelId}/messages`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ body }),
+      credentials: 'include',
+    },
+  )
+  if (!res.ok) {
+    const err = await res.json().catch(() => null)
+    throw new Error(err?.error?.message || 'Failed to send message')
+  }
+  const payload = await res.json()
+  return normalize(payload.data)
+}
+
+/** Create a channel under the Team Chat project. */
+export async function createChannel(projectId: string, name: string) {
+  const res = await authFetch(`${API_BASE}/projects/${projectId}/channels`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name }),
+    credentials: 'include',
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => null)
+    throw new Error(err?.error?.message || 'Failed to create channel')
+  }
+  const payload = await res.json()
+  return normalize(payload.data)
+}
+
 /** ------------------------------------------------------------------- */
 /* Tasks (kanban) */
 export interface TaskItem {

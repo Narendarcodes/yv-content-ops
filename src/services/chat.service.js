@@ -53,6 +53,8 @@ async function postMessage({ projectId, channelId, author, body, parentId = null
   const message = new ChatMessage({ channelId, projectId, author, body, parentId, attachments });
   await message.save();
   await bus.emitAsync('chat.message_sent', { projectId, channelId, message, author });
+  // Real-time fan-out to everyone viewing this channel.
+  require('../realtime/socket').emitMessage(projectId, channelId, message);
   return message;
 }
 

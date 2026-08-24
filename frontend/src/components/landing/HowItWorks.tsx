@@ -26,7 +26,15 @@ export default function HowItWorks() {
         return
       }
 
-      const distance = () => track.scrollWidth - el.clientWidth
+      // Travel exactly far enough that the LAST card lands flush with the
+      // padded right edge (the old formula ignored the viewport padding,
+      // over-scrolling and leaving card 04 stranded half-out of frame).
+      const viewport = el.querySelector<HTMLElement>('[data-viewport]')
+      const distance = () => {
+        if (!viewport || !track) return 0
+        const padLeft = parseFloat(getComputedStyle(viewport).paddingLeft) || 0
+        return Math.max(0, track.scrollWidth - (viewport.clientWidth - padLeft))
+      }
       const tween = gsap.to(track, {
         x: () => -distance(),
         ease: 'none',
@@ -36,6 +44,7 @@ export default function HowItWorks() {
           end: () => `+=${distance()}`,
           scrub: 1,
           pin: true,
+          anticipatePin: 1,
           invalidateOnRefresh: true,
         },
       })

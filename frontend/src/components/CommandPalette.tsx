@@ -34,6 +34,16 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
     }
   }, [open])
 
+  // Close on Escape from anywhere while the palette is open.
+  useEffect(() => {
+    if (!open) return
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onEsc)
+    return () => window.removeEventListener('keydown', onEsc)
+  }, [open, onClose])
+
   const results = useMemo<Result[]>(() => {
     const query = q.trim().toLowerCase()
     const projectHits = projects
@@ -74,9 +84,15 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
       e.preventDefault()
       setActive((a) => Math.max(a - 1, 0))
     } else if (e.key === 'Enter' && results[active]) {
+      e.preventDefault()
       go(results[active].to)
     }
   }
+
+  // Keep the highlight inside bounds when the result set shrinks.
+  useEffect(() => {
+    setActive((a) => Math.min(a, Math.max(results.length - 1, 0)))
+  }, [results.length])
 
   return (
     <div className="fixed inset-0 z-[60] flex items-start justify-center p-4 pt-[12vh]">

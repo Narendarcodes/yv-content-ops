@@ -1,106 +1,62 @@
 import { useEffect, useRef } from 'react'
-import type * as THREE_NS from 'three'
+import type * as THREE from 'three' // types only; runtime import is dynamic below
 
 /**
- * Faithful port of OriginKit's `gallery-tunnel` engine (from hero-03) to Folio.
+ * Port of OriginKit's `gallery-tunnel` engine (hero-03) to Folio.
  *
- * How the original works (reverse-engineered from its published module):
- * - Three.js corridor made of N identical "segments" chained along -Z.
- * - Each segment = grid wires on floor/ceiling/both walls + a few sparse
- *   image slabs applied to random grid cells.
- * - Camera drifts forward forever; when a segment passes behind the camera
- *   it teleports to the far end of the chain and re-randomizes → seamless
- *   infinite tunnel with zero popping.
- * - Fog fades the far end into the background; speed eases; hold-to-boost.
- *
- * Folio adaptations: gradient slab textures painted on canvases (no external
- * assets), warm-paper palette, DPR clamp, rAF paused off-screen/hidden so
- * scrolling never flickers.
+ * - Three.js corridor of N chained segments along -Z: grid wires on
+ *   floor/ceiling/walls + sparse plain gradient slabs.
+ * - Camera drifts forward FOREVER at constant calm speed; segments passing
+ *   behind the camera teleport to the far end and re-randomize their slabs
+ *   (shared geometry is NEVER disposed → no vanishing over time).
+ * - Minimal product words ("Briefs", "Reviews"…) float in the corridor gaps
+ *   on transparent billboards you fly past.
+ * - Fog fades the far end; rAF paused off-screen/hidden (no scroll flicker).
  */
 
 type Three = typeof import('three')
 
 const SEGMENTS = 15
-const SEG_LEN = 1 // length of one segment along Z
-const HALF_W = 0.9 // corridor half-width  (X)
-const HALF_H = 0.5 // corridor half-height (Y)
-const GRID = 4 // cells per face
-const SPEED = 0.055 // forward units/sec
+const SEG_LEN = 1
+const HALF_W = 0.9
+const HALF_H = 0.5
+const GRID = 4
+const SPEED = 0.05 // constant, calm
 
-/** Mini product-moment cards painted onto tunnel wall slabs (Folio flavor). */
-const SLAB_CARDS = [
-  { title: 'Brief locked', detail: 'Northwind × Folio', dot: '#0f766e' },
-  { title: 'Review approved', detail: 'Spring campaign v4', dot: '#15803d' },
-  { title: 'Scheduled', detail: '12 assets · next week', dot: '#b45309' },
-  { title: '+3 revisions merged', detail: 'Q3 launch kit', dot: '#0f766e' },
-  { title: 'Published', detail: 'Case study → blog', dot: '#2563eb' },
+const SLAB_STOPS: [string, string, string][] = [
+  ['#e6f2f0', '#7fb8b0', '#0f766e'],
+  ['#f7f0dd', '#e3c98a', '#c09a4e'],
+  ['#efe9df', '#c2b49a', '#78716c'],
+  ['#ffffff', '#efebe3', '#d8d0bf'],
 ]
 
-/**
- * Paints one wall-slab texture: a soft gradient ground + a mini product card
- * (title, detail, colored status dot) so the corridor reads as Folio moments
- * flying past instead of blank decoration.
- */
-function makeSlabTexture(THREE: Three, index: number) {
+/** Plain gradient slab texture — no text. */
+function makeSlabTexture(T3: Three, index: number) {
   const c = document.createElement('canvas')
-  c.width = 512
-  c.height = 320
+  c.width = c.height = 256
   const ctx = c.getContext('2d')!
-
-  // gradient grounds cycle through the warm palette
-  const stops: [string, string, string][] = [
-    ['#e6f2f0', '#7fb8b0', '#0f766e'],
-    ['#f7f0dd', '#e3c98a', '#c09a4e'],
-    ['#efe9df', '#c2b49a', '#78716c'],
-    ['#ffffff', '#efebe3', '#d8d0bf'],
-  ]
-  const g = ctx.createLinearGradient(0, 0, 512, 320)
-  g.addColorStop(0, stops[index % stops.length][0])
-  g.addColorStop(0.55, stops[index % stops.length][1])
-  g.addColorStop(1, stops[index % stops.length][2])
+  const [a, b, d] = SLAB_STOPS[index % SLAB_STOPS.length]
+  const g = ctx.createLinearGradient(0, 0, 256, 256)
+  g.addColorStop(0, a)
+  g.addColorStop(0.55, b)
+  g.addColorStop(1, d)
   ctx.fillStyle = g
-  ctx.fillRect(0, 0, 512, 320)
-
-  // the mini product card
-  const card = SLAB_CARDS[index % SLAB_CARDS.length]
-  const pad = 44
-  ctx.fillStyle = 'rgba(255,255,255,0.92)'
-  const rx = pad
-  const ry = 96
-  const rw = 512 - pad * 2
-  const rh = 150
-  const r = 22
-  ctx.beginPath()
-  ctx.roundRect(rx, ry, rw, rh, r)
-  ctx.shadowColor = 'rgba(28,25,23,0.25)'
-  ctx.shadowBlur = 30
-  ctx.shadowOffsetY = 10
-  ctx.fill()
-  ctx.shadowColor = 'transparent'
-
-  // status dot + title + detail
-  ctx.fillStyle = card.dot
-  ctx.beginPath()
-  ctx.arc(rx + 40, ry + 52, 11, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.fillStyle = '#1c1917'
-  ctx.font = '600 34px Figtree, sans-serif'
-  ctx.fillText(card.title, rx + 66, ry + 64)
-  ctx.fillStyle = 'rgba(28,25,23,0.55)'
-  ctx.font = '400 26px Figtree, sans-serif'
-  ctx.fillText(card.detail, rx + 66, ry + 112)
-
-  const tex = new THREE.CanvasTexture(c)
-  tex.colorSpace = THREE.SRGBColorSpace
+  ctx.fillRect(0, 0, 256, 256)
+  const tex = new T3.CanvasTexture(c)
+  tex.colorSpace = T3.SRGBColorSpace
   return tex
 }
 
-type Mesh = THREE_NS.Mesh
-type Group = THREE_NS.Group
 
-type TunnelOptions = { background: string; lineColor: string }
-
-export default function GalleryTunnel({ className = '', background = '#f7f5f2', lineColor = '#c6bfae' }: { className?: string } & Partial<TunnelOptions>) {
+export default function GalleryTunnel({
+  className = '',
+  background = '#f7f5f2',
+  lineColor = '#c6bfae',
+}: {
+  className?: string
+  background?: string
+  lineColor?: string
+}) {
   const hostRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -110,41 +66,38 @@ export default function GalleryTunnel({ className = '', background = '#f7f5f2', 
     let teardown: (() => void) | null = null
 
     ;(async () => {
-      const THREE = await import('three')
+      const T3 = await import('three')
       if (killed || !hostRef.current) return
 
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-      const scene = new THREE.Scene()
-      scene.background = new THREE.Color(background)
-      scene.fog = new THREE.Fog(new THREE.Color(background), 4.2, 8.8)
+      const scene = new T3.Scene()
+      scene.background = new T3.Color(background)
+      scene.fog = new T3.Fog(new T3.Color(background), 4.2, 8.8)
 
-      const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100)
+      const camera = new T3.PerspectiveCamera(45, 1, 0.1, 100)
 
-      const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' })
+      const renderer = new T3.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' })
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
       Object.assign(renderer.domElement.style, { display: 'block', width: '100%', height: '100%' })
       host.appendChild(renderer.domElement)
 
-      // ---------- shared materials & geometry ----------
-      const lineMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(lineColor), transparent: true, opacity: 0.55 })
-      const slabMats = SLAB_CARDS.map((_, i) => {
-        const mat = new THREE.MeshBasicMaterial({ map: makeSlabTexture(THREE, i), side: THREE.DoubleSide })
-        return mat
-      })
+      // ---------- shared materials & geometry (created ONCE, never disposed) ----------
+      const lineMat = new T3.MeshBasicMaterial({ color: new T3.Color(lineColor), transparent: true, opacity: 0.55 })
+      const slabMats = SLAB_STOPS.map((_, i) => new T3.MeshBasicMaterial({ map: makeSlabTexture(T3, i), side: T3.DoubleSide }))
 
       const faceW = (HALF_W * 2) / GRID
       const faceH = (HALF_H * 2) / GRID
 
-      const wireX = new THREE.TubeGeometry(
-        new THREE.LineCurve3(new THREE.Vector3(0, 0, -SEG_LEN), new THREE.Vector3(0, 0, SEG_LEN)), 1, 0.0035, 6,
+      const wireX = new T3.TubeGeometry(
+        new T3.LineCurve3(new T3.Vector3(0, 0, -SEG_LEN / 2), new T3.Vector3(0, 0, SEG_LEN / 2)), 1, 0.0035, 6,
       )
-      const tileFloorCeil = new THREE.PlaneGeometry(faceW * 0.96, SEG_LEN) // XZ tiles
-      const tileWall = new THREE.PlaneGeometry(SEG_LEN, faceH * 0.96) // ZY tiles
+      const tileFloorCeil = new T3.PlaneGeometry(faceW * 0.96, SEG_LEN)
+      const tileWall = new T3.PlaneGeometry(SEG_LEN, faceH * 0.96)
 
-      /** One grid cell on one of the four faces. face: 0 floor · 1 ceiling · 2 left · 3 right */
-      function placeTile(group: THREE_NS.Group, face: number, cell: number, material: THREE_NS.Material | null) {
-        const mesh = new THREE.Mesh(face <= 1 ? tileFloorCeil : tileWall, material ?? lineMat)
+      /** One grid cell on one face: 0 floor · 1 ceiling · 2 left · 3 right */
+      function placeTile(group: THREE.Group, face: number, cell: number, material: THREE.Material | null) {
+        const mesh = new T3.Mesh(face <= 1 ? tileFloorCeil : tileWall, material ?? lineMat)
         if (face === 0) {
           mesh.position.set(-HALF_W + (cell + 0.5) * faceW, -HALF_H, -SEG_LEN / 2)
           mesh.rotation.x = -Math.PI / 2
@@ -164,15 +117,19 @@ export default function GalleryTunnel({ className = '', background = '#f7f5f2', 
 
       const rand = (n: number) => Math.floor(Math.random() * n)
 
-      /** Build one corridor segment: full grid wires + ~2 random gradient slabs. */
-      function buildSegment(): THREE_NS.Group {
-        const group = new THREE.Group()
+      interface Segment extends THREE.Group {
+        userData: { slabs: THREE.Mesh[] }
+      }
+
+      /** Build one segment: grid wires + sparse plain-gradient slabs. */
+      function buildSegment(): Segment {
+        const group = new T3.Group() as unknown as Segment
 
         // transverse wires across floor & ceiling
         for (let i = 0; i <= GRID; i++) {
           const x = -HALF_W + i * faceW
           for (const y of [-HALF_H, HALF_H]) {
-            const m = new THREE.Mesh(wireX, lineMat)
+            const m = new T3.Mesh(wireX, lineMat)
             m.position.set(x, y, -SEG_LEN / 2)
             group.add(m)
           }
@@ -181,30 +138,38 @@ export default function GalleryTunnel({ className = '', background = '#f7f5f2', 
         for (let i = 1; i < GRID; i++) {
           const y = -HALF_H + i * faceH
           for (const x of [-HALF_W, HALF_W]) {
-            const m = new THREE.Mesh(wireX, lineMat)
+            const m = new T3.Mesh(wireX, lineMat)
             m.position.set(x, y, -SEG_LEN / 2)
             group.add(m)
           }
         }
 
-        // sparse slabs — up to two per segment (walls preferred so cards face the camera)
+        // sparse PLAIN gradient slabs (no text)
+        const slabs: THREE.Mesh[] = []
         const faces = [2, 3, 0, 1].sort(() => Math.random() - 0.5).slice(0, 2)
         for (const face of faces) {
-          const cell = rand(GRID)
-          placeTile(group, face, cell, slabMats[rand(slabMats.length)])
+          slabs.push(placeTile(group, face, rand(GRID), slabMats[rand(slabMats.length)]))
         }
+
+        group.userData.slabs = slabs
         return group
       }
 
+      /** Re-randomize an existing segment's slab colors (no geometry churn). */
+      function reshuffle(seg: Segment) {
+        for (const slab of seg.userData.slabs) {
+          slab.material = slabMats[rand(slabMats.length)]
+        }
+      }
+
       // ---------- segment chain ----------
-      const segments: Group[] = []
+      const segments: Segment[] = []
       for (let i = 0; i < SEGMENTS; i++) {
         const s = buildSegment()
         s.position.z = -i * SEG_LEN
         scene.add(s)
         segments.push(s)
       }
-
       const CHAIN_LEN = SEGMENTS * SEG_LEN
 
       // ---------- sizing ----------
@@ -226,7 +191,6 @@ export default function GalleryTunnel({ className = '', background = '#f7f5f2', 
       const onVis = () => { if (document.hidden) visible = false }
       document.addEventListener('visibilitychange', onVis)
 
-      let distance = 0
       let camZ = 0
       let last = 0
       let raf = 0
@@ -236,21 +200,15 @@ export default function GalleryTunnel({ className = '', background = '#f7f5f2', 
         last = t
         if (!visible) return // paused off-screen → no scroll flicker
 
-        if (!reduced) distance += SPEED * dt
-        camZ += (distance - camZ) * 0.12 // eased forward drift
+        if (!reduced) camZ += SPEED * dt
         camera.position.z = camZ
 
-        for (const s of segments) {
+        // teleport far-passed segments to the front; re-skin, never rebuild
+        for (let i = 0; i < segments.length; i++) {
+          const s = segments[i]
           if (s.position.z > camZ + SEG_LEN) {
             s.position.z -= CHAIN_LEN
-            // re-randomize: rebuild this segment in place
-            const z = s.position.z
-            scene.remove(s)
-            s.traverse((o: any) => (o as Mesh).geometry?.dispose?.())
-            const fresh = buildSegment()
-            fresh.position.z = z
-            segments[segments.indexOf(s)] = fresh
-            scene.add(fresh)
+            reshuffle(s)
           }
         }
 
