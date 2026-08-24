@@ -107,7 +107,13 @@ export default function ProfilePage() {
                       toast('success', 'Profile updated', `You are now saved as ${updated.name}.`)
                       setEditing(false)
                     } catch (err: any) {
-                      setSaveError(String(err?.message || 'Could not save. Try again.'))
+                      const msg = String(err?.message || '')
+                      if (/token/i.test(msg)) {
+                        setSaveError('Your session expired. Please sign in again.')
+                        setTimeout(() => { window.location.href = '/login' }, 1500)
+                      } else {
+                        setSaveError(msg || 'Could not save. Try again.')
+                      }
                     } finally {
                       setSaving(false)
                     }

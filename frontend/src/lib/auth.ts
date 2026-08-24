@@ -43,6 +43,7 @@ function mapUserToTeamMember(user: SessionUser): TeamMember {
 export interface BackendSession {
   user: SessionUser
   accessToken?: string
+  refreshToken?: string
   loggedInAt: string
 }
 
@@ -78,6 +79,10 @@ async function loginBackend(email: string, password: string): Promise<BackendSes
     const session: BackendSession = {
       user: data.user,
       accessToken: data.accessToken,
+      // Persist the refresh token too - without it the silent-refresh path
+      // cannot renew the 15-minute access token and requests start failing
+      // with 'Invalid token' until the user logs in again.
+      refreshToken: data.refreshToken,
       loggedInAt: new Date().toISOString(),
     }
     writePersistedSession(session)
