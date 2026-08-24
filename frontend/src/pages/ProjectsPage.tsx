@@ -3,6 +3,7 @@ import { Plus, Search } from 'lucide-react'
 import { useState } from 'react'
 import Chip, { statusTone, PageHeader, Tabs } from '../components/primitives'
 import Avatar from '../components/ui'
+import { ListSkeleton, ErrorBanner, EmptyState } from '../components/states'
 import { type Project } from '../lib/types'
 import { statusLabel } from '../lib/format'
 import { useTeam, useProjects } from '../lib/data'
@@ -26,7 +27,7 @@ export default function ProjectsPage() {
   const [query, setQuery] = useState('')
   const phase = PHASES.find((x) => x.id === tab)!
 
-  const { projects } = useProjects()
+  const { projects, loading, error } = useProjects()
   const { team } = useTeam()
   setTeamRef(team)
 
@@ -74,6 +75,15 @@ export default function ProjectsPage() {
 
       {/* Table */}
       <div className="card overflow-hidden p-0">
+        {loading ? (
+          <div className="p-5">
+            <ListSkeleton rows={5} height="h-12" />
+          </div>
+        ) : error ? (
+          <div className="p-6">
+            <ErrorBanner onRetry={() => window.location.reload()} />
+          </div>
+        ) : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] text-left">
             <thead>
@@ -116,9 +126,23 @@ export default function ProjectsPage() {
             </tbody>
           </table>
         </div>
+        )}
         {filtered.length === 0 && (
           <div className="px-5 py-12 text-center">
-            <p className="text-sm text-umber">No projects match this view. Try another phase or search term.</p>
+            {projects.length === 0 ? (
+              <EmptyState
+                title="No projects yet"
+                hint="Start from a concept to create your first project."
+                action={
+                  <Link to="/concepts" className="btn-primary !h-9 text-[13px]">
+                    <Plus size={14} strokeWidth={2} />
+                    Start from a concept
+                  </Link>
+                }
+              />
+            ) : (
+              <p className="text-sm text-umber">No projects match this view. Try another phase or search term.</p>
+            )}
           </div>
         )}
       </div>

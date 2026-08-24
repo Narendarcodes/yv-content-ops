@@ -4,6 +4,7 @@ import Chip, { statusTone, PageHeader } from '../components/primitives'
 import Avatar from '../components/ui'
 import { statusLabel } from '../lib/format'
 import { useProjects, useTeam, useMe } from '../lib/data'
+import { ListSkeleton, ErrorBanner } from '../components/states'
 
 const GROUPS: { key: string; label: string; hint: string; statuses: string[] }[] = [
   { key: 'active', label: 'In production', hint: 'Being produced', statuses: ['ASSIGNED', 'WAITING_FOR_INPUTS', 'INPUTS_READY', 'IN_PROGRESS'] },
@@ -12,7 +13,7 @@ const GROUPS: { key: string; label: string; hint: string; statuses: string[] }[]
 ]
 
 export default function MyWorkPage() {
-  const { projects } = useProjects()
+  const { projects, loading, error } = useProjects()
   const { team } = useTeam()
   const me = useMe()
   const memberOf = (id: string) => team.find((m) => m.id === id)
@@ -22,10 +23,16 @@ export default function MyWorkPage() {
     <div className="space-y-8">
       <PageHeader
         title="My work"
-        subtitle={`Projects assigned to you - ${mine.length} active`}
+        subtitle={loading ? 'Loading your projects…' : `Projects assigned to you - ${mine.length} active`}
         actions={<Link to="/projects" className="btn-secondary">All projects</Link>}
       />
 
+      {loading ? (
+        <ListSkeleton rows={3} />
+      ) : error ? (
+        <ErrorBanner onRetry={() => window.location.reload()} />
+      ) : (
+      <>
       {GROUPS.map((g) => {
         const list = mine.filter((p) => g.statuses.includes(p.status))
         if (!list.length) return null
@@ -74,6 +81,8 @@ export default function MyWorkPage() {
           <p className="font-headline text-base font-semibold text-ink">Nothing assigned to you yet</p>
           <p className="mt-1 max-w-sm text-sm text-umber">When a project is assigned to you, it will show up here.</p>
         </div>
+      )}
+      </>
       )}
     </div>
   )

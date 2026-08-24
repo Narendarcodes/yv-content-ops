@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import type * as THREE_NS from 'three'
 
 /**
  * Faithful port of OriginKit's `gallery-tunnel` engine (from hero-03) to Folio.
@@ -26,32 +27,78 @@ const HALF_H = 0.5 // corridor half-height (Y)
 const GRID = 4 // cells per face
 const SPEED = 0.055 // forward units/sec
 
-function makeSlabTexture(THREE: Three, hue: 'teal' | 'amber' | 'umber' | 'cream') {
+/** Mini product-moment cards painted onto tunnel wall slabs (Folio flavor). */
+const SLAB_CARDS = [
+  { title: 'Brief locked', detail: 'Northwind × Folio', dot: '#0f766e' },
+  { title: 'Review approved', detail: 'Spring campaign v4', dot: '#15803d' },
+  { title: 'Scheduled', detail: '12 assets · next week', dot: '#b45309' },
+  { title: '+3 revisions merged', detail: 'Q3 launch kit', dot: '#0f766e' },
+  { title: 'Published', detail: 'Case study → blog', dot: '#2563eb' },
+]
+
+/**
+ * Paints one wall-slab texture: a soft gradient ground + a mini product card
+ * (title, detail, colored status dot) so the corridor reads as Folio moments
+ * flying past instead of blank decoration.
+ */
+function makeSlabTexture(THREE: Three, index: number) {
   const c = document.createElement('canvas')
-  c.width = c.height = 256
+  c.width = 512
+  c.height = 320
   const ctx = c.getContext('2d')!
-  const stops: Record<string, [string, string, string]> = {
-    teal: ['#e6f2f0', '#7fb8b0', '#0f766e'],
-    amber: ['#f7f0dd', '#e3c98a', '#c09a4e'],
-    umber: ['#efe9df', '#c2b49a', '#78716c'],
-    cream: ['#ffffff', '#efebe3', '#d8d0bf'],
-  }
-  const [a, b, d] = stops[hue]
-  const g = ctx.createLinearGradient(0, 0, 256, 256)
-  g.addColorStop(0, a)
-  g.addColorStop(0.55, b)
-  g.addColorStop(1, d)
+
+  // gradient grounds cycle through the warm palette
+  const stops: [string, string, string][] = [
+    ['#e6f2f0', '#7fb8b0', '#0f766e'],
+    ['#f7f0dd', '#e3c98a', '#c09a4e'],
+    ['#efe9df', '#c2b49a', '#78716c'],
+    ['#ffffff', '#efebe3', '#d8d0bf'],
+  ]
+  const g = ctx.createLinearGradient(0, 0, 512, 320)
+  g.addColorStop(0, stops[index % stops.length][0])
+  g.addColorStop(0.55, stops[index % stops.length][1])
+  g.addColorStop(1, stops[index % stops.length][2])
   ctx.fillStyle = g
-  ctx.fillRect(0, 0, 256, 256)
+  ctx.fillRect(0, 0, 512, 320)
+
+  // the mini product card
+  const card = SLAB_CARDS[index % SLAB_CARDS.length]
+  const pad = 44
+  ctx.fillStyle = 'rgba(255,255,255,0.92)'
+  const rx = pad
+  const ry = 96
+  const rw = 512 - pad * 2
+  const rh = 150
+  const r = 22
+  ctx.beginPath()
+  ctx.roundRect(rx, ry, rw, rh, r)
+  ctx.shadowColor = 'rgba(28,25,23,0.25)'
+  ctx.shadowBlur = 30
+  ctx.shadowOffsetY = 10
+  ctx.fill()
+  ctx.shadowColor = 'transparent'
+
+  // status dot + title + detail
+  ctx.fillStyle = card.dot
+  ctx.beginPath()
+  ctx.arc(rx + 40, ry + 52, 11, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.fillStyle = '#1c1917'
+  ctx.font = '600 34px Figtree, sans-serif'
+  ctx.fillText(card.title, rx + 66, ry + 64)
+  ctx.fillStyle = 'rgba(28,25,23,0.55)'
+  ctx.font = '400 26px Figtree, sans-serif'
+  ctx.fillText(card.detail, rx + 66, ry + 112)
+
   const tex = new THREE.CanvasTexture(c)
   tex.colorSpace = THREE.SRGBColorSpace
   return tex
 }
 
-interface TunnelOptions {
-  background: string
-  lineColor: string
-}
+type Mesh = THREE_NS.Mesh
+type Group = THREE_NS.Group
+
+type TunnelOptions = { background: string; lineColor: string }
 
 export default function GalleryTunnel({ className = '', background = '#f7f5f2', lineColor = '#c6bfae' }: { className?: string } & Partial<TunnelOptions>) {
   const hostRef = useRef<HTMLDivElement>(null)
@@ -81,8 +128,8 @@ export default function GalleryTunnel({ className = '', background = '#f7f5f2', 
 
       // ---------- shared materials & geometry ----------
       const lineMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(lineColor), transparent: true, opacity: 0.55 })
-      const slabMats = (['teal', 'amber', 'umber', 'cream'] as const).map((hue) => {
-        const mat = new THREE.MeshBasicMaterial({ map: makeSlabTexture(THREE, hue), side: THREE.DoubleSide })
+      const slabMats = SLAB_CARDS.map((_, i) => {
+        const mat = new THREE.MeshBasicMaterial({ map: makeSlabTexture(THREE, i), side: THREE.DoubleSide })
         return mat
       })
 
@@ -96,7 +143,7 @@ export default function GalleryTunnel({ className = '', background = '#f7f5f2', 
       const tileWall = new THREE.PlaneGeometry(SEG_LEN, faceH * 0.96) // ZY tiles
 
       /** One grid cell on one of the four faces. face: 0 floor · 1 ceiling · 2 left · 3 right */
-      function placeTile(group: THREE.Group, face: number, cell: number, material: THREE.Material | null) {
+      function placeTile(group: THREE_NS.Group, face: number, cell: number, material: THREE_NS.Material | null) {
         const mesh = new THREE.Mesh(face <= 1 ? tileFloorCeil : tileWall, material ?? lineMat)
         if (face === 0) {
           mesh.position.set(-HALF_W + (cell + 0.5) * faceW, -HALF_H, -SEG_LEN / 2)
@@ -118,7 +165,7 @@ export default function GalleryTunnel({ className = '', background = '#f7f5f2', 
       const rand = (n: number) => Math.floor(Math.random() * n)
 
       /** Build one corridor segment: full grid wires + ~2 random gradient slabs. */
-      function buildSegment(): THREE.Group {
+      function buildSegment(): THREE_NS.Group {
         const group = new THREE.Group()
 
         // transverse wires across floor & ceiling
@@ -140,8 +187,8 @@ export default function GalleryTunnel({ className = '', background = '#f7f5f2', 
           }
         }
 
-        // sparse slabs — at most one per face, like the original
-        const faces = [0, 1, 2, 3].sort(() => Math.random() - 0.5).slice(0, 2)
+        // sparse slabs — up to two per segment (walls preferred so cards face the camera)
+        const faces = [2, 3, 0, 1].sort(() => Math.random() - 0.5).slice(0, 2)
         for (const face of faces) {
           const cell = rand(GRID)
           placeTile(group, face, cell, slabMats[rand(slabMats.length)])
@@ -150,7 +197,7 @@ export default function GalleryTunnel({ className = '', background = '#f7f5f2', 
       }
 
       // ---------- segment chain ----------
-      const segments: THREE.Group[] = []
+      const segments: Group[] = []
       for (let i = 0; i < SEGMENTS; i++) {
         const s = buildSegment()
         s.position.z = -i * SEG_LEN
@@ -199,7 +246,7 @@ export default function GalleryTunnel({ className = '', background = '#f7f5f2', 
             // re-randomize: rebuild this segment in place
             const z = s.position.z
             scene.remove(s)
-            s.traverse((o) => (o as THREE.Mesh).geometry?.dispose?.())
+            s.traverse((o: any) => (o as Mesh).geometry?.dispose?.())
             const fresh = buildSegment()
             fresh.position.z = z
             segments[segments.indexOf(s)] = fresh

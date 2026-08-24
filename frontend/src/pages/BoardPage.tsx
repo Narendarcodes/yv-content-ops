@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { PageHeader } from '../components/primitives'
 import Avatar from '../components/ui'
+import { Skeleton, ErrorBanner, EmptyState } from '../components/states'
 import { useBoard, useTeam } from '../lib/data'
 import type { BoardTask } from '../lib/data'
 
@@ -28,7 +29,7 @@ const priorityTone: Record<string, string> = {
 }
 
 export default function BoardPage() {
-  const { tasks } = useBoard()
+  const { tasks, loading, error } = useBoard()
   const { team } = useTeam()
 
   const grouped = COLUMNS.map((c) => ({
@@ -43,6 +44,26 @@ export default function BoardPage() {
         subtitle="Every task across the team’s content pipeline."
       />
 
+      {loading ? (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="card p-4">
+              <Skeleton className="h-3 w-20" />
+              <div className="mt-3 space-y-2">
+                <Skeleton className="h-14 w-full" />
+                <Skeleton className="h-14 w-full" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : error ? (
+        <ErrorBanner onRetry={() => window.location.reload()} />
+      ) : tasks.length === 0 ? (
+        <EmptyState
+          title="No tasks yet"
+          hint="Tasks live inside projects. Open a project to add its first task."
+        />
+      ) : (
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {grouped.length === 0 ? (
           <p className="py-10 text-center text-sm text-umber">No tasks yet. Create a project to get started.</p>
@@ -80,6 +101,7 @@ export default function BoardPage() {
           ))
         )}
       </div>
+      )}
     </div>
   )
 }
