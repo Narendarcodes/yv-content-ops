@@ -68,14 +68,16 @@ export default function ProfilePage() {
           />
         </div>
 
-        <div className="px-7 pb-7">
+        <div className="relative px-7 pb-7">
           <div className="-mt-11 mb-5 flex items-end justify-between">
-            <Avatar
-              initials={viewer.initials}
-              size="xl"
-              tone="ink"
-              className="h-24 w-24 text-[26px] ring-[5px] ring-surface shadow-[0_4px_16px_rgba(28,25,23,0.18)]"
-            />
+            <span className="relative z-10 inline-flex">
+              <Avatar
+                initials={viewer.initials}
+                size="xl"
+                tone="ink"
+                className="h-24 w-24 text-[26px] ring-[5px] ring-surface shadow-[0_4px_16px_rgba(28,25,23,0.18)]"
+              />
+            </span>
             {editing ? (
               <div className="flex items-center gap-2">
                 <button
