@@ -1,15 +1,15 @@
-# Folio Marketing Landing Page — Implementation Plan
+# yv. Marketing Landing Page — Implementation Plan
 
-**Status:** FINAL — fuses all 13 sources: 7 DESIGN.md docs, 6 OriginKit sections (hero-01/03/06/15/20 + cta-02 gallery posters), Folio app design system, product story.
-**Sources:** 7 DESIGN.md inspiration docs (`inspiration-docs-synthesis.md`), OriginKit sections hero-01/03/06/15/20 + cta-02 (gallery posters), Folio app design system (`frontend/src/index.css`), product story (README + PRD).
+**Status:** FINAL — fuses all 13 sources: 7 DESIGN.md docs, 6 OriginKit sections (hero-01/03/06/15/20 + cta-02 gallery posters), yv. app design system, product story.
+**Sources:** 7 DESIGN.md inspiration docs (`inspiration-docs-synthesis.md`), OriginKit sections hero-01/03/06/15/20 + cta-02 (gallery posters), yv. app design system (`frontend/src/index.css`), product story (README + PRD).
 
 ---
 
 ## 0. Product & Goal
 
-**Product:** Folio — Content Operations & Project Memory Platform (Aaryajanani). For content-ops teams/agencies: briefs → projects → reviews/locks → kanban production → chat → approvals → schedule/publish, plus contracts & invoices. App frontend exists (React 18 + Vite + Tailwind v4, routes behind auth).
+**Product:** yv. — Content Operations & Project Memory Platform (Aaryajanani). For content-ops teams/agencies: briefs → projects → reviews/locks → kanban production → chat → approvals → schedule/publish, plus contracts & invoices. App frontend exists (React 18 + Vite + Tailwind v4, routes behind auth).
 
-**Goal:** A single premium animated marketing landing page that makes Folio feel *authored, tactile and alive* — paper-craft editorial identity carried by WebGL/GSAP motion engineering.
+**Goal:** A single premium animated marketing landing page that makes yv. feel *authored, tactile and alive* — paper-craft editorial identity carried by WebGL/GSAP motion engineering.
 
 **Route:** public `/landing` (does not collide with authed `"/"` dashboard); linked from Login/Register pages ("Learn more").
 
@@ -20,7 +20,7 @@
 ### Verdict
 **Cluster A — Warm Paper Editorial** (Archive, Craft, Imprint docs; OriginKit hero-03's gallery-corridor editorial mood) **powered by Cluster C's motion engineering** (Nimbus's GSAP ScrollTrigger architecture).
 
-### Palette — extend existing Folio tokens only
+### Palette — extend existing yv. tokens only
 | Role | Value | Source |
 |---|---|---|
 | Canvas | `#f7f5f2` | existing `--color-canvas` |
@@ -54,7 +54,7 @@ The five analyzed section images independently confirm and refine the direction:
   3. **Odometer count-ups** (cta-02) on the proof-strip stats via ScrollTrigger.
   4. **Micro-interactions everywhere** (hero-15/20): chevron nudge on button hover, press-scale 0.97, cursor-spotlight dot grid in the features band.
   5. **Film-grain overlay** (hero-06/20/cta-02) at very low opacity over the whole page — merged with the diagonal-hatch idea; grain wins (closer to the paper identity).
-- **Rejected:** Creatora's red-orange `#FF4A1F` accent (collides with Folio's teal identity — teal stays the sole accent), ArchiFlow's zero-color austerity (too cold alone).
+- **Rejected:** Creatora's red-orange `#FF4A1F` accent (collides with yv.'s teal identity — teal stays the sole accent), ArchiFlow's zero-color austerity (too cold alone).
 
 ## 2. Page Architecture (9 blocks)
 
@@ -62,7 +62,7 @@ The five analyzed section images independently confirm and refine the direction:
 2. **Hero** *(OriginKit hero-03 mood + Aura/Nimbus canvas pattern)* — full-viewport; huge Instrument Serif headline over a fixed z-0 **Three.js particle field**: sparse amber→teal-tinted dots, slow orbital drift + breathing pulse (shader-based), pointer-parallax, restrained scroll-linked amplitude. Left-biased cream scrim (Imprint recipe) keeps type legible. Sub-copy, dual CTAs (solid ink pill + outline), small handwritten-style annotation near primary CTA (hero-01's playful cue). Staggered text-rise entrance.
 3. **Proof strip** — quiet marquee of team/agency names + stat chips ("reviews locked", "assets shipped"). Low contrast.
 4. **Features grid** *(Archive mosaic)* — 6 cards in 3-col grid on cream band: Briefs, Project memory, Review lock & summarize, Kanban production, Approvals, Schedule & publish. Gradient-border shell on the highlighted card. Icons: lucide linear set only.
-5. **Product showcase** — framed dashboard mockup (built from real Folio UI primitives, not screenshot) tilted in perspective; ScrollTrigger scrub rotates it to flat while feature callouts pin/step. This is the hero-03 "depth corridor" homage translated to product space.
+5. **Product showcase** — framed dashboard mockup (built from real yv. UI primitives, not screenshot) tilted in perspective; ScrollTrigger scrub rotates it to flat while feature callouts pin/step. This is the hero-03 "depth corridor" homage translated to product space.
 6. **How it works** — horizontal-scroll pinned section (Lenis+ScrollTrigger): Brief → Produce → Review → Ship, each step a large numeral in Instrument Serif + short copy.
 7. **Testimonials** *(Craft's white-on-warm cards)* — 3 cards, warm shadows, terracotta-free: quote + name + role. Split-text reveal per card.
 8. **CTA block** *(cta-02)* — full-bleed espresso `#1c1917` band (the one dark moment): huge serif headline, teal accent-glow button (CoinCompass glow-shadow recipe re-tinted), particle field re-used at higher density/dimmer.

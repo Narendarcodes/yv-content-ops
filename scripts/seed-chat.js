@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * seed-chat.js — curated, real-data seed for Folio.
+ * seed-chat.js — curated, real-data seed for yv..
  *
  * This is NOT a parser. It encodes the structured understanding of the
  * "SM ARJ - Stories Category" WhatsApp group chat (a real export the user

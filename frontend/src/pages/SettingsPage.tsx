@@ -56,7 +56,7 @@ export default function SettingsPage() {
     // Persist preferences locally - backend settings API replaces this later
     try {
       localStorage.setItem(
-        'folio.settings',
+        'yv.settings',
         JSON.stringify({ orgName: orgName.trim(), notifEmail, notifDigest, mentions, twoFactor }),
       )
     } catch {

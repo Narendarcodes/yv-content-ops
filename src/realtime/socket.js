@@ -1,5 +1,5 @@
 /**
- * Socket.IO real-time layer for Folio team chat.
+ * Socket.IO real-time layer for yv. team chat.
  *
  * Protocol:
  *  - Client connects with `auth: { token: <JWT> }`; the handshake is rejected

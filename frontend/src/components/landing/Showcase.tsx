@@ -68,7 +68,7 @@ export default function Showcase() {
                 <span className="h-2.5 w-2.5 rounded-full bg-danger/70" />
                 <span className="h-2.5 w-2.5 rounded-full bg-warning/70" />
                 <span className="h-2.5 w-2.5 rounded-full bg-success/70" />
-                <span className="ml-3 text-xs text-umber">folio · spring campaign</span>
+                <span className="ml-3 text-xs text-umber">yv. · spring campaign</span>
               </div>
               {/* mock body — sidebar column only from sm up (it's display:none below) */}
               <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr]">

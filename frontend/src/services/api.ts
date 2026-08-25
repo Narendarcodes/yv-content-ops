@@ -14,7 +14,7 @@ export const API_BASE =
         'http://localhost:3000/api/v1')
     : 'http://localhost:3000/api/v1'
 
-const SESSION_KEY = 'folio.session'
+const SESSION_KEY = 'yv.session'
 
 // Read the persisted access token (written on login, mirrors lib/auth.writePersistedSession).
 function getAccessToken(): string | null {

@@ -50,7 +50,7 @@ export interface BackendSession {
 /** Read the session from the persisted store. */
 function readPersistedSession(): BackendSession | null {
   try {
-    const raw = localStorage.getItem('folio.session')
+    const raw = localStorage.getItem('yv.session')
     if (!raw) return null
     const parsed = JSON.parse(raw) as BackendSession & { user?: SessionUser & { _id?: string } }
     const uid = parsed.user?.id ?? parsed.user?._id
@@ -64,7 +64,7 @@ function readPersistedSession(): BackendSession | null {
 /** Write the session to localStorage (kept in sync with the backend cookie). */
 function writePersistedSession(session: BackendSession): void {
   try {
-    localStorage.setItem('folio.session', JSON.stringify(session))
+    localStorage.setItem('yv.session', JSON.stringify(session))
   } catch {
     /* storage unavailable - in-memory only */
   }
@@ -105,7 +105,7 @@ async function logoutBackend(): Promise<void> {
   }
   // Remove the persisted session so the frontend knows it's signed out
   try {
-    localStorage.removeItem('folio.session')
+    localStorage.removeItem('yv.session')
   } catch {
     /* noop */
   }
@@ -149,7 +149,7 @@ export function useAuth() {
   // 3️⃣ Listen for storage events (e.g. another tab signing out)
   useEffect(() => {
     const handler = (e: StorageEvent) => {
-      if (e.key === 'folio.session') {
+      if (e.key === 'yv.session') {
         const s = readPersistedSession()
         setSession(s)
         setAuthenticated(!!s?.user?.id)
@@ -177,7 +177,7 @@ export function updateSessionUser(patch: Partial<SessionUser>): void {
   writePersistedSession(next)
   // Notify every hook (same-tab storage writes don't fire native events).
   try {
-    window.dispatchEvent(new StorageEvent('storage', { key: 'folio.session' }))
+    window.dispatchEvent(new StorageEvent('storage', { key: 'yv.session' }))
   } catch {
     /* noop */
   }

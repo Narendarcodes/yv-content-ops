@@ -218,7 +218,7 @@ export default function RegisterPage() {
                   {orgName.trim() || 'Your organization'}
                 </p>
                 <p className="font-mono text-[11px] text-umber">
-                  folio.app/{orgSlug || 'your-workspace'}
+                  yv.app/{orgSlug || 'your-workspace'}
                 </p>
               </div>
             </div>
@@ -330,7 +330,7 @@ export default function RegisterPage() {
                         className={`input !pl-10 font-mono text-[13px] ${tried && !slugOk ? 'input-error' : ''}`}
                       />
                     </div>
-                    <p className="mt-1.5 font-mono text-[11px] text-umber/70">folio.app/{orgSlug || 'your-workspace'}</p>
+                    <p className="mt-1.5 font-mono text-[11px] text-umber/70">yv.app/{orgSlug || 'your-workspace'}</p>
                     {tried && !slugOk && (
                       <p className="mt-1.5 font-mono text-[11px] text-danger" role="alert">Use lowercase letters, numbers and dashes</p>
                     )}
@@ -592,7 +592,7 @@ export default function RegisterPage() {
                   </div>
                   <div className="flex items-center justify-between px-5 py-3.5">
                     <span className="font-mono text-[10px] uppercase tracking-wider text-umber/60">Workspace</span>
-                    <span className="font-mono text-[13px] text-ink">folio.app/{orgSlug}</span>
+                    <span className="font-mono text-[13px] text-ink">yv.app/{orgSlug}</span>
                   </div>
                   <div className="flex items-center justify-between px-5 py-3.5">
                     <span className="font-mono text-[10px] uppercase tracking-wider text-umber/60">Admin</span>
