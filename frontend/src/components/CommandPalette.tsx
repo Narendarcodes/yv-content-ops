@@ -3,6 +3,7 @@
  * then jump straight to them. Wired to the top-bar search box.
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { FileText, Search, User, X } from 'lucide-react'
 import { statusLabel } from '../lib/format'
@@ -96,8 +97,9 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
 
   if (!open) return null
 
-
-  return (
+  // Portal to body: escapes transformed ancestors (.page-enter wrapper) so the
+  // backdrop truly covers the viewport and the dialog centers on screen.
+  return createPortal(
     <div className="fixed inset-0 z-[60] flex items-start justify-center p-4 pt-[12vh]">
       <div className="fixed inset-0 bg-ink/45 backdrop-blur-[2px]" onClick={onClose} aria-hidden="true" />
       <div
@@ -159,6 +161,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
           <span>esc close</span>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

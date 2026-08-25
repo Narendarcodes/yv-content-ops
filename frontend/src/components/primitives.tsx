@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import type { ReactNode } from 'react'
 import { X } from 'lucide-react'
 
@@ -89,8 +91,33 @@ export function Modal({
   children: ReactNode
   width?: string
 }) {
+  // Escape closes while open (hooks stay above the early return).
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, onClose])
+
+  // Lock background scroll behind a tall modal.
+  useEffect(() => {
+    if (!open) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [open])
+
   if (!open) return null
-  return (
+
+  // Portal to document.body so `position: fixed` resolves against the
+  // VIEWPORT. Without it, transformed ancestors (AppShell's .page-enter
+  // wrapper keeps transform via animation fill-mode) become the containing
+  // block -> backdrop/modal clipped to the content column.
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 pt-[8vh]">
       <div className="fixed inset-0 bg-ink/45 backdrop-blur-[2px]" onClick={onClose} aria-hidden="true" />
       <div
@@ -111,7 +138,8 @@ export function Modal({
         </header>
         <div className="px-6 py-5">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
