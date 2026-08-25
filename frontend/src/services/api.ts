@@ -450,6 +450,60 @@ export async function listVersions(projectId: string): Promise<ProjectVersion[]>
   }))
 }
 
+/** ------------------------------------------------------------------- */
+/* Concepts (idea pipeline before projects) */
+export interface Concept {
+  id: string
+  title: string
+  description: string
+  type: 'New Concept' | 'Experiment' | 'Revision'
+  status: 'IDEA' | 'APPROVED' | 'DECLINED'
+  proposerName?: string | null
+  approvedProjectId?: string | null
+  createdAt?: string
+}
+
+export async function listConcepts(orgId: string): Promise<Concept[]> {
+  const res = await authFetch(`${API_BASE}/organizations/${orgId}/concepts`)
+  if (!res.ok) throw new Error(`listConcepts failed (${res.status})`)
+  const json = await res.json()
+  return json.data ?? []
+}
+
+export async function createConcept(
+  orgId: string,
+  input: { title: string; description: string; type: Concept['type'] },
+): Promise<Concept> {
+  const res = await authFetch(`${API_BASE}/organizations/${orgId}/concepts`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(input),
+  })
+  if (!res.ok) throw new Error(`createConcept failed (${res.status})`)
+  return (await res.json()).data
+}
+
+export async function approveConcept(orgId: string, conceptId: string): Promise<{ projectId: string }> {
+  const res = await authFetch(`${API_BASE}/organizations/${orgId}/concepts/${conceptId}/approve`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error(`approveConcept failed (${res.status})`)
+  const json = await res.json()
+  return { projectId: json.data.projectId }
+}
+
+export async function declineConcept(orgId: string, conceptId: string): Promise<void> {
+  const res = await authFetch(`${API_BASE}/organizations/${orgId}/concepts/${conceptId}/decline`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error(`declineConcept failed (${res.status})`)
+}
+
 /** Send a chat message to a channel (persisted server-side). */
 export async function sendChannelMessage(projectId: string, channelId: string, body: string) {
   const res = await authFetch(

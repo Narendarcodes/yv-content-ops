@@ -48,6 +48,7 @@ if (config.env !== 'test') {
 app.use(`${config.apiPrefix}/health`, healthRouter);
 app.use(`${config.apiPrefix}/auth`, authRouter);
 app.use(`${config.apiPrefix}/organizations`, orgRouter);
+app.use(`${config.apiPrefix}/organizations/:organizationId/concepts`, require('./routes/concepts'));
 app.use(`${config.apiPrefix}/organizations`, contractsRouter);
 app.use(`${config.apiPrefix}/organizations`, invoicesRouter);
 app.use(`${config.apiPrefix}/projects`, projectsRouter);

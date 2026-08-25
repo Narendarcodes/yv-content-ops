@@ -54,7 +54,8 @@ let orgIdCache: string | null = null
 export function invalidateOrgCache() {
   orgIdCache = null
 }
-async function primaryOrgId(): Promise<string | null> {
+/** Resolve the current user's primary org id (no orgId needed from caller). */
+export async function primaryOrgId(): Promise<string | null> {
   if (orgIdCache) return orgIdCache
   try {
     const orgs = await api.listOrgs()
