@@ -7,7 +7,7 @@ const CALLOUTS = [
   { x: '10%', y: '68%', text: 'Full decision history, always searchable' },
 ]
 
-/** Framed dashboard mockup built from Folio primitives — perspective tilt that
+/** Framed dashboard mockup built from yv. primitives — perspective tilt that
  *  scrubs to flat as you scroll (hero-03 depth homage, translated to product space). */
 export default function Showcase() {
   const root = useRef<HTMLElement>(null)
@@ -54,7 +54,7 @@ export default function Showcase() {
     <section ref={root} className="relative overflow-hidden bg-cream/70 py-28" style={{ perspective: '1400px' }}>
       <div className="grain absolute inset-0" aria-hidden="true" />
       <div className="relative mx-auto max-w-6xl px-6">
-        <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-teal">Inside Folio</p>
+        <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-teal">Inside yv.</p>
         <h2 className="mx-auto mt-4 max-w-2xl text-center font-display text-[clamp(2.4rem,5vw,4rem)] leading-[1.05] text-ink">
           The dashboard your work deserves
         </h2>

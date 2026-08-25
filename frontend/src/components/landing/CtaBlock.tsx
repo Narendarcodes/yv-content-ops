@@ -1,12 +1,10 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
-import ParticleField from './ParticleField'
 
 /** Full-bleed dark CTA — the one espresso moment (cta-02 pattern, teal glow accent). */
 export default function CtaBlock() {
   return (
     <section className="relative overflow-hidden bg-ink py-32 text-canvas">
-      <ParticleField className="absolute inset-0 z-0" density={0.9} opacity={0.22} />
       <div className="absolute inset-0 z-[1] bg-gradient-to-b from-ink via-transparent to-ink" aria-hidden="true" />
 
       <div className="relative z-10 mx-auto max-w-3xl px-6 text-center">

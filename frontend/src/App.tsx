@@ -38,7 +38,7 @@ function RedirectIfAuthed({ children }: { children: ReactNode }) {
   const location = useLocation()
   if (authenticated) {
     const from = (location.state as { from?: string } | null)?.from
-    return <Navigate to={from ?? '/'} replace />
+    return <Navigate to={from ?? '/dashboard'} replace />
   }
   return <>{children}</>
 }
@@ -46,15 +46,15 @@ function RedirectIfAuthed({ children }: { children: ReactNode }) {
 export default function App() {
   return (
     <Routes>
-      {/* Public (redirect to app when already signed in) */}
-      <Route path="/landing" element={<LandingPage />} />
+      {/* Public marketing home — the tunnel hero landing (no auth gate) */}
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<RedirectIfAuthed><LoginPage /></RedirectIfAuthed>} />
       <Route path="/register" element={<RedirectIfAuthed><RegisterPage /></RedirectIfAuthed>} />
       <Route path="/forgot-password" element={<RedirectIfAuthed><ForgotPasswordPage /></RedirectIfAuthed>} />
 
       {/* Authenticated app shell */}
       <Route element={<RequireAuth><AppShell /></RequireAuth>}>
-        <Route path="/" element={<DashboardPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/my-work" element={<MyWorkPage />} />
         <Route path="/review" element={<ReviewPage />} />
         <Route path="/board" element={<BoardPage />} />

@@ -18,7 +18,7 @@ const FEATURES = [
   {
     icon: LockKeyhole,
     title: 'Review lock & summarize',
-    body: 'Freeze a review round and let Folio condense scattered feedback into one clear revision list.',
+    body: 'Freeze a review round and let yv. condense scattered feedback into one clear revision list.',
   },
   {
     icon: KanbanSquare,

@@ -1,5 +1,5 @@
 /**
- * Shared domain types for Folio.
+ * Shared domain types for yv..
  *
  * These used to live in mockData.ts; they now stand alone so no page ever
  * needs to import from a file containing fake data. All runtime data comes

@@ -10,7 +10,7 @@ import type * as THREE from 'three'
  * (every other segment takes slabs; each slab then has a 50% chance to show;
  * shown slabs alternate color/image materials via stride counters) are
  * 1:1 with the published module. Only the "images" half is swapped for
- * Folio gradient canvases, per the user's no-text/plain-blocks direction.
+ * yv. gradient canvases, per the user's no-text/plain-blocks direction.
  *
  * Strict variant-3 tweaks: fade:100 · grid:6 · boost:33 · speed:100 ·
  * tunnelSize:1 · lineOpacity:100 · lineColor:#E4E4E4 · background:#FFFFFF
@@ -28,8 +28,8 @@ const CFG = {
   tunnelSize: 1,
 }
 
-// OriginKit variant-3 palette (kept exactly; Folio-neutral enough on white)
-// Folio application theme colors (from index.css @theme tokens)
+// OriginKit variant-3 palette (kept exactly; yv.-neutral enough on white)
+// yv. application theme colors (from index.css @theme tokens)
 const COLORS = [
   '#0f766e', // Deep Teal — accent
   '#115e59', // Teal press
@@ -82,7 +82,7 @@ export default function GalleryTunnel({ className = '' }: { className?: string }
         opacity: Math.min(100, Math.max(0, CFG.lineOpacity)) / 100,
       })
 
-      // Folio gradient canvases stand in for the demo's image URLs
+      // yv. gradient canvases stand in for the demo's image URLs
       function makeGradientMat(index: number) {
         const c = document.createElement('canvas')
         c.width = c.height = 128

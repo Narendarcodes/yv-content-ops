@@ -1,5 +1,5 @@
 /**
- * Thin fetch wrapper for Folio.
+ * Thin fetch wrapper for yv..
  * All requests go to the real backend - there is no mock mode anymore.
  */
 

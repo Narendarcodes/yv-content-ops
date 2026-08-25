@@ -1,5 +1,5 @@
 /**
- * Live team chat state for Folio.
+ * Live team chat state for yv..
  *
  * - Loads the "Team Chat" project's channels + messages from the API.
  * - Opens one Socket.IO connection, authenticated with the session JWT.

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import { useToast } from '../components/toast'
 import { login as apiLogin } from '../services/api'
+import BrandLogo from '../components/BrandLogo'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -72,8 +73,7 @@ export default function LoginPage() {
         />
 
         <div className="relative z-10 flex items-center gap-3">
-          <span className="brand-mark h-10 w-10 text-base">Fo</span>
-          <span className="font-headline text-xl font-bold tracking-[-0.02em] text-ink">Folio</span>
+          <BrandLogo to="/" size={40} />
         </div>
 
         <div className="relative z-10">
@@ -109,7 +109,7 @@ export default function LoginPage() {
       <div className="flex flex-1 items-center justify-center bg-surface px-6 py-12">
         <div className="w-full max-w-sm">
           <div className="mb-8 lg:hidden">
-            <span className="brand-mark h-10 w-10 text-base">Fo</span>
+            <BrandLogo to="/" size={40} />
           </div>
 
           <div className="stagger">
@@ -187,7 +187,7 @@ export default function LoginPage() {
             </form>
 
             <p className="mt-7 text-center text-sm text-umber">
-              New to Folio?{' '}
+              New to yv.?{' '}
               <Link to="/register" className="font-medium text-teal transition-opacity hover:opacity-80">
                 Create your organization
               </Link>

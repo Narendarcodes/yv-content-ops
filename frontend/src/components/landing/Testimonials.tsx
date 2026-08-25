@@ -2,7 +2,7 @@ import Reveal from './Reveal'
 
 const QUOTES = [
   {
-    quote: 'We stopped losing client decisions in Slack. Folio remembers the "why" behind every asset — our revisions dropped by a third.',
+    quote: 'We stopped losing client decisions in Slack. yv. remembers the "why" behind every asset — our revisions dropped by a third.',
     name: 'Maya Ortiz',
     role: 'Creative Director, Halcyon Media',
   },

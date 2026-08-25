@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, CheckCircle2, Mail } from 'lucide-react'
+import BrandLogo from '../components/BrandLogo'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -21,8 +22,7 @@ export default function ForgotPasswordPage() {
     <div className="flex min-h-screen items-center justify-center bg-surface px-6 py-12">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex items-center gap-3">
-          <span className="brand-mark h-10 w-10 text-base">Fo</span>
-          <span className="font-headline text-xl font-bold tracking-[-0.02em] text-ink">Folio</span>
+          <BrandLogo to="/" size={40} />
         </div>
 
         {sent ? (

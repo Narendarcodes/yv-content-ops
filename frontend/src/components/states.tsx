@@ -1,5 +1,5 @@
 /**
- * Async UI states for Folio.
+ * Async UI states for yv..
  *
  * Skeletons show while real data loads, an ErrorBanner offers a retry when
  * the backend is unreachable, and EmptyState explains when there is simply

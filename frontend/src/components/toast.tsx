@@ -1,5 +1,5 @@
 /**
- * Lightweight toast feedback for Folio - no external dependency, matching
+ * Lightweight toast feedback for yv. - no external dependency, matching
  * the app's hand-rolled motion approach. Actions that change state should
  * always confirm themselves with a toast.
  */

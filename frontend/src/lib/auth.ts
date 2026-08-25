@@ -1,5 +1,5 @@
 /**
- * Frontend session management for Folio.
+ * Frontend session management for yv..
  *
  * Priority:
  *   1. Real backend (access token from cookies / Authorization header)

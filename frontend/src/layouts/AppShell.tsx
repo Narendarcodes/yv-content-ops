@@ -21,8 +21,9 @@ import Avatar from '../components/ui'
 import { useViewer } from '../lib/viewer'
 import { logout, useAuth } from '../lib/auth'
 import { useNotifications, refreshNotifications } from '../lib/notifications'
-import { useTeam, useProjects } from '../lib/data'
+import { useProjects } from '../lib/data'
 import CommandPalette from '../components/CommandPalette'
+import BrandLogo from '../components/BrandLogo'
 
 
 const iconProps = { size: 17, strokeWidth: 1.75 }
@@ -59,7 +60,6 @@ export default function AppShell() {
   const viewer = useViewer()
   const { session } = useAuth()
   const notifs = useNotifications()
-  const { org } = useTeam()
   const { projects } = useProjects()
   const [paletteOpen, setPaletteOpen] = useState(false)
   const segments = location.pathname.split('/').filter(Boolean)
@@ -119,18 +119,7 @@ export default function AppShell() {
       <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-line bg-canvas">
         {/* Brand */}
         <div className="flex items-center gap-3 px-4 pt-5 pb-4">
-          <span className="brand-mark h-9 w-9 text-sm">Fo</span>
-          <div className="leading-tight">
-            <p className="font-headline text-base font-bold tracking-[-0.02em] text-ink">Folio</p>
-            <button
-              onClick={() => navigate('/settings')}
-              className="flex items-center gap-1 text-[11px] text-umber transition-colors hover:text-teal"
-              title="Switch workspace"
-            >
-              {org?.name ?? 'Workspace'}
-              <ChevronsUpDown size={11} strokeWidth={2} className="text-umber/50" />
-            </button>
-          </div>
+          <BrandLogo to="/dashboard" size={36} />
         </div>
 
         {/* Nav */}
@@ -262,7 +251,7 @@ export default function AppShell() {
 const navGroups: { section: string; items: NavItem[] }[] = [
   {
     section: 'Overview',
-    items: [{ to: '/', label: 'Dashboard', icon: () => <LayoutGrid {...iconProps} />, end: true }],
+    items: [{ to: '/dashboard', label: 'Dashboard', icon: () => <LayoutGrid {...iconProps} />, end: true }],
   },
   {
     section: 'Work',

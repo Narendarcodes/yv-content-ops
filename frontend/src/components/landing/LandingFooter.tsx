@@ -16,7 +16,7 @@ export default function LandingFooter() {
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
           {/* brand */}
           <div>
-            <p className="font-display text-2xl text-ink">Folio</p>
+            <p className="font-display text-2xl text-ink">yv.</p>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-umber">
               The project memory platform for content teams — briefs, reviews,
               production and publishing in one calm, connected workspace.
@@ -54,7 +54,7 @@ export default function LandingFooter() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-line pt-6 sm:flex-row">
           <p className="text-xs text-umber/80">
-            © {new Date().getFullYear()} Folio — content operations &amp; project memory.
+            © {new Date().getFullYear()} yv. — content operations &amp; project memory.
           </p>
           <p className="text-xs text-umber/60">
             Built for teams who refuse to forget.

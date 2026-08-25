@@ -25,7 +25,7 @@ function Swoosh() {
 
 /**
  * OriginKit hero-03 port: a real Three.js gallery tunnel (GalleryTunnel engine)
- * with Folio's copy at the calm core. The canvas handles all depth; DOM adds a
+ * with yv.'s copy at the calm core. The canvas handles all depth; DOM adds a
  * radial scrim for legibility. No per-frame DOM work → no scroll flicker.
  */
 export default function HeroTunnel() {
@@ -71,7 +71,7 @@ export default function HeroTunnel() {
         </h1>
 
         <p data-rise className="mx-auto mt-8 max-w-xl px-2 text-base leading-relaxed text-umber sm:px-0 sm:text-lg">
-          Folio is the project memory platform for content teams — briefs, reviews,
+          yv. is the project memory platform for content teams — briefs, reviews,
           production and publishing in one calm, connected workspace.
         </p>
 

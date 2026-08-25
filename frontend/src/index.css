@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /* ============================================================
-   Folio Design System — Tailwind v4 theme tokens
+   yv. Design System — Tailwind v4 theme tokens
    Derived from Stitch DESIGN.md (assets/5404831274793666282)
    ============================================================ */
 @theme {
@@ -484,7 +484,7 @@ body {
   70%, 100% { transform: scale(2.4); opacity: 0; }
 }
 
-/* Brand mark — the "Fo" monogram */
+/* Brand mark — the yv. monogram */
 .brand-mark {
   display: inline-flex;
   align-items: center;
@@ -505,7 +505,7 @@ body {
 }
 
 /* ============================================================
-   Landing page (route /landing) — Folio marketing system
+   Landing page (home route /) — yv. marketing system
    ============================================================ */
 
 .landing {

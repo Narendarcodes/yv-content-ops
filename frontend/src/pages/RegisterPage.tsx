@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import { useToast } from '../components/toast'
 import { login as apiLogin, register as apiRegister, createOrg as apiCreateOrg, addMember as apiAddMember, checkOrgAvailability } from '../services/api'
+import BrandLogo from '../components/BrandLogo'
 
 /* ------------------------------------------------------------------ */
 /* Organization signup - three steps: Organization → Admin → Team     */
@@ -194,8 +195,7 @@ export default function RegisterPage() {
         />
 
         <div className="relative z-10 flex items-center gap-3">
-          <span className="brand-mark h-10 w-10 text-base">Fo</span>
-          <span className="font-headline text-xl font-bold tracking-[-0.02em] text-ink">Folio</span>
+          <BrandLogo to="/" size={40} />
         </div>
 
         <div className="relative z-10">
@@ -211,7 +211,7 @@ export default function RegisterPage() {
           <div className="card card-hover mt-10 max-w-sm p-4">
             <div className="flex items-center gap-3">
               <span className="brand-mark h-9 w-9 text-xs">
-                {orgName.trim() ? orgName.trim().slice(0, 2).toUpperCase() : 'Fo'}
+                {orgName.trim() ? orgName.trim().slice(0, 2).toUpperCase() : 'yv'}
               </span>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[13px] font-medium text-ink">
@@ -237,7 +237,7 @@ export default function RegisterPage() {
       <div className="flex flex-1 items-center justify-center bg-surface px-6 py-12">
         <div className="w-full max-w-md">
           <div className="mb-8 lg:hidden">
-            <span className="brand-mark h-10 w-10 text-base">Fo</span>
+            <BrandLogo to="/" size={40} />
           </div>
 
           {/* Stepper */}

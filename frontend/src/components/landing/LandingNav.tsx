@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import BrandLogo from '../BrandLogo'
 
 const LINKS = [
   { label: 'Features', href: '#features' },
@@ -24,9 +25,7 @@ export default function LandingNav() {
   return (
     <header ref={ref} className="landing-nav fixed inset-x-0 top-4 z-50 flex justify-center px-4">
       <nav className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2 rounded-full border border-line bg-surface/80 py-2 pl-4 pr-2 shadow-card backdrop-blur-md transition-all duration-300 sm:pl-6">
-        <a href="#top" className="font-display text-xl text-ink">
-          Folio
-        </a>
+        <BrandLogo to="/" size={34} className="shrink-0" />
         <div className="hidden items-center gap-7 sm:flex">
           {LINKS.map((l) => (
             <a key={l.href} href={l.href} className="text-sm font-medium text-umber transition-colors duration-200 hover:text-ink">

@@ -1,5 +1,5 @@
 /**
- * Role & permission model for Folio.
+ * Role & permission model for yv..
  * Mirrors the backend role seeds (src/seed/roles.js) so the UX matches what
  * the API enforces. Frontend checks are a UX aid only - the backend remains
  * the real security boundary. A user's role comes from their login session,
