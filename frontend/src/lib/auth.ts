@@ -129,11 +129,17 @@ export function useAuth() {
 
     async function boot() {
       try {
+        // Preserve existing tokens - getMe() must NEVER clobber the session's
+        // accessToken/refreshToken, otherwise the silent-refresh path dies
+        // and every request 401s once the 15-min access token expires.
+        const prev = readPersistedSession()
         const data = await getMe()
         const user = { ...data, id: (data as SessionUser & { _id?: string }).id ?? (data as SessionUser & { _id?: string })._id }
         const session: BackendSession = {
           user,
-          loggedInAt: new Date().toISOString(),
+          accessToken: prev?.accessToken,
+          refreshToken: prev?.refreshToken,
+          loggedInAt: prev?.loggedInAt ?? new Date().toISOString(),
         }
         setSession(session)
         setAuthenticated(true)
