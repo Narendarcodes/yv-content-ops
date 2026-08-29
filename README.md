@@ -6,18 +6,10 @@ The backend + frontend for the **yv. Content Operations & Project Memory Platfor
 
 Built under the **yv.** brand. Monorepo: Node.js + Express + MongoDB API and a React + Vite frontend.
 
-<p>
-  <img src="./yv_svgs/yv-wordmark.svg" height="28" alt="yv. wordmark" />
-  &nbsp;
-  <img src="./yv_svgs/yv-mark.svg" height="28" alt="yv. mark" />
-</p>
-
 [![Node](https://img.shields.io/badge/node-24-black)](#tech-stack)
 [![MongoDB](https://img.shields.io/badge/MongoDB-7-green)](#tech-stack)
 [![React](https://img.shields.io/badge/frontend-React%20%2B%20Vite-149eca)](#tech-stack)
 [![License](https://img.shields.io/badge/license-private-lightgrey)](#license)
-
-![yv-content-ops social preview](.github/social-preview.png)
 
 ---
 
@@ -113,7 +105,6 @@ yv-content-ops/
 │   └── openapi.yaml     # OpenAPI 3.1 spec
 ├── tests/               # Jest + Supertest (in-memory MongoDB)
 ├── scripts/             # seed-chat.js etc.
-├── yv_svgs/             # yv. brand — yv-mark.svg, yv-wordmark.svg, yv-favicon.svg
 ├── docker-compose.yml
 ├── Dockerfile
 └── README.md
@@ -420,7 +411,7 @@ MVP backend + frontend are functional. Next:
 
 ## Brand
 
-**yv.** — wordmark, mark and favicon live in `yv_svgs/` (`yv-wordmark.svg`, `yv-mark.svg`, `yv-favicon.svg`). Use the wordmark for headers and the mark for favicons / compact placements. `logo.png` is a legacy export — prefer the SVGs.
+**yv.** — official logo is the cursive script `yv.` with teal dot — exact vector trace `INK_PATH`/`TEAL_PATH` (985:529) in `frontend/src/components/BrandLogo.tsx` (`#171310` + `#035E5E`). `logo.png` is a raster export of the same. No other wordmark/icon variants are kept in the repo.
 
 Repo name: **`yv-content-ops`** → `github.com/Narendarcodes/yv-content-ops`
 
