@@ -15,7 +15,7 @@
  *   node scripts/seed-chat.js            # seed MongoDB
  *   node scripts/seed-chat.js --dry-run  # print what would be created
  *
- * Env overrides: MONGO_URI, ORG_SLUG (default aaryajanani).
+ * Env overrides: MONGO_URI, ORG_SLUG (default demo).
  */
 require('dotenv').config({ path: require('path').resolve(__dirname, '..', '.env') });
 
@@ -36,7 +36,7 @@ const Notification = require('../src/models/notification.model');
 
 const DRY_RUN = process.argv.includes('--dry-run');
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/cop';
-const ORG_SLUG = process.env.ORG_SLUG || 'aaryajanani';
+const ORG_SLUG = process.env.ORG_SLUG || 'demo';
 const DEMO_PASSWORD = 'demo';
 
 const VALID_ROLES = ['admin', 'editor', 'reviewer', 'designer', 'publisher', 'member'];
@@ -59,9 +59,9 @@ function parseChatDate(s) {
 /* --------------------------- chat participants --------------------------- */
 // The three people who actually do the work in the Stories Category chat.
 const PARTICIPANTS = [
-  { email: 'divya@aaryajanani.org', name: 'Divya Akka', role: 'editor', title: 'Content Lead' },
-  { email: 'narendar@aaryajanani.org', name: 'Narendar', role: 'designer', title: 'Video Editor' },
-  { email: 'deepthi@aaryajanani.org', name: 'Deepthi Akka', role: 'editor', title: 'Script Writer' },
+  { email: 'divya@demo.yv-ops.test', name: 'Divya Akka', role: 'editor', title: 'Content Lead' },
+  { email: 'narendar@demo.yv-ops.test', name: 'Narendar', role: 'designer', title: 'Video Editor' },
+  { email: 'deepthi@demo.yv-ops.test', name: 'Deepthi Akka', role: 'editor', title: 'Script Writer' },
 ];
 
 /* --------------------------- the real conversation --------------------------- */
@@ -148,8 +148,8 @@ const PROJECTS = [
     status: 'PUBLISHED',
     description:
       'First "Stories Category" reel — the sage Ashtavakra, framed around a pregnancy message. Scripted by Deepthi, voiced by multiple artists, edited by Narendar, published to YouTube Shorts + Instagram.',
-    creator: 'divya@aaryajanani.org',
-    assignee: 'narendar@aaryajanani.org',
+    creator: 'divya@demo.yv-ops.test',
+    assignee: 'narendar@demo.yv-ops.test',
     publishedAt: '2/5/26, 2:04 PM',
   },
   {
@@ -157,16 +157,16 @@ const PROJECTS = [
     type: 'Content Production',
     status: 'IDEA',
     description: 'Movie-based reel (Mirai). Discussed as the next story after Ashtavakra. Blocked on voice-over script from Deepthi.',
-    creator: 'divya@aaryajanani.org',
-    assignee: 'narendar@aaryajanani.org',
+    creator: 'divya@demo.yv-ops.test',
+    assignee: 'narendar@demo.yv-ops.test',
   },
   {
     title: 'Kantara 2 Movie Reel',
     type: 'Content Production',
     status: 'IDEA',
     description: 'Movie-based reel (Kantara 2). Discussed alongside Mirai as a future story. Blocked on voice-over script from Deepthi.',
-    creator: 'divya@aaryajanani.org',
-    assignee: 'narendar@aaryajanani.org',
+    creator: 'divya@demo.yv-ops.test',
+    assignee: 'narendar@demo.yv-ops.test',
   },
   {
     title: 'Instagram Auto-DM Workflow',
@@ -174,16 +174,16 @@ const PROJECTS = [
     status: 'IN_PROGRESS',
     description:
       'Narendar built an easy-to-use UI to manage the Instagram auto-DM automation. Needs to be deployed/hosted and connected with the dev team (deb) for the website integration.',
-    creator: 'narendar@aaryajanani.org',
-    assignee: 'narendar@aaryajanani.org',
+    creator: 'narendar@demo.yv-ops.test',
+    assignee: 'narendar@demo.yv-ops.test',
   },
   {
     title: 'SM Content Calendar',
     type: 'Content Production',
     status: 'APPROVED',
     description: 'Shared content calendar (Google Sheet) tracking posting schedule for the story reels so the team stays consistent.',
-    creator: 'divya@aaryajanani.org',
-    assignee: 'divya@aaryajanani.org',
+    creator: 'divya@demo.yv-ops.test',
+    assignee: 'divya@demo.yv-ops.test',
   },
 ];
 
@@ -191,15 +191,15 @@ const PROJECTS = [
 // Where the published reel actually went live, per the chat
 // ("published to YouTube Shorts + Instagram", Feb 5).
 const PUBLICATIONS = [
-  { project: 'Ashtavakra Story Reel', platform: 'YouTube Shorts', publishedBy: 'deepthi@aaryajanani.org', publishedAt: '2/5/26, 2:04 PM' },
-  { project: 'Ashtavakra Story Reel', platform: 'Instagram', publishedBy: 'deepthi@aaryajanani.org', publishedAt: '2/5/26, 2:10 PM' },
+  { project: 'Ashtavakra Story Reel', platform: 'YouTube Shorts', publishedBy: 'deepthi@demo.yv-ops.test', publishedAt: '2/5/26, 2:04 PM' },
+  { project: 'Ashtavakra Story Reel', platform: 'Instagram', publishedBy: 'deepthi@demo.yv-ops.test', publishedAt: '2/5/26, 2:10 PM' },
 ];
 
 /* --------------------------- notifications --------------------------- */
 // Real events from the chat, delivered to the people involved.
 const NOTIFICATIONS = [
   {
-    to: 'divya@aaryajanani.org',
+    to: 'divya@demo.yv-ops.test',
     project: 'Ashtavakra Story Reel',
     type: 'comment_added',
     title: 'Narendar commented on the draft',
@@ -207,7 +207,7 @@ const NOTIFICATIONS = [
     at: '1/15/26, 9:05 AM',
   },
   {
-    to: 'narendar@aaryajanani.org',
+    to: 'narendar@demo.yv-ops.test',
     project: 'Ashtavakra Story Reel',
     type: 'revision_requested',
     title: 'Script correction requested',
@@ -215,7 +215,7 @@ const NOTIFICATIONS = [
     at: '1/30/26, 11:19 AM',
   },
   {
-    to: 'deepthi@aaryajanani.org',
+    to: 'deepthi@demo.yv-ops.test',
     project: 'Ashtavakra Story Reel',
     type: 'comment_added',
     title: 'Divya Akka approved the visuals',
@@ -223,7 +223,7 @@ const NOTIFICATIONS = [
     at: '1/27/26, 5:15 PM',
   },
   {
-    to: 'divya@aaryajanani.org',
+    to: 'divya@demo.yv-ops.test',
     project: 'Ashtavakra Story Reel',
     type: 'published',
     title: 'Ashtavakra Story Reel is live',
@@ -236,26 +236,26 @@ const NOTIFICATIONS = [
 /* --------------------------- tasks (kanban) --------------------------- */
 // Work items for the Ashtavakra reel, derived from the chat's workflow.
 const TASKS = [
-  { title: 'Write Ashtavakra script', status: 'done', priority: 'high', assignee: 'deepthi@aaryajanani.org', project: 'Ashtavakra Story Reel', due: '1/10/26, 12:03 AM' },
-  { title: 'Record voice-over (Deepthi, Urvashi, Narendar)', status: 'done', priority: 'high', assignee: 'deepthi@aaryajanani.org', project: 'Ashtavakra Story Reel', due: '1/31/26, 2:39 PM' },
-  { title: 'Create story visuals', status: 'done', priority: 'medium', assignee: 'narendar@aaryajanani.org', project: 'Ashtavakra Story Reel', due: '1/27/26, 5:32 PM' },
-  { title: 'Edit video (build style + framework)', status: 'done', priority: 'high', assignee: 'narendar@aaryajanani.org', project: 'Ashtavakra Story Reel', due: '2/3/26, 7:25 AM' },
-  { title: 'Review script & hook line', status: 'done', priority: 'high', assignee: 'divya@aaryajanani.org', project: 'Ashtavakra Story Reel', due: '1/13/26, 7:51 AM' },
-  { title: 'Add BGM / SFX', status: 'in_progress', priority: 'medium', assignee: 'narendar@aaryajanani.org', project: 'Ashtavakra Story Reel', due: '2/5/26, 1:21 PM' },
-  { title: 'Publish to YouTube & Instagram', status: 'done', priority: 'high', assignee: 'deepthi@aaryajanani.org', project: 'Ashtavakra Story Reel', due: '2/5/26, 2:04 PM' },
-  { title: 'Deploy Auto-DM workflow', status: 'in_progress', priority: 'medium', assignee: 'narendar@aaryajanani.org', project: 'Instagram Auto-DM Workflow', due: '1/23/26, 2:30 PM' },
-  { title: 'Share Mirai + Kantara VO scripts', status: 'todo', priority: 'medium', assignee: 'deepthi@aaryajanani.org', project: 'Mirai Movie Reel', due: '1/25/26, 9:13 PM' },
+  { title: 'Write Ashtavakra script', status: 'done', priority: 'high', assignee: 'deepthi@demo.yv-ops.test', project: 'Ashtavakra Story Reel', due: '1/10/26, 12:03 AM' },
+  { title: 'Record voice-over (Deepthi, Urvashi, Narendar)', status: 'done', priority: 'high', assignee: 'deepthi@demo.yv-ops.test', project: 'Ashtavakra Story Reel', due: '1/31/26, 2:39 PM' },
+  { title: 'Create story visuals', status: 'done', priority: 'medium', assignee: 'narendar@demo.yv-ops.test', project: 'Ashtavakra Story Reel', due: '1/27/26, 5:32 PM' },
+  { title: 'Edit video (build style + framework)', status: 'done', priority: 'high', assignee: 'narendar@demo.yv-ops.test', project: 'Ashtavakra Story Reel', due: '2/3/26, 7:25 AM' },
+  { title: 'Review script & hook line', status: 'done', priority: 'high', assignee: 'divya@demo.yv-ops.test', project: 'Ashtavakra Story Reel', due: '1/13/26, 7:51 AM' },
+  { title: 'Add BGM / SFX', status: 'in_progress', priority: 'medium', assignee: 'narendar@demo.yv-ops.test', project: 'Ashtavakra Story Reel', due: '2/5/26, 1:21 PM' },
+  { title: 'Publish to YouTube & Instagram', status: 'done', priority: 'high', assignee: 'deepthi@demo.yv-ops.test', project: 'Ashtavakra Story Reel', due: '2/5/26, 2:04 PM' },
+  { title: 'Deploy Auto-DM workflow', status: 'in_progress', priority: 'medium', assignee: 'narendar@demo.yv-ops.test', project: 'Instagram Auto-DM Workflow', due: '1/23/26, 2:30 PM' },
+  { title: 'Share Mirai + Kantara VO scripts', status: 'todo', priority: 'medium', assignee: 'deepthi@demo.yv-ops.test', project: 'Mirai Movie Reel', due: '1/25/26, 9:13 PM' },
 ];
 
 /* --------------------------- reviews (comments) --------------------------- */
 // Feedback cycles on the Ashtavakra reel, mapped to Comment records.
 const COMMENTS = [
-  { project: 'Ashtavakra Story Reel', author: 'divya@aaryajanani.org', body: 'This is krisp and perfect. Only felt the 1st line should be a hookline.', at: '1/13/26, 7:51 AM' },
-  { project: 'Ashtavakra Story Reel', author: 'deepthi@aaryajanani.org', body: "Small correction: it is not evidently mentioned anywhere that his mother named him Ashtavakra. So we can omit that part and just continue saying 'he was born bent in eight places - Ashtavakra.'", at: '1/30/26, 11:19 AM', resolved: true },
-  { project: 'Ashtavakra Story Reel', author: 'narendar@aaryajanani.org', body: 'While saying the hook line the pitch should be different from the story part and need to be exciting and tension creating.', at: '1/15/26, 9:05 AM' },
-  { project: 'Ashtavakra Story Reel', author: 'divya@aaryajanani.org', body: 'Omg these visuals are soo good', at: '1/27/26, 5:15 PM', resolved: true },
-  { project: 'Ashtavakra Story Reel', author: 'deepthi@aaryajanani.org', body: "The visuals are stunning! We need a powerful BGM for this. Hope the subtitles fit in for the Insta reel aspect ratio.", at: '2/3/26, 12:28 AM' },
-  { project: 'Ashtavakra Story Reel', author: 'divya@aaryajanani.org', body: 'Yes but this is to his own son kada. So they may be projected in a bad light.', at: '2/3/26, 11:05 PM' },
+  { project: 'Ashtavakra Story Reel', author: 'divya@demo.yv-ops.test', body: 'This is krisp and perfect. Only felt the 1st line should be a hookline.', at: '1/13/26, 7:51 AM' },
+  { project: 'Ashtavakra Story Reel', author: 'deepthi@demo.yv-ops.test', body: "Small correction: it is not evidently mentioned anywhere that his mother named him Ashtavakra. So we can omit that part and just continue saying 'he was born bent in eight places - Ashtavakra.'", at: '1/30/26, 11:19 AM', resolved: true },
+  { project: 'Ashtavakra Story Reel', author: 'narendar@demo.yv-ops.test', body: 'While saying the hook line the pitch should be different from the story part and need to be exciting and tension creating.', at: '1/15/26, 9:05 AM' },
+  { project: 'Ashtavakra Story Reel', author: 'divya@demo.yv-ops.test', body: 'Omg these visuals are soo good', at: '1/27/26, 5:15 PM', resolved: true },
+  { project: 'Ashtavakra Story Reel', author: 'deepthi@demo.yv-ops.test', body: "The visuals are stunning! We need a powerful BGM for this. Hope the subtitles fit in for the Insta reel aspect ratio.", at: '2/3/26, 12:28 AM' },
+  { project: 'Ashtavakra Story Reel', author: 'divya@demo.yv-ops.test', body: 'Yes but this is to his own son kada. So they may be projected in a bad light.', at: '2/3/26, 11:05 PM' },
 ];
 
 /* --------------------------- revision requests --------------------------- */
@@ -264,7 +264,7 @@ const REVISIONS = [
     project: 'Ashtavakra Story Reel',
     revisionNumber: 1,
     reason: "Script correction: omit the line about the mother naming him Ashtavakra (not evidently mentioned); continue with 'he was born bent in eight places - Ashtavakra.'",
-    requester: 'deepthi@aaryajanani.org',
+    requester: 'deepthi@demo.yv-ops.test',
     status: 'resolved',
     requestedAt: '1/30/26, 11:19 AM',
     resolvedAt: '1/30/26, 12:05 PM',
@@ -273,7 +273,7 @@ const REVISIONS = [
     project: 'Ashtavakra Story Reel',
     revisionNumber: 2,
     reason: "Video edit change: the 'curse' depiction may project the father in a bad light (it's his own son). Generate a more dignified image; finalize between the two edit versions.",
-    requester: 'divya@aaryajanani.org',
+    requester: 'divya@demo.yv-ops.test',
     status: 'resolved',
     requestedAt: '2/3/26, 11:05 PM',
     resolvedAt: '2/4/26, 1:13 PM',
@@ -287,7 +287,7 @@ async function main() {
   // Resolve org
   const org = await Organization.findOneAndUpdate(
     { slug: ORG_SLUG },
-    { $set: { name: 'Aaryajanani Content Team', slug: ORG_SLUG } },
+    { $set: { name: 'Demo Content Team', slug: ORG_SLUG } },
     { upsert: true, new: true }
   );
 

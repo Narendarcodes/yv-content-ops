@@ -309,7 +309,7 @@ export default function RegisterPage() {
                         id="orgName"
                         value={orgName}
                         onChange={(e) => onOrgName(e.target.value)}
-                        placeholder="Aaryajanani Studio"
+                        placeholder="Demo Studio"
                         className={`input !pl-10 ${tried && !orgName.trim() ? 'input-error' : ''}`}
                       />
                     </div>
@@ -326,7 +326,7 @@ export default function RegisterPage() {
                         id="orgSlug"
                         value={orgSlug}
                         onChange={(e) => { setSlugTouched(true); setExistingWorkspace(null); setOrgSlug(slugify(e.target.value)) }}
-                        placeholder="aaryajanani-studio"
+                        placeholder="demo-studio"
                         className={`input !pl-10 font-mono text-[13px] ${tried && !slugOk ? 'input-error' : ''}`}
                       />
                     </div>

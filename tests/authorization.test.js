@@ -25,7 +25,7 @@ describe('Organization and membership', () => {
     const token = login.body.data.accessToken;
 
     // create organization as admin
-    const create = await request(app).post('/api/v1/organizations').set('Authorization', `Bearer ${token}`).send({ name: 'Aaryajanani', slug: 'aaryajanani' });
+    const create = await request(app).post('/api/v1/organizations').set('Authorization', `Bearer ${token}`).send({ name: 'Demo Workspace', slug: 'demo' });
     expect(create.statusCode).toBe(201);
     const orgId = create.body.data._id;
 

@@ -1,9 +1,9 @@
 ---
 name: content-ops-backend
-description: Domain knowledge for the Content Operations & Project Memory Platform (Aaryajanani) backend — Node/Express/Mongo. Use when working on this backend: adding routes/services/models, changing the project lifecycle, permissions, notifications, or running tests. Encodes architecture, state machine, permission model, conventions, and DoD.
+description: Domain knowledge for the yv. Content Operations & Project Memory Platform backend — Node/Express/Mongo. Use when working on this backend: adding routes/services/models, changing the project lifecycle, permissions, notifications, or running tests. Encodes architecture, state machine, permission model, conventions, and DoD.
 ---
 
-# Content Ops Backend (Aaryajanani)
+# Content Ops Backend
 
 Node.js 24 (CommonJS) + Express 4 + Mongoose 7 + MongoDB (mongodb-memory-server in tests).
 

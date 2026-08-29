@@ -1,7 +1,7 @@
 {
   "name": "yv-content-ops",
   "version": "0.1.0",
-  "description": "yv-content-ops — yv. Content Operations & Project Memory Platform (Aaryajanani) — Node.js + Express + MongoDB",
+  "description": "yv-content-ops — yv. Content Operations & Project Memory Platform — Node.js + Express + MongoDB",
   "main": "src/server.js",
   "private": true,
   "scripts": {

@@ -2,7 +2,7 @@
 
 > **yv-content-ops** — Content Operations & Project Memory Platform
 
-The backend + frontend for **Aaryajanani's** Content Operations & Project Memory Platform — an agency-grade hub to take content from **idea → brief → tasks → review → approval → publish → invoice**, with full project memory, chat, and client workflows.
+The backend + frontend for the **yv. Content Operations & Project Memory Platform** — an agency-grade hub to take content from **idea → brief → tasks → review → approval → publish → invoice**, with full project memory, chat, and client workflows.
 
 Built under the **yv.** brand. Monorepo: Node.js + Express + MongoDB API and a React + Vite frontend.
 
@@ -16,6 +16,8 @@ Built under the **yv.** brand. Monorepo: Node.js + Express + MongoDB API and a R
 [![MongoDB](https://img.shields.io/badge/MongoDB-7-green)](#tech-stack)
 [![React](https://img.shields.io/badge/frontend-React%20%2B%20Vite-149eca)](#tech-stack)
 [![License](https://img.shields.io/badge/license-private-lightgrey)](#license)
+
+![yv-content-ops social preview](.github/social-preview.png)
 
 ---
 
@@ -45,7 +47,7 @@ Built under the **yv.** brand. Monorepo: Node.js + Express + MongoDB API and a R
 - **Tasks** (kanban), **Briefs**, **Review locking & summarization**, **Chat** (channels + threads), **Contracts** and **Invoices** — the Fluit-aligned agency surface.
 - **Org-scoped RBAC**, JWT auth with hashed refresh tokens, notifications, activity history, file uploads, and a pluggable storage adapter.
 
-Product spec: `Aaryajanani_Content_Operations_PRD_v1.pdf` in the repo root.
+Product spec: see the PRD PDF in the repo root.
 
 ---
 

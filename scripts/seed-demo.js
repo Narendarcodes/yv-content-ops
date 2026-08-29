@@ -15,15 +15,15 @@ const Role = require('../src/models/role.model');
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/cop';
 const DEMO_PASSWORD = 'demo';
 
-const ORG = { name: 'Aaryajanani Content Team', slug: 'aaryajanani' };
+const ORG = { name: 'Demo Content Team', slug: 'demo' };
 
 const MEMBERS = [
-  { email: 'ananya@aaryajanani.org', name: 'Ananya Rao', role: 'admin' },
-  { email: 'priya@aaryajanani.org', name: 'Priya Menon', role: 'editor' },
-  { email: 'arjun@aaryajanani.org', name: 'Arjun Nair', role: 'editor' },
-  { email: 'sana@aaryajanani.org', name: 'Sana Kapoor', role: 'reviewer' },
-  { email: 'rohan@aaryajanani.org', name: 'Rohan Das', role: 'designer' },
-  { email: 'meera@aaryajanani.org', name: 'Meera Iyer', role: 'publisher' },
+  { email: 'ananya@demo.yv-ops.test', name: 'Ananya Rao', role: 'admin' },
+  { email: 'priya@demo.yv-ops.test', name: 'Priya Menon', role: 'editor' },
+  { email: 'arjun@demo.yv-ops.test', name: 'Arjun Nair', role: 'editor' },
+  { email: 'sana@demo.yv-ops.test', name: 'Sana Kapoor', role: 'reviewer' },
+  { email: 'rohan@demo.yv-ops.test', name: 'Rohan Das', role: 'designer' },
+  { email: 'meera@demo.yv-ops.test', name: 'Meera Iyer', role: 'publisher' },
 ];
 
 const ROLES = [
