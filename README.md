@@ -11,6 +11,8 @@ Built under the **yv.** brand. Monorepo: Node.js + Express + MongoDB API and a R
 [![React](https://img.shields.io/badge/frontend-React%20%2B%20Vite-149eca)](#tech-stack)
 [![License](https://img.shields.io/badge/license-private-lightgrey)](#license)
 
+![yv-content-ops social preview](.github/social-preview.png)
+
 ---
 
 ## Table of contents
