@@ -535,57 +535,61 @@ export async function createVersion(projectId: string, changeSummary: string): P
   }
 }
 
-/** Upload a file to an existing version (multipart form). */
+/** Upload a file to an existing version (multipart form). Retries once with a refreshed token on 401. */
 export async function uploadVersionFile(
   projectId: string,
   versionId: string,
   file: File,
   onProgress?: (pct: number) => void,
 ): Promise<{ id: string; filename: string; mimeType: string; size: number }[]> {
-  const token = (() => {
-    try {
-      const raw = localStorage.getItem('yv.session')
-      if (!raw) return null
-      return JSON.parse(raw).accessToken ?? null
-    } catch {
-      return null
-    }
-  })()
-
-  const formData = new FormData()
-  formData.append('file', file)
-
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
-    xhr.open('POST', `${API_BASE}/projects/${projectId}/versions/${versionId}/files`)
-    if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`)
-
-    xhr.upload.addEventListener('progress', (e) => {
-      if (e.lengthComputable && onProgress) onProgress(Math.round((e.loaded / e.total) * 100))
+  const doUpload = (token: string | null) =>
+    new Promise<{ id: string; filename: string; mimeType: string; size: number }[]>((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.open('POST', `${API_BASE}/projects/${projectId}/versions/${versionId}/files`)
+      if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`)
+      xhr.withCredentials = true
+      xhr.upload.addEventListener('progress', (e) => {
+        if (e.lengthComputable && onProgress) onProgress(Math.round((e.loaded / e.total) * 100))
+      })
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const body = JSON.parse(xhr.responseText)
+            const files = (body.data?.files ?? body.files ?? []).map((f: any) => ({
+              id: String(f._id),
+              filename: f.filename,
+              mimeType: f.mimeType,
+              size: f.size,
+            }))
+            resolve(files)
+          } catch {
+            reject(new Error('Failed to parse upload response'))
+          }
+        } else {
+          let msg = `Upload failed (${xhr.status})`
+          try {
+            const body = JSON.parse(xhr.responseText)
+            msg = body?.error?.message || body?.error?.code || msg
+          } catch {}
+          reject(new Error(msg))
+        }
+      }
+      xhr.onerror = () => reject(new Error('Network error during upload'))
+      const formData = new FormData()
+      formData.append('file', file)
+      xhr.send(formData)
     })
 
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        try {
-          const body = JSON.parse(xhr.responseText)
-          const files = (body.data?.files ?? []).map((f: any) => ({
-            id: String(f._id),
-            filename: f.filename,
-            mimeType: f.mimeType,
-            size: f.size,
-          }))
-          resolve(files)
-        } catch {
-          reject(new Error('Failed to parse upload response'))
-        }
-      } else {
-        reject(new Error(`Upload failed (${xhr.status})`))
-      }
+  try {
+    return await doUpload(getAccessToken())
+  } catch (err: any) {
+    const msg = String(err?.message || '')
+    if (/401|Invalid token|invalid_token|expired/i.test(msg)) {
+      const newToken = await tryRefreshToken()
+      if (newToken) return await doUpload(newToken)
     }
-
-    xhr.onerror = () => reject(new Error('Network error during upload'))
-    xhr.send(formData)
-  })
+    throw err
+  }
 }
 
 /** ------------------------------------------------------------------- */
