@@ -1,13 +1,16 @@
 /**
- * Typed ESM wrapper around the shared CJS pickVersion
- * (src/utils/reviewVersions.js — also required directly by jest).
+ * Typed ESM pickVersion for the review workspace (frontend copy).
  *
- * Vite's CJS interop turns `module.exports` into the default export, so
- * we import the namespace and pull pickVersion off it. This keeps one
- * implementation (tested by jest) with a typed surface for the frontend.
+ * Contract (must stay in parity with src/utils/reviewVersions.js — the
+ * jest-tested CommonJS twin; parity enforced by
+ * tests/review-versions-module.test.js): NEVER returns undefined.
+ * Returns null when there is nothing to pick, so the page can branch
+ * to its "No draft uploaded yet" state instead of crashing on .id.
+ *
+ * NOTE: deliberately self-contained. Do NOT import the CJS twin here —
+ * Vite serves this tree as ESM and the `module` global does not exist
+ * in the browser (that import was the "module is not defined" crash).
  */
-import * as reviewVersionsCjs from '../../../src/utils/reviewVersions'
-
 export interface ReviewVersion {
   id: string
   label: string
@@ -19,6 +22,6 @@ export interface ReviewVersion {
 
 /** Never undefined: returns null when there is no version to pick. */
 export function pickVersion(versions: ReviewVersion[], versionId: string): ReviewVersion | null {
-  const fn = (reviewVersionsCjs as any).pickVersion ?? (reviewVersionsCjs as any).default?.pickVersion
-  return fn(versions, versionId) as ReviewVersion | null
+  if (!Array.isArray(versions) || versions.length === 0) return null
+  return versions.find((v) => v.id === versionId) ?? versions[0]
 }
