@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { useState } from 'react'
 
 const tones: Record<string, string> = {
   teal: 'bg-teal text-on-accent',
@@ -28,11 +29,14 @@ export default function Avatar({
     lg: 'h-11 w-11 text-sm',
     xl: 'h-20 w-20 text-2xl',
   }
-  if (src) {
+  const [failed, setFailed] = useState(false)
+  const showImg = !!src && !failed
+  if (showImg) {
     return (
       <img
-        src={src}
+        src={src!}
         alt=""
+        onError={() => setFailed(true)}
         className={`inline-flex shrink-0 rounded-full object-cover ${sizes[size]} ${className}`}
       />
     )
