@@ -319,6 +319,10 @@ export default function ProfilePage() {
               <label htmlFor="profile-name" className="label">Full name</label>
               <input
                 id="profile-name"
+                name="name"
+                type="text"
+                autoComplete="name"
+                spellCheck={false}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 onKeyDown={(e) => {
@@ -328,20 +332,20 @@ export default function ProfilePage() {
                     btn?.click()
                   }
                 }}
-                className="input"
-                placeholder="Your name"
+                className="input touch-manipulation focus-visible:ring-2 focus-visible:ring-teal/20"
+                placeholder="Your name…"
               />
             </div>
           ) : (
             <>
               <div className="flex flex-wrap items-center gap-3">
-                <h2 className="font-headline text-2xl font-semibold tracking-[-0.02em] text-ink">{viewer.name}</h2>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-tint px-2.5 py-0.5 font-mono text-[11px] font-medium text-teal">
-                  <Shield size={11} strokeWidth={2} />
+                <h2 className="font-headline truncate text-2xl font-semibold tracking-[-0.02em] text-ink">{viewer.name}</h2>
+                <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-tint px-2.5 py-0.5 font-mono text-[11px] font-medium text-teal">
+                  <Shield size={11} strokeWidth={2} aria-hidden="true" />
                   {roleLabel[viewer.role] ?? viewer.role}
                 </span>
               </div>
-              {viewer.title && <p className="mt-1 text-sm text-umber">{viewer.title}</p>}
+              {viewer.title && <p className="mt-1 truncate text-sm text-umber">{viewer.title}</p>}
             </>
           )}
 

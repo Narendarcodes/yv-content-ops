@@ -29,6 +29,13 @@ export default function Avatar({
     lg: 'h-11 w-11 text-sm',
     xl: 'h-20 w-20 text-2xl',
   }
+  const dims: Record<string, { w: number; h: number }> = {
+    xs: { w: 24, h: 24 },
+    sm: { w: 32, h: 32 },
+    md: { w: 36, h: 36 },
+    lg: { w: 44, h: 44 },
+    xl: { w: 96, h: 96 },
+  }
   const [failed, setFailed] = useState(false)
   // Reset fallback when src changes — fixes the "stuck D until navigate back" bug
   const [prevSrc, setPrevSrc] = useState(src)
@@ -38,18 +45,22 @@ export default function Avatar({
   }
   const showImg = !!src && !failed
   if (showImg) {
+    const d = dims[size]
     return (
       <img
         src={src!}
         alt=""
+        width={d.w}
+        height={d.h}
+        loading="lazy"
         onError={() => setFailed(true)}
-        className={`inline-flex shrink-0 rounded-full object-cover ${sizes[size]} ${className}`}
+        className={`inline-flex shrink-0 rounded-full object-cover ${sizes[size]} ${className} touch-manipulation`}
       />
     )
   }
   return (
     <span
-      className={`inline-flex shrink-0 items-center justify-center rounded-full font-mono font-medium ${sizes[size]} ${tones[tone]} ${className}`}
+      className={`inline-flex shrink-0 items-center justify-center rounded-full font-mono font-medium ${sizes[size]} ${tones[tone]} ${className} touch-manipulation`}
       aria-hidden="true"
     >
       {initials}

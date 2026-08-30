@@ -202,7 +202,7 @@ export default function AppShell() {
               className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-umber/60"
             />
             <input
-              placeholder="Search projects, people…"
+              placeholder="Search projects…"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value)
@@ -219,8 +219,13 @@ export default function AppShell() {
                   setSearchQuery('')
                 }
               }}
-              className="input !h-9 !pl-9 cursor-text"
-              aria-label="Search projects and people"
+              name="search"
+              type="search"
+              autoComplete="off"
+              spellCheck={false}
+              inputMode="search"
+              className="input !h-9 !pl-9 cursor-text touch-manipulation focus-visible:ring-2 focus-visible:ring-teal/20 focus-visible:ring-offset-0"
+              aria-label="Search projects"
               aria-expanded={paletteOpen}
               aria-haspopup="dialog"
             />
@@ -230,12 +235,12 @@ export default function AppShell() {
           </div>
           <button
             onClick={() => navigate('/notifications')}
-            className="icon-btn"
+            className="icon-btn touch-manipulation focus-visible:ring-2 focus-visible:ring-teal/20"
             aria-label="Notifications"
             data-testid="notifications-button"
           >
             <span className="relative inline-flex">
-              <Bell size={17} strokeWidth={1.75} />
+              <Bell size={17} strokeWidth={1.75} aria-hidden="true" />
               {unreadCount > 0 && (
                 <span className="ping-dot absolute right-[-2px] top-[-2px] h-2 w-2 rounded-full bg-danger" aria-hidden="true" />
               )}
@@ -243,7 +248,7 @@ export default function AppShell() {
           </button>
           <button
             onClick={() => navigate('/profile')}
-            className="rounded-full ring-2 ring-transparent transition-[box-shadow,transform] hover:ring-teal/40 active:scale-95"
+            className="rounded-full ring-2 ring-transparent transition-[box-shadow,transform] hover:ring-teal/40 active:scale-95 touch-manipulation focus-visible:ring-2 focus-visible:ring-teal/20"
             aria-label="Profile"
           >
             {(() => { const src = (viewer as any).photoUrl || (viewer as any).profileImage; const apiBase = (import.meta as any)?.env?.VITE_API_BASE_URL || 'http://localhost:3000/api/v1'; const url = src ? (src.startsWith('http') ? src : `${apiBase.replace(/\/api\/v1\/?$/, '')}${src}`) : null; return <Avatar initials={viewer.initials} size="sm" tone="ink" src={url} /> })()}
