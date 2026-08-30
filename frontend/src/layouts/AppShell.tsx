@@ -5,7 +5,6 @@ import {
   ListTodo,
   MessageSquare,
   MessageCircle,
-  Columns3,
   FolderKanban,
   Lightbulb,
   BarChart3,
@@ -279,7 +278,6 @@ const navGroups: { section: string; items: NavItem[] }[] = [
     items: [
       { to: '/my-work', label: 'My work', icon: () => <ListTodo {...iconProps} /> },
       { to: '/review', label: 'Review', icon: () => <MessageSquare {...iconProps} />, roles: ['admin', 'reviewer'] },
-      { to: '/board', label: 'Board', icon: () => <Columns3 {...iconProps} /> },
     ],
   },
   {
