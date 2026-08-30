@@ -177,11 +177,11 @@ export default function ProjectDetailPage() {
               setUploadNote('')
               setSelectedFile(null)
               setUploadProgress(0)
-              void fileInputRef.current?.value && (fileInputRef.current.value = '')
+              if (fileInputRef.current) fileInputRef.current.value = ''
               // Open the review workspace automatically
               navigate(`/projects/${project.id}/review`)
             } catch (err: any) {
-              toast('error', 'Upload failed', err?.message || 'Could not upload version')
+              toast('danger', 'Upload failed', err?.message || 'Could not upload version')
               setUploading(false)
               setUploadProgress(0)
             }

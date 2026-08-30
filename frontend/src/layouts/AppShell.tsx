@@ -62,6 +62,7 @@ export default function AppShell() {
   const notifs = useNotifications()
   const { projects } = useProjects()
   const [paletteOpen, setPaletteOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const segments = location.pathname.split('/').filter(Boolean)
   const crumb = CRUMBS[segments[0] ?? ''] ?? 'Overview'
 
@@ -160,7 +161,7 @@ export default function AppShell() {
             onClick={() => navigate('/profile')}
             className="group flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-ink/4"
           >
-            <Avatar initials={viewer.initials} size="md" tone="ink" />
+            {(() => { const src = (viewer as any).photoUrl || (viewer as any).profileImage; const apiBase = (import.meta as any)?.env?.VITE_API_BASE_URL || 'http://localhost:3000/api/v1'; const url = src ? (src.startsWith('http') ? src : `${apiBase.replace(/\/api\/v1\/?$/, '')}${src}`) : null; return <Avatar initials={viewer.initials} size="md" tone="ink" src={url} /> })()}
             <div className="min-w-0 flex-1 leading-tight">
               <p className="truncate text-sm font-medium text-ink">{viewer.name}</p>
               <p className="truncate text-[11px] text-umber">{viewer.title}</p>
@@ -202,12 +203,26 @@ export default function AppShell() {
             />
             <input
               placeholder="Search projects, people…"
-              readOnly
-              value=""
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value)
+                if (!paletteOpen) setPaletteOpen(true)
+              }}
               onFocus={() => setPaletteOpen(true)}
               onClick={() => setPaletteOpen(true)}
-              className="input !h-9 !pl-9 cursor-pointer"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  setPaletteOpen(true)
+                }
+                if (e.key === 'Escape') {
+                  setSearchQuery('')
+                }
+              }}
+              className="input !h-9 !pl-9 cursor-text"
               aria-label="Search projects and people"
+              aria-expanded={paletteOpen}
+              aria-haspopup="dialog"
             />
             <kbd className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md border border-line bg-canvas px-1.5 py-0.5 font-mono text-[9px] text-umber/60">
               ⌘K
@@ -217,6 +232,7 @@ export default function AppShell() {
             onClick={() => navigate('/notifications')}
             className="icon-btn"
             aria-label="Notifications"
+            data-testid="notifications-button"
           >
             <span className="relative inline-flex">
               <Bell size={17} strokeWidth={1.75} />
@@ -230,7 +246,7 @@ export default function AppShell() {
             className="rounded-full ring-2 ring-transparent transition-[box-shadow,transform] hover:ring-teal/40 active:scale-95"
             aria-label="Profile"
           >
-            <Avatar initials={viewer.initials} size="sm" tone="ink" />
+            {(() => { const src = (viewer as any).photoUrl || (viewer as any).profileImage; const apiBase = (import.meta as any)?.env?.VITE_API_BASE_URL || 'http://localhost:3000/api/v1'; const url = src ? (src.startsWith('http') ? src : `${apiBase.replace(/\/api\/v1\/?$/, '')}${src}`) : null; return <Avatar initials={viewer.initials} size="sm" tone="ink" src={url} /> })()}
           </button>
         </header>
 
@@ -243,7 +259,7 @@ export default function AppShell() {
       </div>
 
       {/* Global command palette */}
-      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+      <CommandPalette open={paletteOpen} initialQuery={searchQuery} onClose={() => { setPaletteOpen(false); setSearchQuery('') }} />
     </div>
   )
 }

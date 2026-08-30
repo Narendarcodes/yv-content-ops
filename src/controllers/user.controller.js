@@ -1,4 +1,15 @@
 const userService = require('../services/user.service');
+const multer = require('multer');
+
+// In-memory multer for profile photo uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB cap
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) cb(null, true);
+    else cb(new Error('Only image files are allowed'), false);
+  },
+});
 
 async function me(req, res, next) {
   try {
@@ -21,6 +32,25 @@ async function myOrganizations(req, res, next) {
 async function updateMe(req, res, next) {
   try {
     const user = await userService.updateProfile(req.user._id, req.body);
+    res.json({ data: user });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function uploadPhoto(req, res, next) {
+  try {
+    if (!req.file) return res.status(400).json({ error: { code: 'no_file', message: 'No image provided' } });
+    const user = await userService.setProfilePhoto(req.user._id, req.file.buffer, req.file.originalname, req.file.mimetype);
+    res.json({ data: user });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function removePhoto(req, res, next) {
+  try {
+    const user = await userService.removeProfilePhoto(req.user._id);
     res.json({ data: user });
   } catch (err) {
     next(err);
@@ -53,4 +83,4 @@ async function updateMember(req, res, next) {
   }
 }
 
-module.exports = { me, myOrganizations, updateMe, listMembers, updateMember };
+module.exports = { me, myOrganizations, updateMe, uploadPhoto, removePhoto, listMembers, updateMember, upload };

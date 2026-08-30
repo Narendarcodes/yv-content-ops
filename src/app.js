@@ -4,6 +4,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 const config = require('./config');
 const healthRouter = require('./routes/health');
 const authRouter = require('./routes/auth');
@@ -31,6 +32,8 @@ app.use(helmet());
 app.use(cors({ origin: config.corsOrigin, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
+// Serve uploaded files (profile photos, etc) statically
+app.use('/uploads', express.static(path.resolve(config.storage.localDir)));
 
 // global rate limiting (per IP)
 app.use(

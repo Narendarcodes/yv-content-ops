@@ -107,6 +107,8 @@ export interface SessionUser {
   role: string
   title?: string
   organization?: string
+  photoUrl?: string | null
+  profileImage?: string | null
 }
 
 export interface Session {
@@ -194,6 +196,31 @@ export async function updateMe(patch: { name?: string; email?: string }): Promis
   const body = await res.json()
   const u = (body.data ?? {}) as SessionUser & { _id?: string }
   return { ...u, id: u.id ?? u._id ?? '' } as SessionUser
+}
+
+/** Upload profile photo (multipart). Returns updated user. */
+export async function uploadProfilePhoto(file: File): Promise<SessionUser & { photoUrl?: string; profileImage?: string }> {
+  const token = (() => {
+    try { const raw = localStorage.getItem('yv.session'); if (!raw) return null; return JSON.parse(raw).accessToken ?? null } catch { return null }
+  })()
+  const headers: Record<string,string> = {}
+  if (token) headers['Authorization'] = `Bearer ${token}`
+  const form = new FormData()
+  form.append('file', file)
+  const res = await fetch(`${API_BASE}/users/me/photo`, { method: 'PATCH', headers, body: form as any, credentials: 'include' })
+  if (!res.ok) { const b = await res.json().catch(()=>null); throw new Error(b?.error?.message || 'Photo upload failed') }
+  const body = await res.json()
+  const u = (body.data ?? {}) as any
+  return { ...u, id: u.id ?? u._id ?? '' }
+}
+
+/** Remove profile photo. Returns updated user. */
+export async function removeProfilePhoto(): Promise<SessionUser & { photoUrl?: string; profileImage?: string }> {
+  const res = await authFetch(`${API_BASE}/users/me/photo`, { method: 'DELETE', credentials: 'include' })
+  if (!res.ok) { const b = await res.json().catch(()=>null); throw new Error(b?.error?.message || 'Remove photo failed') }
+  const body = await res.json()
+  const u = (body.data ?? {}) as any
+  return { ...u, id: u.id ?? u._id ?? '' }
 }
 
 /** Refresh the access token using a refresh token */
@@ -358,7 +385,15 @@ export async function listNotifications(unreadOnly = false): Promise<AppNotifica
   })
   const body = await res.json()
   if (!res.ok) throw new Error('Failed to list notifications')
-  return (body.data ?? []) as AppNotification[]
+  const raw: any[] = body.data ?? []
+  return raw.map((n: any) => ({
+    id: String(n.id ?? n._id ?? ''),
+    type: n.type,
+    title: n.title || '',
+    desc: n.body || n.desc || '',
+    time: n.time || n.createdAt || '',
+    unread: n.unread ?? !n.read,
+  })) as AppNotification[]
 }
 
 export async function markRead(id: string): Promise<AppNotification> {
@@ -367,7 +402,9 @@ export async function markRead(id: string): Promise<AppNotification> {
     credentials: 'include',
   })
   if (!res.ok) throw new Error('Failed to mark notification read')
-  return res.json()
+  const body = await res.json()
+  const n = body.data
+  return { id: n.id ?? n._id, type: n.type, title: n.title || '', desc: n.body || n.desc || '', time: n.createdAt, unread: false }
 }
 
 export async function markAllRead(): Promise<{ marked: number }> {

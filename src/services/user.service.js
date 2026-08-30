@@ -1,5 +1,6 @@
 const User = require('../models/user.model');
 const Membership = require('../models/membership.model');
+const uploadService = require('./upload.service');
 
 async function getMe(userId) {
   const user = await User.findById(userId);
@@ -8,6 +9,10 @@ async function getMe(userId) {
   // frontend reflects what the backend actually enforces (membership.role).
   const membership = await Membership.findOne({ userId, disabled: { $ne: true } }).sort({ createdAt: 1 });
   const plain = user.toObject();
+  // Normalize avatar fields — expose both aliases for frontend compat
+  const avatarUrl = plain.photoUrl || plain.profileImage || null;
+  plain.photoUrl = avatarUrl;
+  plain.profileImage = avatarUrl;
   plain.role = membership ? membership.role : 'member';
   return plain;
 }
@@ -40,7 +45,11 @@ async function updateProfile(userId, { name, email }) {
     }
   }
   await user.save();
-  return user;
+  const plain = user.toObject();
+  const avatarUrl = plain.photoUrl || plain.profileImage || null;
+  plain.photoUrl = avatarUrl;
+  plain.profileImage = avatarUrl;
+  return plain;
 }
 
 async function listOrgMembers({ organizationId }) {
@@ -68,4 +77,22 @@ async function updateMemberRole({ organizationId, userId, roleName }) {
   return m;
 }
 
-module.exports = { getMe, listMyOrganizations, updateProfile, listOrgMembers, setMemberStatus, updateMemberRole };
+/**
+ * Set a user's profile photo by uploading a file buffer.
+ * Returns the updated user object.
+ */
+async function setProfilePhoto(userId, buffer, filename, mimeType) {
+  await uploadService.uploadProfilePhoto(userId, buffer, filename, mimeType);
+  return getMe(userId);
+}
+
+/**
+ * Remove a user's profile photo.
+ * Returns the updated user object.
+ */
+async function removeProfilePhoto(userId) {
+  await uploadService.removeProfilePhoto(userId);
+  return getMe(userId);
+}
+
+module.exports = { getMe, listMyOrganizations, updateProfile, listOrgMembers, setMemberStatus, updateMemberRole, setProfilePhoto, removeProfilePhoto };

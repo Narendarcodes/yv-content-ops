@@ -1,12 +1,12 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Building2, Check, Mail, Pencil, Shield, Star, Hash, X, AlertTriangle } from 'lucide-react'
+import { Building2, Check, Mail, Pencil, Shield, Star, Hash, X, AlertTriangle, Camera, Trash2 } from 'lucide-react'
 import Avatar from '../components/ui'
 import { useViewer } from '../lib/viewer'
 import { roleOf, PERMISSION_LABELS } from '../lib/roles'
 import { useToast } from '../components/toast'
 import { updateSessionUser } from '../lib/auth'
-import { updateMe } from '../services/api'
+import { updateMe, uploadProfilePhoto, removeProfilePhoto } from '../services/api'
 import { useProjects, useTeam, useReviews, useMe } from '../lib/data'
 
 const roleLabel: Record<string, string> = {
@@ -25,6 +25,9 @@ export default function ProfilePage() {
   const [name, setName] = useState(viewer.name)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [photoUploading, setPhotoUploading] = useState(false)
+  const [photoError, setPhotoError] = useState<string | null>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
   const access = roleOf(viewer)
   const { projects } = useProjects()
   const { team, org } = useTeam()
@@ -41,6 +44,46 @@ export default function ProfilePage() {
     { label: 'Comments written', value: myComments },
     { label: 'Teammates', value: teammateCount },
   ]
+
+  const avatarSrc = (viewer as any).photoUrl || (viewer as any).profileImage || null
+  const apiBase = (import.meta as any)?.env?.VITE_API_BASE_URL || 'http://localhost:3000/api/v1'
+  const avatarUrl = avatarSrc ? (avatarSrc.startsWith('http') ? avatarSrc : `${apiBase.replace(/\/api\/v1\/?$/, '')}${avatarSrc}`) : null
+
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith('image/')) { setPhotoError('Only image files are allowed'); return }
+    if (file.size > 5 * 1024 * 1024) { setPhotoError('Image must be under 5 MB'); return }
+    setPhotoUploading(true)
+    setPhotoError(null)
+    try {
+      const updated = await uploadProfilePhoto(file)
+      updateSessionUser({ photoUrl: (updated as any).photoUrl ?? (updated as any).profileImage, profileImage: (updated as any).profileImage ?? (updated as any).photoUrl } as any)
+      toast('success', 'Profile photo updated')
+      // force re-render via session event — viewer hook listens to storage
+      window.location.reload()
+    } catch (err: any) {
+      setPhotoError(err?.message || 'Could not upload photo')
+    } finally {
+      setPhotoUploading(false)
+      if (fileRef.current) fileRef.current.value = ''
+    }
+  }
+
+  const handleRemovePhoto = async () => {
+    setPhotoUploading(true)
+    setPhotoError(null)
+    try {
+      await removeProfilePhoto()
+      updateSessionUser({ photoUrl: null, profileImage: null } as any)
+      toast('success', 'Profile photo removed')
+      window.location.reload()
+    } catch (err: any) {
+      setPhotoError(err?.message || 'Could not remove photo')
+    } finally {
+      setPhotoUploading(false)
+    }
+  }
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -73,13 +116,23 @@ export default function ProfilePage() {
 
         <div className="relative px-7 pb-7">
           <div className="-mt-11 mb-5 flex items-end justify-between">
-            <span className="relative z-10 inline-flex">
+            <span className="relative z-10 inline-flex group/avatar">
               <Avatar
                 initials={viewer.initials}
                 size="xl"
                 tone="ink"
+                src={avatarUrl}
                 className="h-24 w-24 text-[26px] ring-[5px] ring-surface shadow-[0_4px_16px_rgba(28,25,23,0.18)]"
               />
+              <button
+                onClick={() => fileRef.current?.click()}
+                disabled={photoUploading}
+                className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-ink text-on-accent shadow-md ring-2 ring-surface transition-opacity hover:bg-ink/90 disabled:opacity-50"
+                aria-label="Change profile photo"
+                title="Change profile photo"
+              >
+                <Camera size={12} strokeWidth={2} />
+              </button>
             </span>
             {editing ? (
               <div className="flex items-center gap-2">
@@ -132,6 +185,25 @@ export default function ProfilePage() {
             )}
           </div>
 
+          {/* Photo controls */}
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
+            <button onClick={() => fileRef.current?.click()} disabled={photoUploading} className="btn-ghost text-xs">
+              <Camera size={13} /> {photoUploading ? 'Uploading…' : avatarSrc ? 'Change photo' : 'Add photo'}
+            </button>
+            {avatarSrc && (
+              <button onClick={handleRemovePhoto} disabled={photoUploading} className="btn-ghost text-xs text-danger">
+                <Trash2 size={13} /> Remove
+              </button>
+            )}
+          </div>
+          {photoError && (
+            <div className="mb-4 flex items-center gap-2 rounded-[10px] border border-danger/25 bg-danger/5 px-3.5 py-2.5 text-sm text-danger" role="alert">
+              <AlertTriangle size={15} strokeWidth={1.75} />
+              {photoError}
+            </div>
+          )}
+
           {editing ? (
             <div className="mt-4">
               <label htmlFor="profile-name" className="label">Full name</label>
@@ -168,7 +240,6 @@ export default function ProfilePage() {
               {viewer.title && <p className="mt-1 text-sm text-umber">{viewer.title}</p>}
             </>
           )}
-
           {/* Stats */}
           <div className="mt-6 grid grid-cols-3 gap-3">
             {stats.map((s) => (

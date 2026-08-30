@@ -18,9 +18,9 @@ interface Result {
   to: string
 }
 
-export default function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
+export default function CommandPalette({ open, initialQuery = '', onClose }: { open: boolean; initialQuery?: string; onClose: () => void }) {
   const navigate = useNavigate()
-  const [q, setQ] = useState('')
+  const [q, setQ] = useState(initialQuery)
   const [active, setActive] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
   const { projects } = useProjects()
@@ -28,12 +28,12 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
 
   useEffect(() => {
     if (open) {
-      setQ('')
+      setQ(initialQuery)
       setActive(0)
       const t = window.setTimeout(() => inputRef.current?.focus(), 10)
       return () => window.clearTimeout(t)
     }
-  }, [open])
+  }, [open, initialQuery])
 
   // Close on Escape from anywhere while the palette is open.
   useEffect(() => {

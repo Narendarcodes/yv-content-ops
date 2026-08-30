@@ -44,7 +44,7 @@ export async function refreshNotifications(): Promise<AppNotification[]> {
   try {
     const data = await apiList()
     items = (data ?? []).map((n: any) => ({
-      id: n.id,
+      id: String(n.id ?? n._id ?? ''),
       type: n.type,
       title: n.title || '',
       desc: n.body || n.desc || '',

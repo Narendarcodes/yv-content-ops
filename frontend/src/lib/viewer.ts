@@ -18,9 +18,11 @@ export interface Viewer {
   role: RoleName
   title?: string
   initials: string
+  photoUrl?: string | null
+  profileImage?: string | null
 }
 
-function toViewer(user: { id?: string; name?: string; email?: string; role?: string; title?: string } | null | undefined): Viewer | null {
+function toViewer(user: { id?: string; name?: string; email?: string; role?: string; title?: string; photoUrl?: string | null; profileImage?: string | null } | null | undefined): Viewer | null {
   if (!user?.id) return null
   const name = user.name ?? ''
   const initials =
@@ -38,6 +40,8 @@ function toViewer(user: { id?: string; name?: string; email?: string; role?: str
     role: (user.role as RoleName) || 'member',
     title: user.title,
     initials,
+    photoUrl: (user as any).photoUrl ?? (user as any).profileImage ?? null,
+    profileImage: (user as any).profileImage ?? (user as any).photoUrl ?? null,
   }
 }
 

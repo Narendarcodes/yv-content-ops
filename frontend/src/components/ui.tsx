@@ -13,11 +13,13 @@ export default function Avatar({
   size = 'md',
   tone = 'teal',
   className = '',
+  src,
 }: {
   initials: string
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   tone?: keyof typeof tones
   className?: string
+  src?: string | null
 }) {
   const sizes = {
     xs: 'h-6 w-6 text-[9px]',
@@ -25,6 +27,15 @@ export default function Avatar({
     md: 'h-9 w-9 text-xs',
     lg: 'h-11 w-11 text-sm',
     xl: 'h-20 w-20 text-2xl',
+  }
+  if (src) {
+    return (
+      <img
+        src={src}
+        alt=""
+        className={`inline-flex shrink-0 rounded-full object-cover ${sizes[size]} ${className}`}
+      />
+    )
   }
   return (
     <span

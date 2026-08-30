@@ -9,7 +9,13 @@ async function list(req, res, next) {
       limit: parseInt(limit, 10) || 100,
       skip: parseInt(skip, 10) || 0,
     });
-    res.json({ data: notifications });
+    // Normalize _id → id for frontend consumption
+    const normalized = notifications.map((n) => {
+      const obj = n.toObject ? n.toObject() : { ...n };
+      const { _id, __v: _unused, ...rest } = obj;
+      return { id: String(_id), ...rest };
+    });
+    res.json({ data: normalized });
   } catch (err) {
     next(err);
   }
@@ -19,7 +25,9 @@ async function markRead(req, res, next) {
   try {
     const { id } = req.params;
     const n = await notificationService.markRead({ userId: req.user._id, notificationId: id });
-    res.json({ data: n });
+    const obj = n.toObject ? n.toObject() : { ...n };
+    const { _id, __v: _unused2, ...rest } = obj;
+    res.json({ data: { id: String(_id), ...rest } });
   } catch (err) {
     next(err);
   }

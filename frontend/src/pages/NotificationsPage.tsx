@@ -43,14 +43,19 @@ const typeMeta: Record<string, { icon: JSX.Element; tone: string }> = {
   },
 }
 
-/** Where each notification type should take the user. */
-const ROUTES: Record<string, string> = {
-  review: '/projects/p1/review',
-  comment: '/projects/p1/review',
-  revision: '/projects/p2',
-  approval: '/projects/p5',
-  schedule: '/schedule',
-  published: '/projects/p10',
+/** Where each notification type should take the user. Uses real projectId when available. */
+function routeFor(n: { type: string; projectId?: string; payload?: any }): string {
+  const pid = n.projectId ? String(n.projectId) : null
+  if (pid) return `/projects/${pid}`
+  const fallback: Record<string, string> = {
+    review: '/review',
+    comment: '/review',
+    revision: '/projects',
+    approval: '/projects',
+    schedule: '/schedule',
+    published: '/projects',
+  }
+  return fallback[n.type] ?? '/notifications'
 }
 
 export default function NotificationsPage() {
@@ -65,7 +70,7 @@ export default function NotificationsPage() {
       await markRead(n.id)
       toast('info', 'Marked as read')
     }
-    navigate(ROUTES[n.type] ?? '/notifications')
+    navigate(routeFor(n as any))
   }
 
   return (
