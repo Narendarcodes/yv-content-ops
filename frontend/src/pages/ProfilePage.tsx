@@ -21,7 +21,6 @@ const roleLabel: Record<string, string> = {
 function toAvatarUrl(src: string | null | undefined): string | null {
   if (!src) return null
   if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('data:')) return src
-  // Backend stores /uploads/<file> — resolve against API origin (http://localhost:3000)
   const origin = API_BASE.replace(/\/api\/v1\/?$/, '')
   return `${origin}${src.startsWith('/') ? src : `/${src}`}`
 }
@@ -44,18 +43,7 @@ export default function ProfilePage() {
   const me = useMe()
   const { reviews } = useReviews()
 
-  // Keep draft name in sync when viewer updates (after photo change)
-  useEffect(() => {
-    if (!editing) setName(viewer.name)
-  }, [viewer.name, editing])
-
-  // Preview for a locally selected file
-  useEffect(() => {
-    if (!pendingPhoto) { setPreviewUrl(null); return }
-    const url = URL.createObjectURL(pendingPhoto)
-    setPreviewUrl(url)
-    return () => URL.revokeObjectURL(url)
-  }, [pendingPhoto])
+  useEffect(() => { if (!editing) setName(viewer.name) }, [viewer.name, editing])
 
   const activeProjects = projects.filter(
     (p) => p.assignee === (me?.id ?? '') && !['PUBLISHED', 'CLOSED'].includes(p.status),
@@ -70,98 +58,143 @@ export default function ProfilePage() {
   ]
 
   const storedSrc = (viewer as any).photoUrl || (viewer as any).profileImage || null
-  const avatarUrl = previewUrl ?? toAvatarUrl(storedSrc)
+  // Preview takes priority when a file is pending — immediate feedback, fixes the "still D" glitch
+  const avatarSrc = previewUrl ?? storedSrc
+  const avatarUrl = toAvatarUrl(avatarSrc)
 
   const handlePickPhoto = () => fileRef.current?.click()
 
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    if (!file.type.startsWith('image/')) { setPhotoError('Only image files are allowed'); return }
-    if (file.size > 5 * 1024 * 1024) { setPhotoError('Image must be under 5 MB'); return }
+    if (!file.type.startsWith('image/')) { setPhotoError('Only image files are allowed'); if (fileRef.current) fileRef.current.value = ''; return }
+    if (file.size > 5 * 1024 * 1024) { setPhotoError('Image must be under 5 MB'); if (fileRef.current) fileRef.current.value = ''; return }
     setPhotoError(null)
+    setSaveError(null)
+    // Create preview synchronously — no useEffect delay, fixes first-shot D bug
+    const url = URL.createObjectURL(file)
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    setPreviewUrl(url)
     setPendingPhoto(file)
-    // auto-enter edit mode so the user sees the preview and can Save/Cancel
     setEditing(true)
+    // keep input value so Clear works, but don't revoke yet
   }
 
-  const handleSavePhoto = async () => {
-    if (!pendingPhoto) return
+  const handleClearSelection = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    setPreviewUrl(null)
+    setPendingPhoto(null)
+    setPhotoError(null)
+    if (fileRef.current) fileRef.current.value = ''
+  }
+
+  const handleSavePhoto = async (): Promise<boolean> => {
+    if (!pendingPhoto) return true
     setPhotoUploading(true)
     setPhotoError(null)
     try {
       const updated = await uploadProfilePhoto(pendingPhoto)
       const nextUrl = (updated as any).photoUrl ?? (updated as any).profileImage ?? null
       updateSessionUser({ photoUrl: nextUrl, profileImage: nextUrl } as any)
+      // keep preview until viewer propagates, then clear
       toast('success', 'Profile photo updated')
-      setPendingPhoto(null)
-      if (fileRef.current) fileRef.current.value = ''
+      return true
     } catch (err: any) {
-      setPhotoError(err?.message || 'Could not upload photo')
+      const msg = String(err?.message || '')
+      if (/invalid_token|invalid_refresh|expired/i.test(msg)) {
+        setPhotoError('Session expired — please sign in again.')
+        setTimeout(() => { window.location.href = '/login' }, 1200)
+      } else {
+        setPhotoError(msg || 'Could not upload photo')
+      }
+      return false
     } finally {
       setPhotoUploading(false)
     }
   }
 
   const handleRemovePhoto = async () => {
-    if (!storedSrc && !pendingPhoto) return
-    if (pendingPhoto) { setPendingPhoto(null); if (fileRef.current) fileRef.current.value = ''; return }
+    // pending selection exists — just clear it
+    if (pendingPhoto) { handleClearSelection(); return }
+    if (!storedSrc) return
     setPhotoUploading(true)
     setPhotoError(null)
     try {
       await removeProfilePhoto()
       updateSessionUser({ photoUrl: null, profileImage: null } as any)
       toast('success', 'Profile photo removed')
+      if (previewUrl) { URL.revokeObjectURL(previewUrl); setPreviewUrl(null) }
     } catch (err: any) {
-      setPhotoError(err?.message || 'Could not remove photo')
+      const msg = String(err?.message || '')
+      if (/invalid_token|invalid_refresh|expired/i.test(msg)) {
+        setPhotoError('Session expired — please sign in again.')
+      } else {
+        setPhotoError(msg || 'Could not remove photo')
+      }
     } finally {
       setPhotoUploading(false)
     }
   }
 
   const handleCancel = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    setPreviewUrl(null)
+    setPendingPhoto(null)
     setEditing(false)
     setSaveError(null)
     setPhotoError(null)
-    setPendingPhoto(null)
     setName(viewer.name)
     if (fileRef.current) fileRef.current.value = ''
   }
 
   const handleSave = async () => {
     if (saving || photoUploading) return
-    // If there's a pending photo, upload it first
-    if (pendingPhoto) {
-      await handleSavePhoto()
-      // if photo upload failed, keep editing open so user sees the error
-      if (photoError) return
-    }
-    if (name.trim() === viewer.name) {
-      // only photo changed — close edit if photo succeeded
-      if (pendingPhoto === null) setEditing(false)
-      return
-    }
-    if (!name.trim()) { setSaveError('Name cannot be empty'); return }
-    setSaving(true)
     setSaveError(null)
-    try {
-      const updated = await updateMe({ name: name.trim() })
-      updateSessionUser({ name: updated.name })
-      toast('success', 'Profile updated', `You are now saved as ${updated.name}.`)
-      setEditing(false)
+    // 1) photo first, if any
+    if (pendingPhoto) {
+      const ok = await handleSavePhoto()
+      if (!ok) return // keep editing open to show photoError
+      // photo updated — clear local pending but keep preview until viewer refreshes
+      if (previewUrl) { URL.revokeObjectURL(previewUrl); setPreviewUrl(null) }
       setPendingPhoto(null)
-    } catch (err: any) {
-      const msg = String(err?.message || '')
-      if (/token/i.test(msg)) {
-        setSaveError('Your session expired. Please sign in again.')
-        setTimeout(() => { window.location.href = '/login' }, 1500)
-      } else {
-        setSaveError(msg || 'Could not save. Try again.')
+      if (fileRef.current) fileRef.current.value = ''
+      // if name unchanged, we're done
+      if (name.trim() === viewer.name.trim()) {
+        setEditing(false)
+        return
       }
-    } finally {
-      setSaving(false)
+    }
+    // 2) name, if changed
+    if (name.trim() !== viewer.name.trim()) {
+      if (!name.trim()) { setSaveError('Name cannot be empty'); return }
+      setSaving(true)
+      try {
+        const updated = await updateMe({ name: name.trim() })
+        updateSessionUser({ name: updated.name })
+        toast('success', 'Profile updated', `You are now saved as ${updated.name}.`)
+        setEditing(false)
+      } catch (err: any) {
+        const msg = String(err?.message || '')
+        if (/invalid_token|invalid_refresh|expired|token/i.test(msg)) {
+          setSaveError('Your session expired. Please sign in again.')
+          setTimeout(() => { window.location.href = '/login' }, 1200)
+        } else {
+          setSaveError(msg || 'Could not save. Try again.')
+        }
+        return
+      } finally {
+        setSaving(false)
+      }
+    } else if (!pendingPhoto) {
+      // nothing changed
+      setEditing(false)
+    } else {
+      setEditing(false)
     }
   }
+
+  // Cleanup preview on unmount
+  useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl) }, [previewUrl])
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -235,7 +268,6 @@ export default function ProfilePage() {
             )}
           </div>
 
-          {/* Hidden file input — only reachable via Edit */}
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelected} />
 
           {editing && (
@@ -252,6 +284,9 @@ export default function ProfilePage() {
                 )}
                 {pendingPhoto && (
                   <span className="text-xs text-umber">{pendingPhoto.name} · {(pendingPhoto.size / 1024).toFixed(0)} KB · will save with profile</span>
+                )}
+                {!pendingPhoto && storedSrc && (
+                  <span className="text-xs text-umber/70">Current photo shown above — change or remove, then Save.</span>
                 )}
               </div>
               <p className="mt-2 text-xs text-umber/70">JPG or PNG, max 5 MB. Saved when you click Save.</p>

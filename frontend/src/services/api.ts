@@ -207,17 +207,22 @@ export async function updateMe(patch: { name?: string; email?: string }): Promis
   return { ...u, id: u.id ?? u._id ?? '' } as SessionUser
 }
 
-/** Upload profile photo (multipart). Returns updated user. */
+/** Upload profile photo (multipart). Returns updated user. Handles 401 via refresh. */
 export async function uploadProfilePhoto(file: File): Promise<SessionUser & { photoUrl?: string; profileImage?: string }> {
-  const token = (() => {
-    try { const raw = localStorage.getItem('yv.session'); if (!raw) return null; return JSON.parse(raw).accessToken ?? null } catch { return null }
-  })()
-  const headers: Record<string,string> = {}
-  if (token) headers['Authorization'] = `Bearer ${token}`
-  const form = new FormData()
-  form.append('file', file)
-  const res = await fetch(`${API_BASE}/users/me/photo`, { method: 'PATCH', headers, body: form as any, credentials: 'include' })
-  if (!res.ok) { const b = await res.json().catch(()=>null); throw new Error(b?.error?.message || 'Photo upload failed') }
+  const doFetch = async (withRefresh = false): Promise<Response> => {
+    const token = withRefresh ? await tryRefreshToken() : getAccessToken()
+    const headers: Record<string,string> = {}
+    if (token) headers['Authorization'] = `Bearer ${token}`
+    const form = new FormData()
+    form.append('file', file)
+    // For FormData, do NOT set Content-Type — browser sets multipart boundary
+    return fetch(`${API_BASE}/users/me/photo`, { method: 'PATCH', headers, body: form as any, credentials: 'include' })
+  }
+  let res = await doFetch(false)
+  if (res.status === 401) {
+    res = await doFetch(true)
+  }
+  if (!res.ok) { const b = await res.json().catch(()=>null); throw new Error(b?.error?.message || b?.error?.code || 'Photo upload failed') }
   const body = await res.json()
   const u = (body.data ?? {}) as any
   return { ...u, id: u.id ?? u._id ?? '' }
