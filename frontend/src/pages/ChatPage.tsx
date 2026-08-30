@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { Info, Paperclip, Send, Plus, WifiOff } from 'lucide-react'
+import { createPortal } from 'react-dom'
+import { Info, Paperclip, Send, Plus, WifiOff, X, Hash, Users } from 'lucide-react'
 import Avatar from '../components/ui'
 import { Skeleton, ErrorBanner } from '../components/states'
 import { useViewer } from '../lib/viewer'
@@ -19,6 +20,7 @@ export default function ChatPage() {
   const [newChannelName, setNewChannelName] = useState('')
   const [creatingChannel, setCreatingChannel] = useState(false)
   const [channelError, setChannelError] = useState<string | null>(null)
+  const [infoOpen, setInfoOpen] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const active: ChatChannel | undefined =
@@ -128,8 +130,15 @@ export default function ChatPage() {
             </h2>
             {active && <p className="text-[11px] text-umber">Live · updates in real time</p>}
           </div>
-          <button className="icon-btn icon-btn-sm" aria-label="Channel info">
-            <Info size={16} strokeWidth={1.75} />
+          <button
+            onClick={() => setInfoOpen(true)}
+            className="icon-btn icon-btn-sm touch-manipulation focus-visible:ring-2 focus-visible:ring-teal/20"
+            aria-label="Channel info"
+            aria-expanded={infoOpen}
+            aria-haspopup="dialog"
+            title="Channel info"
+          >
+            <Info size={16} strokeWidth={1.75} aria-hidden="true" />
           </button>
         </header>
 
@@ -181,8 +190,8 @@ export default function ChatPage() {
         {/* Composer */}
         <footer className="border-t border-line p-3">
           <div className="flex items-center gap-2 rounded-[8px] border border-line bg-canvas/50 px-3 py-2 focus-within:border-teal/50">
-            <button className="icon-btn icon-btn-sm" aria-label="Attach" disabled title="Attachments coming soon">
-              <Paperclip size={15} strokeWidth={1.75} />
+            <button className="icon-btn icon-btn-sm touch-manipulation focus-visible:ring-2 focus-visible:ring-teal/20" aria-label="Attach" disabled title="Attachments coming soon">
+              <Paperclip size={15} strokeWidth={1.75} aria-hidden="true" />
             </button>
             <input
               value={draft}
@@ -195,14 +204,97 @@ export default function ChatPage() {
               }}
               placeholder={active ? `Message ${active.name}` : 'Select a channel first'}
               disabled={!active}
-              className="flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-umber/70"
+              name="message"
+              type="text"
+              autoComplete="off"
+              aria-label="Message"
+              className="flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-umber/70 touch-manipulation focus-visible:ring-2 focus-visible:ring-teal/20"
             />
-            <button onClick={() => void submit()} disabled={!draft.trim() || !active || sending} className="btn-primary btn-xs !px-3" aria-label="Send">
-              <Send size={14} strokeWidth={1.75} />
+            <button onClick={() => void submit()} disabled={!draft.trim() || !active || sending} className="btn-primary btn-xs !px-3 touch-manipulation focus-visible:ring-2 focus-visible:ring-teal/20" aria-label="Send">
+              <Send size={14} strokeWidth={1.75} aria-hidden="true" />
             </button>
           </div>
         </footer>
       </section>
+
+      {/* Channel info drawer — portal so it escapes card overflow */}
+      {infoOpen &&
+        createPortal(
+          <div className="fixed inset-0 z-[70] flex justify-end">
+            <div className="absolute inset-0 bg-ink/30 backdrop-blur-[1px]" onClick={() => setInfoOpen(false)} aria-hidden="true" />
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Channel info"
+              className="relative flex h-full w-full max-w-sm flex-col border-l border-line bg-surface shadow-pop transition-transform"
+              style={{ overscrollBehavior: 'contain' } as any}
+            >
+              <header className="flex items-center justify-between border-b border-line px-5 py-4">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-xl border border-line bg-canvas text-teal">
+                    <Hash size={14} strokeWidth={1.75} aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h3 className="font-headline text-sm font-semibold text-ink">{active?.name ?? 'Channel'}</h3>
+                    <p className="font-mono text-[11px] text-umber/70">{active ? `Project ${active.projectId.slice(0, 8)}…` : ''}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setInfoOpen(false)}
+                  className="icon-btn icon-btn-sm touch-manipulation focus-visible:ring-2 focus-visible:ring-teal/20"
+                  aria-label="Close channel info"
+                >
+                  <X size={14} strokeWidth={2} aria-hidden="true" />
+                </button>
+              </header>
+              <div className="flex-1 overflow-y-auto p-5">
+                <div className="rounded-xl border border-line bg-canvas/60 p-4">
+                  <p className="font-mono text-[10px] uppercase tracking-wider text-umber/60">About</p>
+                  <p className="mt-2 text-sm leading-relaxed text-ink/80">
+                    {active?.name === '#Stories Category'
+                      ? 'Imported WhatsApp “Stories Category” — real messages, tasks and feedback from the Stories workflow. Live updates via Socket.IO.'
+                      : active
+                        ? `${active.name} — team channel for quick updates.`
+                        : 'Select a channel to see details.'}
+                  </p>
+                </div>
+                <div className="mt-4 rounded-xl border border-line bg-canvas/60 p-4">
+                  <p className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-umber/60">
+                    <Users size={11} strokeWidth={1.75} aria-hidden="true" /> Team
+                  </p>
+                  {teamLoading ? (
+                    <p className="mt-2 text-xs text-umber/60">Loading…</p>
+                  ) : (
+                    <ul className="mt-3 space-y-2">
+                      {team.slice(0, 8).map((m) => (
+                        <li key={m.id} className="flex items-center gap-2.5">
+                          <Avatar initials={m.initials} size="xs" tone="tint" />
+                          <span className="min-w-0 flex-1 truncate text-sm text-ink">{m.name}</span>
+                          <span className="font-mono text-[10px] uppercase tracking-wide text-umber/60">{m.role}</span>
+                        </li>
+                      ))}
+                      {team.length > 8 && <li className="font-mono text-[11px] text-umber/50">+{team.length - 8} more</li>}
+                    </ul>
+                  )}
+                </div>
+                <div className="mt-4 rounded-xl border border-line bg-canvas/40 px-4 py-3">
+                  <p className="font-mono text-[10px] uppercase tracking-wider text-umber/60">Details</p>
+                  <dl className="mt-2 space-y-1.5 text-xs">
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-umber/60">Messages</dt>
+                      <dd className="font-mono font-medium tabular-nums text-ink">{messages.length}</dd>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-umber/60">Channel ID</dt>
+                      <dd className="truncate font-mono text-[11px] text-ink/70">{active?.id ?? '—'}</dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   )
 }
