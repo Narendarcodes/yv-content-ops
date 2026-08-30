@@ -102,7 +102,7 @@ export default function CommandPalette({ open, initialQuery = '', onClose }: { o
             }}
             onKeyDown={onKey}
             placeholder="Search projects…"
-            className="h-7 flex-1 bg-transparent text-[15px] leading-none text-ink outline-none placeholder:text-umber/40"
+            className="flex-1 bg-transparent py-1 text-[15px] font-normal leading-6 text-ink caret-teal outline-none placeholder:text-umber/40 placeholder:font-normal"
             aria-label="Search projects"
           />
           {q && (
