@@ -62,10 +62,19 @@ async function tryRefreshToken(): Promise<string | null> {
   if (!rt) return null
   refreshInFlight = (async () => {
     try {
-      const data = (await refreshToken(rt)) as { accessToken: string; refreshToken?: string }
+      const data = await refreshToken(rt)
+      // data is now unwrapped { accessToken, refreshToken }
+      if (!data?.accessToken) throw new Error('No access token in refresh response')
       updateStoredTokens(data.accessToken, data.refreshToken)
+      // keep cookie in sync for httpOnly fallback — backend sets cookie on login only
       return data.accessToken
-    } catch {
+    } catch (err: any) {
+      const msg = String(err?.message || '')
+      // Bad refresh (revoked/expired) — clear session so we don't spam refresh forever
+      if (/invalid_refresh|expired_refresh|Invalid refresh/i.test(msg)) {
+        try { localStorage.removeItem(SESSION_KEY) } catch {}
+        // let callers see the 401; UI will redirect to /login via RequireAuth
+      }
       return null
     } finally {
       refreshInFlight = null
@@ -224,14 +233,20 @@ export async function removeProfilePhoto(): Promise<SessionUser & { photoUrl?: s
 }
 
 /** Refresh the access token using a refresh token */
-export async function refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
+export async function refreshToken(refreshToken: string): Promise<{ accessToken: string; refreshToken?: string }> {
   const res = await fetch(`${API_BASE}/auth/refresh`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ refreshToken }),
   })
-  if (!res.ok) throw new Error('Token refresh failed')
-  return res.json()
+  if (!res.ok) {
+    const body = await res.json().catch(() => null)
+    throw new Error(body?.error?.message || 'Token refresh failed')
+  }
+  const body = await res.json()
+  // Backend wraps in { data: { accessToken, refreshToken } }
+  const data = body.data ?? body
+  return data as { accessToken: string; refreshToken?: string }
 }
 
 /** Log out - revokes the refresh token on the server */

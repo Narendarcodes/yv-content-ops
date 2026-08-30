@@ -42,8 +42,27 @@ async function revokeRefreshToken(token) {
 async function rotateRefreshToken(oldToken) {
   const oldHash = hashToken(oldToken);
   const rt = await RefreshToken.findOne({ tokenHash: oldHash });
-  if (!rt || rt.revoked) throw { status: 401, code: 'invalid_refresh', message: 'Invalid refresh token' };
+  if (!rt) throw { status: 401, code: 'invalid_refresh', message: 'Invalid refresh token' };
   if (rt.expiresAt < new Date()) throw { status: 401, code: 'expired_refresh', message: 'Refresh token expired' };
+  if (rt.revoked) {
+    // Allow grace for concurrent refreshes that race on the same old token:
+    // if this token was already rotated, check if the replacement is still valid
+    // and treat this as a replay within the window — issue a new rotation instead of hard failing.
+    if (rt.replacedByToken) {
+      const replacement = await RefreshToken.findOne({ tokenHash: rt.replacedByToken });
+      if (replacement && !replacement.revoked && replacement.expiresAt > new Date()) {
+        // Issue a fresh token for the racing request (extend the chain)
+        const newRaw = generateRefreshToken();
+        const newHash = hashToken(newRaw);
+        const expiresAt = new Date(Date.now() + REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000);
+        // reuse the valid replacement as the parent for auditing
+        const nrt = new RefreshToken({ userId: replacement.userId, tokenHash: newHash, expiresAt });
+        await nrt.save();
+        return { newRefresh: newRaw, userId: replacement.userId };
+      }
+    }
+    throw { status: 401, code: 'invalid_refresh', message: 'Invalid refresh token' };
+  }
   // create new
   const newRaw = generateRefreshToken();
   const newHash = hashToken(newRaw);
