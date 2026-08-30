@@ -481,9 +481,16 @@ export interface ProjectVersion {
   files: VersionFile[]
 }
 
-/** Authenticated URL for streaming a version file (Range-aware). */
+/**
+ * Authenticated URL for streaming a version file (Range-aware).
+ * Appends ?token= because <video>/<audio> src attributes cannot send
+ * Authorization headers or reliably carry the httpOnly cookie — the
+ * backend authenticate middleware accepts the query-param fallback.
+ */
 export function versionFileUrl(projectId: string, versionId: string, fileId: string): string {
-  return `${API_BASE}/projects/${projectId}/versions/${versionId}/files/${fileId}`
+  const base = `${API_BASE}/projects/${projectId}/versions/${versionId}/files/${fileId}`
+  const token = getAccessToken()
+  return token ? `${base}?token=${encodeURIComponent(token)}` : base
 }
 
 async function authedJson<T>(url: string): Promise<T> {

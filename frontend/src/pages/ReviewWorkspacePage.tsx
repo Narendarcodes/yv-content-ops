@@ -266,7 +266,6 @@ export default function ReviewWorkspacePage() {
                 controls
                 playsInline
                 preload="metadata"
-                crossOrigin="use-credentials"
                 className="aspect-video w-full bg-black"
                 onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
               />

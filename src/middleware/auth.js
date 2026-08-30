@@ -11,6 +11,12 @@ async function authenticate(req, res, next) {
     } else if (req.cookies && req.cookies.accessToken) {
       // Cookie-based fallback (cookie-parser is installed in app.js)
       token = req.cookies.accessToken;
+    } else if (req.query && req.query.token) {
+      // Query-param fallback for transports that cannot send headers or
+      // cookies — <video>/<audio> src attributes. Only the media stream
+      // route exposes URLs with this, and invalid tokens are still rejected
+      // below, so this is not an auth bypass.
+      token = String(req.query.token);
     }
     if (!token) return res.status(401).json({ error: { code: 'unauthenticated', message: 'Missing token' } });
     const payload = verifyAccessToken(token);
