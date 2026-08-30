@@ -5,8 +5,14 @@ const Membership = require('../models/membership.model');
 async function authenticate(req, res, next) {
   try {
     const auth = req.headers.authorization;
-    if (!auth || !auth.startsWith('Bearer ')) return res.status(401).json({ error: { code: 'unauthenticated', message: 'Missing token' } });
-    const token = auth.slice('Bearer '.length);
+    let token = null;
+    if (auth && auth.startsWith('Bearer ')) {
+      token = auth.slice('Bearer '.length);
+    } else if (req.cookies && req.cookies.accessToken) {
+      // Cookie-based fallback (cookie-parser is installed in app.js)
+      token = req.cookies.accessToken;
+    }
+    if (!token) return res.status(401).json({ error: { code: 'unauthenticated', message: 'Missing token' } });
     const payload = verifyAccessToken(token);
     if (!payload) return res.status(401).json({ error: { code: 'invalid_token', message: 'Invalid token' } });
     const user = await User.findById(payload.sub);

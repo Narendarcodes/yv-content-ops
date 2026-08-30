@@ -3,6 +3,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const cookieParser = require('cookie-parser');
 const config = require('./config');
 const healthRouter = require('./routes/health');
 const authRouter = require('./routes/auth');
@@ -28,6 +29,7 @@ app.use(helmet());
 // credentials:'include' (cookie-based session fallback) — without it the browser
 // blocks the response (Access-Control-Allow-Credentials must be 'true').
 app.use(cors({ origin: config.corsOrigin, credentials: true }));
+app.use(cookieParser());
 app.use(express.json());
 
 // global rate limiting (per IP)

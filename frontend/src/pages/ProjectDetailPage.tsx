@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Play, CircleCheck, TriangleAlert, Circle } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { UploadCloud } from 'lucide-react'
+import { UploadCloud, X } from 'lucide-react'
 import Chip, { statusTone, Modal } from '../components/primitives'
 import Avatar, { AvatarStack } from '../components/ui'
 import { statusLabel } from '../lib/format'
 import { useViewer, can } from '../lib/viewer'
 import { useToast } from '../components/toast'
+import { createVersion, uploadVersionFile } from '../services/api'
 import {
   useProject, useProjectInputs, useProjectActivity, useProjectPublications, useReviews, useTeam,
 } from '../lib/data'
@@ -46,6 +47,10 @@ export default function ProjectDetailPage() {
   const viewer = useViewer()
   const [uploadOpen, setUploadOpen] = useState(false)
   const [uploadNote, setUploadNote] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const { project } = useProject(id)
   const { team } = useTeam()
   const { inputs: rawInputs } = useProjectInputs(id)
@@ -155,24 +160,95 @@ export default function ProjectDetailPage() {
       </div>
 
       {/* Upload new version */}
-      <Modal open={uploadOpen} onClose={() => setUploadOpen(false)} title="Upload a new version">
+      <Modal open={uploadOpen} onClose={() => { if (!uploading) setUploadOpen(false) }} title="Upload a new version">
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault()
-            setUploadOpen(false)
-            setUploadNote('')
-            // Demo: upload is simulated - the backend storage API handles real files later
-            toast('success', 'Version uploaded', `${project.title} · ${uploadNote.trim() || 'New cut'}`)
+            if (!selectedFile || uploading) return
+            setUploading(true)
+            setUploadProgress(0)
+            try {
+              // Step 1: create a version entry
+              const version = await createVersion(project.id, uploadNote.trim() || 'New version')
+              // Step 2: upload the file to that version
+              await uploadVersionFile(project.id, version.id, selectedFile, (pct) => setUploadProgress(pct))
+              toast('success', 'Version uploaded', `${project.title} · ${uploadNote.trim() || 'New cut'}`)
+              setUploadOpen(false)
+              setUploadNote('')
+              setSelectedFile(null)
+              setUploadProgress(0)
+              void fileInputRef.current?.value && (fileInputRef.current.value = '')
+              // Open the review workspace automatically
+              navigate(`/projects/${project.id}/review`)
+            } catch (err: any) {
+              toast('error', 'Upload failed', err?.message || 'Could not upload version')
+              setUploading(false)
+              setUploadProgress(0)
+            }
           }}
           className="space-y-4 px-6 py-5"
         >
-          <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-line bg-canvas/60 px-6 py-8 text-center">
-            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-tint text-teal">
-              <UploadCloud size={18} strokeWidth={1.75} />
-            </span>
-            <p className="text-sm font-medium text-ink">Drop your video here</p>
-            <p className="text-[13px] text-umber">MP4 or MOV, up to 2 GB. The review workspace opens automatically.</p>
+          <div
+            className="flex h-24 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-line bg-canvas/60 text-center transition-colors hover:border-teal/50"
+            onClick={() => !uploading && fileInputRef.current?.click()}
+          >
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="video/mp4,video/quicktime,.mp4,.mov"
+              hidden
+              onChange={(e) => {
+                const f = e.target.files?.[0]
+                if (f) setSelectedFile(f)
+              }}
+              disabled={uploading}
+            />
+            {selectedFile ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs text-ink">{selectedFile.name}</span>
+                  <span className="rounded bg-tint px-1.5 py-0.5 font-mono text-[10px] text-teal">
+                    {(selectedFile.size / (1024 * 1024)).toFixed(1)} MB
+                  </span>
+                  {!uploading && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setSelectedFile(null)
+                        if (fileInputRef.current) fileInputRef.current.value = ''
+                      }}
+                      className="icon-btn icon-btn-sm"
+                      aria-label="Remove file"
+                    >
+                      <X size={12} strokeWidth={2} />
+                    </button>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-tint text-teal">
+                  <UploadCloud size={18} strokeWidth={1.75} />
+                </span>
+                <p className="text-sm font-medium text-ink">Drop your video here</p>
+                <p className="text-[13px] text-umber">MP4 or MOV, up to 2 GB. The review workspace opens automatically.</p>
+              </>
+            )}
           </div>
+
+          {uploading && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between font-mono text-xs text-umber">
+                <span>Uploading…</span>
+                <span>{uploadProgress}%</span>
+              </div>
+              <div className="h-1 w-full rounded-full bg-line overflow-hidden">
+                <div className="h-full bg-teal transition-all" style={{ width: `${uploadProgress}%` }} />
+              </div>
+            </div>
+          )}
+
           <div>
             <label htmlFor="upload-note" className="label">Version note (optional)</label>
             <input
@@ -180,12 +256,15 @@ export default function ProjectDetailPage() {
               value={uploadNote}
               onChange={(e) => setUploadNote(e.target.value)}
               placeholder="e.g. Fixed the subtitle timing"
+              disabled={uploading}
               className="input"
             />
           </div>
           <div className="flex justify-end gap-2 pt-1">
-            <button type="button" onClick={() => setUploadOpen(false)} className="btn-ghost">Cancel</button>
-            <button type="submit" className="btn-primary">Upload version</button>
+            <button type="button" onClick={() => setUploadOpen(false)} disabled={uploading} className="btn-ghost">Cancel</button>
+            <button type="submit" disabled={!selectedFile || uploading} className="btn-primary">
+              {uploading ? 'Uploading…' : 'Upload version'}
+            </button>
           </div>
         </form>
       </Modal>

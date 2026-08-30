@@ -12,25 +12,49 @@
  * Rooms are named `channel:<id>` so channels are isolated per project.
  */
 const { Server } = require('socket.io');
-const { verifyAccessToken } = require('../utils/tokens');
+const { verifyAccessToken, generateAccessToken, hashToken } = require('../utils/tokens');
 const Membership = require('../models/membership.model');
 const Channel = require('../models/channel.model');
+const RefreshToken = require('../models/refreshToken.model');
 const logger = require('../utils/logger');
+const config = require('../config');
 
 let io = null;
 
 /** Initialize Socket.IO on the existing HTTP server. */
 function initSocketServer(httpServer) {
   io = new Server(httpServer, {
-    cors: { origin: true, credentials: true },
+    cors: { origin: config.corsOrigin, credentials: true },
   });
 
   // --- Handshake authentication ---
-  io.use((socket, next) => {
+  // Accepts an access token (auth.token) and optionally a refresh token
+  // (auth.refreshToken). If the access token is expired/invalid, the refresh
+  // token is verified and a new access token is generated so the client can
+  // reconnect without a full page reload / login.
+  io.use(async (socket, next) => {
     try {
       const token = socket.handshake.auth?.token;
-      const payload = token && verifyAccessToken(String(token));
-      if (!payload) return next(new Error('unauthorized'));
+      let payload = token && verifyAccessToken(String(token));
+
+      if (!payload) {
+        // Access token expired/invalid — try refresh token fallback
+        const refreshToken = socket.handshake.auth?.refreshToken;
+        if (refreshToken) {
+          const tokenHash = hashToken(refreshToken);
+          const rt = await RefreshToken.findOne({ tokenHash, revoked: { $ne: true } });
+          if (rt && rt.expiresAt > new Date()) {
+            payload = { sub: String(rt.userId) };
+            // Generate a new access token and send it back to the client
+            const newAccessToken = generateAccessToken({ sub: rt.userId });
+            socket.data.userId = String(rt.userId);
+            socket.data.newAccessToken = newAccessToken;
+            return next();
+          }
+        }
+        return next(new Error('unauthorized'));
+      }
+
       socket.data.userId = String(payload.sub);
       next();
     } catch {

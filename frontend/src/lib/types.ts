@@ -1,9 +1,11 @@
 /**
  * Shared domain types for yv..
  *
- * These used to live in mockData.ts; they now stand alone so no page ever
- * needs to import from a file containing fake data. All runtime data comes
- * exclusively from the backend API (see ./data.ts).
+ * This is the single source of truth for domain types used across the
+ * frontend. API response types (auth session, organization, etc.) are defined
+ * in services/api.ts and imported here to avoid duplication.
+ *
+ * All runtime data comes exclusively from the backend API.
  */
 
 export type RoleName = 'admin' | 'editor' | 'reviewer' | 'designer' | 'publisher' | 'member'
@@ -35,3 +37,6 @@ export interface Project {
   publishedAt?: string
   approvedVersion?: string
 }
+
+/** Re-export auth/session types so pages can import from one place. */
+export type { SessionUser, Session, Org, OrgMember } from '../services/api'

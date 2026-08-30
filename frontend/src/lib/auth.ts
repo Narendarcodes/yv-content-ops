@@ -7,21 +7,13 @@
  *      breaks during the backend rollout.
  *
  * The `useAuth()` hook returns `{ session, authenticated }` where `session.user`
- * is a `SessionUser` shape. Components that need the legacy `TeamMember` shape
- * can call `session.user` and map the fields they use.
+ * is a `SessionUser` shape imported from services/api.ts (single source of truth).
  */
 import { useEffect, useState } from 'react'
 
 import { login as apiLogin, logout as apiLogout, getMe } from '../services/api'
 import { clearDataCaches } from './data'
-
-export interface SessionUser {
-  id: string
-  name: string
-  email: string
-  role: string
-  title?: string
-}
+import type { SessionUser } from '../services/api'
 
 /** Legacy TeamMember shape - kept for components that still import it. */
 export interface TeamMember {
@@ -193,6 +185,13 @@ export function updateSessionUser(patch: Partial<SessionUser>): void {
 /** Sign out - backend first, then cleanup. */
 export async function logout(): Promise<void> {
   await logoutBackend()
+  // Close the chat socket so it doesn't hold a stale session
+  try {
+    const { closeChatSocket } = await import('./chat')
+    closeChatSocket()
+  } catch {
+    /* chat module may not be loaded yet */
+  }
 }
 
 /** ------------------------------------------------------------------- */

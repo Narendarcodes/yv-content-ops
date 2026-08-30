@@ -297,6 +297,9 @@ export async function addMember(orgId: string, email: string, role: string): Pro
 
 /** ------------------------------------------------------------------- */
 /* Projects */
+// Project type is defined in lib/types.ts (single source of truth).
+// This interface mirrors the API response shape; callers should use
+// normalizeProject() from data.ts to get the domain Project type.
 export interface Project {
   id: string
   title: string
@@ -448,6 +451,84 @@ export async function listVersions(projectId: string): Promise<ProjectVersion[]>
       size: f.size,
     })),
   }))
+}
+
+/** Create a new version entry for a project. */
+export async function createVersion(projectId: string, changeSummary: string): Promise<ProjectVersion> {
+  const res = await authFetch(`${API_BASE}/projects/${projectId}/versions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ changeSummary }),
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error('Failed to create version')
+  const body = await res.json()
+  const v = body.data
+  return {
+    id: String(v._id ?? v.id),
+    versionNumber: v.versionNumber,
+    changeSummary: v.changeSummary ?? '',
+    createdAt: v.createdAt,
+    files: (v.files ?? []).map((f: any) => ({
+      id: String(f._id),
+      filename: f.filename,
+      mimeType: f.mimeType,
+      size: f.size,
+    })),
+  }
+}
+
+/** Upload a file to an existing version (multipart form). */
+export async function uploadVersionFile(
+  projectId: string,
+  versionId: string,
+  file: File,
+  onProgress?: (pct: number) => void,
+): Promise<{ id: string; filename: string; mimeType: string; size: number }[]> {
+  const token = (() => {
+    try {
+      const raw = localStorage.getItem('yv.session')
+      if (!raw) return null
+      return JSON.parse(raw).accessToken ?? null
+    } catch {
+      return null
+    }
+  })()
+
+  const formData = new FormData()
+  formData.append('file', file)
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', `${API_BASE}/projects/${projectId}/versions/${versionId}/files`)
+    if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`)
+
+    xhr.upload.addEventListener('progress', (e) => {
+      if (e.lengthComputable && onProgress) onProgress(Math.round((e.loaded / e.total) * 100))
+    })
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const body = JSON.parse(xhr.responseText)
+          const files = (body.data?.files ?? []).map((f: any) => ({
+            id: String(f._id),
+            filename: f.filename,
+            mimeType: f.mimeType,
+            size: f.size,
+          }))
+          resolve(files)
+        } catch {
+          reject(new Error('Failed to parse upload response'))
+        }
+      } else {
+        reject(new Error(`Upload failed (${xhr.status})`))
+      }
+    }
+
+    xhr.onerror = () => reject(new Error('Network error during upload'))
+    xhr.send(formData)
+  })
 }
 
 /** ------------------------------------------------------------------- */

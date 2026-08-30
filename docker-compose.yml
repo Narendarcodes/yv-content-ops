@@ -33,6 +33,7 @@ services:
       JWT_REFRESH_EXPIRES_DAYS: ${JWT_REFRESH_EXPIRES_DAYS:-7}
       STORAGE_DRIVER: ${STORAGE_DRIVER:-local}
       STORAGE_LOCAL_DIR: /app/uploads
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173,http://localhost:3000}
       RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-900000}
       RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-100}
     ports:
@@ -45,6 +46,19 @@ services:
       timeout: 5s
       retries: 5
       start_period: 15s
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: cop-frontend
+    restart: unless-stopped
+    depends_on:
+      - app
+    environment:
+      - VITE_API_BASE_URL=http://localhost:3000/api/v1
+    ports:
+      - "5173:5173"
 
 volumes:
   mongo-data:

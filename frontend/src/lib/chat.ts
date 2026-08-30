@@ -38,10 +38,42 @@ function fmtTime(iso?: string | null) {
 
 let socket: Socket | null = null
 
+/** Derive the Socket.IO server origin from API_BASE (strips the /api/v1 prefix). */
+function getSocketOrigin(): string {
+  const base = (typeof process !== 'undefined' && process.env
+    ? (process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000/api/v1')
+    : 'http://localhost:3000/api/v1')
+  // Strip trailing path (e.g. /api/v1) to get the bare origin for Socket.IO
+  const url = new URL(base)
+  return `${url.protocol}//${url.host}`
+}
+
 function getSocket(): Socket {
   if (socket) return socket
-  const token = getSession()?.accessToken ?? ''
-  socket = io('http://localhost:3000', { auth: { token }, transports: ['websocket', 'polling'] })
+  const session = getSession()
+  const token = session?.accessToken ?? ''
+  const refreshToken = session?.refreshToken ?? ''
+  socket = io(getSocketOrigin(), {
+    auth: { token, refreshToken },
+    transports: ['websocket', 'polling'],
+  })
+  // When the server refreshes our access token during the handshake, it sets
+  // socket.data.newAccessToken. Listen for the 'connect' event and pick it up.
+  socket.on('connect', () => {
+    const newToken = (socket as any).auth?.newAccessToken ?? (socket as any).newAccessToken
+    if (newToken) {
+      // Update the persisted session with the refreshed access token
+      const session = getSession()
+      if (session) {
+        session.accessToken = newToken
+        try {
+          localStorage.setItem('yv.session', JSON.stringify(session))
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+  })
   return socket
 }
 

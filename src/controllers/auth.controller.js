@@ -20,6 +20,14 @@ async function login(req, res, next) {
     const membership = await Membership.findOne({ userId: user._id, disabled: { $ne: true } }).sort({ createdAt: 1 });
     const u = user.toObject();
     u.role = membership ? membership.role : 'member';
+    // Also set the access token as an httpOnly cookie as a fallback transport
+    // so clients that only send cookies (not Authorization headers) can still auth.
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000, // 15 min - matches JWT_ACCESS_EXPIRES_IN
+    });
     res.json({ data: { user: u, accessToken, refreshToken } });
   } catch (err) {
     next(err);

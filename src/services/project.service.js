@@ -3,6 +3,7 @@ const ProjectVersion = require('../models/projectVersion.model');
 const Input = require('../models/input.model');
 const bus = require('../events/hub');
 const storage = require('../storage');
+const { normalizeProject } = require('../utils/normalize');
 
 const ALLOWED_TRANSITIONS = {
   IDEA: ['APPROVED_CONCEPT', 'ASSIGNED', 'CANCELLED'],
@@ -30,7 +31,7 @@ async function getProject({ projectId, organizationId }) {
     .populate('creator', 'name email')
     .populate('assignee', 'name email');
   if (!project) throw { status: 404, code: 'project_not_found', message: 'Project not found' };
-  return project;
+  return normalizeProject(project);
 }
 
 async function listProjects({ organizationId, status, assignee, search, limit = 50, skip = 0, sort = '-createdAt' }) {
@@ -47,7 +48,7 @@ async function listProjects({ organizationId, status, assignee, search, limit = 
       .populate('assignee', 'name email'),
     Project.countDocuments(q),
   ]);
-  return { items, total, limit, skip };
+  return { items: items.map(normalizeProject), total, limit, skip };
 }
 
 async function createProject({ organizationId, title, description, creatorId, type = 'content' }) {
