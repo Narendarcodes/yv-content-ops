@@ -109,7 +109,7 @@ export async function loadTeam(): Promise<TeamMember[]> {
 /* ----------------------------- projects ----------------------------- */
 function normalizeProject(p: any): Project {
   return {
-    id: strId(p.id),
+    id: strId(p._id ?? p.id),
     title: p.title,
     type: (p.type || 'Content Production') as Project['type'],
     status: p.status || 'IDEA',
@@ -409,14 +409,17 @@ export async function loadProject(id: string): Promise<Project | null> {
 
 export function useProject(id: string) {
   const [project, setProject] = useState<Project | null>(null)
+  const [loading, setLoading] = useState(true)
   useEffect(() => {
     let active = true
-    if (id) loadProject(id).then((p) => active && setProject(p)).catch(() => {})
+    setLoading(true)
+    if (id) loadProject(id).then((p) => active && setProject(p)).catch(() => {}).finally(() => active && setLoading(false))
+    else setLoading(false)
     return () => {
       active = false
     }
   }, [id])
-  return { project }
+  return { project, loading }
 }
 
 /* ----------------------- project sub-resources ----------------------- */

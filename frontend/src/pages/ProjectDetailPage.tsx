@@ -51,7 +51,7 @@ export default function ProjectDetailPage() {
   const [uploadProgress, setUploadProgress] = useState(0)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { project } = useProject(id)
+  const { project, loading: projectLoading } = useProject(id)
   const { team } = useTeam()
   const { inputs: rawInputs } = useProjectInputs(id)
   const { activity: activityRaw } = useProjectActivity(id)
@@ -59,6 +59,15 @@ export default function ProjectDetailPage() {
   const { reviews: allReviews } = useReviews()
   const memberOf = (mid: string) => team.find((m) => m.id === mid)
 
+  // Show loading before 404 — useProject is async via org lookup
+  if (projectLoading) {
+    return (
+      <div className="fade-in space-y-4">
+        <div className="h-6 w-40 rounded bg-line/50 animate-pulse" />
+        <div className="h-32 rounded-xl bg-line/30 animate-pulse" />
+      </div>
+    )
+  }
   // Unknown project id - a real 404 instead of silently showing the first project
   if (!project) {
     return (
@@ -165,6 +174,10 @@ export default function ProjectDetailPage() {
           onSubmit={async (e) => {
             e.preventDefault()
             if (!selectedFile || uploading) return
+            if (!project?.id) {
+              toast('danger', 'No project selected', 'Open a project first, then upload.')
+              return
+            }
             setUploading(true)
             setUploadProgress(0)
             try {
