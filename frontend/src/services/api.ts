@@ -758,6 +758,14 @@ export async function listActivity(projectId: string) {
   return normalizeList(Array.isArray(body.data) ? body.data : (body.data?.items ?? []))
 }
 
+/** Org-wide activity feed (dashboard "Recent activity") — events across all org projects. */
+export async function listOrgActivity(orgId: string, limit = 20) {
+  const res = await authFetch(`${API_BASE}/organizations/${orgId}/activity?limit=${limit}`, { credentials: 'include' })
+  if (!res.ok) throw new Error('Failed to list org activity')
+  const body = await res.json()
+  return normalizeList(Array.isArray(body.data) ? body.data : (body.data?.items ?? []))
+}
+
 /** ------------------------------------------------------------------- */
 /* Fallback to demo mock data when the backend is unavailable */
 export interface MockResponse<T> {

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  ArrowRight, BadgeCheck, Bell, CalendarClock, CheckSquare, Clapperboard,
+  ArrowRight, BadgeCheck, CalendarClock, CheckSquare, Clapperboard,
   Eye, Inbox, Megaphone, MessageCircle, MessageSquare, Shield, Users,
 } from 'lucide-react'
 import Chip, { statusTone } from '../components/primitives'
@@ -11,8 +11,9 @@ import { type Project } from '../lib/types'
 import { statusLabel } from '../lib/format'
 import { useViewer } from '../lib/viewer'
 import { roleOf, type Role } from '../lib/roles'
-import { useTeam, useProjects, useReviews, useMe } from '../lib/data'
-import { useNotifications } from '../lib/notifications'
+import { useTeam, useProjects, useReviews, useMe, primaryOrgId } from '../lib/data'
+import { listOrgActivity } from '../services/api'
+import { useEffect, useState } from 'react'
 
 const iconProps = { size: 18, strokeWidth: 1.75 }
 
@@ -163,26 +164,84 @@ function ScheduledCard({ items, className }: { items: Project[]; className?: str
   )
 }
 
+/** Human label for a backend activity action, shown on the dashboard feed. */
+function describeAction(e: any): string {
+  const m = e.metadata ?? {}
+  switch (e.action) {
+    case 'created': return 'created the project'
+    case 'transitioned': return `moved it to ${m.to ?? 'a new stage'}`
+    case 'version_uploaded': return `uploaded ${m.label ?? 'a new version'}`
+    case 'comment_added': return 'commented on the draft'
+    case 'revision_requested': return 'requested a revision'
+    case 'approved': return `approved ${m.label ?? 'the draft'}`
+    case 'scheduled': return 'scheduled it for publishing'
+    case 'published': return 'published the project'
+    case 'metric_recorded': return 'recorded metrics'
+    case 'message_sent': return 'sent a chat message'
+    case 'channel_created': return 'created a channel'
+    default: return String(e.action).replace(/_/g, ' ')
+  }
+}
+
 function ActivityCard() {
-  const notifications = useNotifications()
-  const recent = notifications.slice(0, 5)
+  // REAL events from the org-wide feed (/organizations/:id/activity), not
+  // notifications. Falls back to a quiet empty state; never mock data.
+  const [events, setEvents] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let active = true
+    void (async () => {
+      try {
+        const orgId = await primaryOrgId()
+        if (!orgId) { if (active) setLoading(false); return }
+        const evts = await listOrgActivity(orgId, 8)
+        if (active) setEvents(evts)
+      } catch {
+        /* backend unreachable — empty state below */
+      } finally {
+        if (active) setLoading(false)
+      }
+    })()
+    return () => { active = false }
+  }, [])
+
   return (
     <div className="card overflow-hidden">
       <CardHeader title="Recent activity" />
-      {recent.length ? (
-        <ul className="divide-y divide-line">
-          {recent.map((n, i) => (
-            <li key={n.id} className="flex gap-3 px-5 py-3.5">
-              <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${i % 2 ? 'bg-tint text-teal' : 'bg-ink/5 text-umber'}`}>
-                <Bell {...iconProps} />
-              </span>
-              <div className="min-w-0">
-                <p className="text-sm leading-snug text-ink">{n.title}</p>
-                <p className="mt-0.5 text-xs text-umber">{n.desc}</p>
-                <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-umber/60">{n.time}</p>
+      {loading ? (
+        <div className="space-y-3 px-5 py-6">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="flex animate-pulse gap-3">
+              <span className="h-9 w-9 rounded-xl bg-line/60" />
+              <div className="flex-1 space-y-1.5">
+                <span className="block h-3 w-3/4 rounded bg-line/60" />
+                <span className="block h-2.5 w-1/3 rounded bg-line/40" />
               </div>
-            </li>
+            </div>
           ))}
+        </div>
+      ) : events.length ? (
+        <ul className="divide-y divide-line">
+          {events.map((e, i) => {
+            const actor = e.actor?.name ?? 'Someone'
+            const project = e.projectId?.title ?? 'a project'
+            return (
+              <li key={String(e.id)} className="flex gap-3 px-5 py-3.5 transition-colors hover:bg-canvas/50">
+                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${i % 2 ? 'bg-tint text-teal' : 'bg-ink/5 text-umber'}`}>
+                  <Clapperboard {...iconProps} aria-hidden="true" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm leading-snug text-ink">
+                    <span className="font-medium">{actor}</span> {describeAction(e)} · <span className="text-umber">{project}</span>
+                  </p>
+                  <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-umber/60">
+                    {e.createdAt ? new Date(e.createdAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
+                  </p>
+                </div>
+              </li>
+            )
+          })}
         </ul>
       ) : (
         <p className="px-5 py-8 text-center text-sm text-umber">No activity recorded yet.</p>
