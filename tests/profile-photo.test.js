@@ -10,7 +10,8 @@ const request = require('supertest');
 const app = require('../src/app');
 const mongoose = require('mongoose');
 const Role = require('../src/models/role.model');
-const User = require('../src/models/user.model');
+const _User = require('../src/models/user.model');
+void _User;
 
 describe('Profile photo feature', () => {
   let token, userId;

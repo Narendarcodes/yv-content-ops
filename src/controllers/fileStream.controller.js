@@ -8,7 +8,6 @@
  *   - streams from the storage adapter in bounded chunks (no full-file buffering)
  */
 const ProjectVersion = require('../models/projectVersion.model');
-const storage = require('../storage');
 const logger = require('../utils/logger');
 
 const CHUNK_SIZE = 1024 * 1024; // 1 MiB per range chunk

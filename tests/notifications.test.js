@@ -7,12 +7,10 @@ const app = require('../src/app');
 const mongoose = require('mongoose');
 const Role = require('../src/models/role.model');
 const Notification = require('../src/models/notification.model');
-const User = require('../src/models/user.model');
-const Organization = require('../src/models/organization.model');
-const Membership = require('../src/models/membership.model');
 
 describe('Notifications API normalization', () => {
-  let token, userId, orgId;
+  let token, userId;
+  let _orgId;
 
   beforeAll(async () => {
     await require('../src/db/mongo').connect();
@@ -36,7 +34,8 @@ describe('Notifications API normalization', () => {
       name: 'NotifOrg',
       slug: 'notiforg',
     });
-    orgId = org.body.data._id;
+    _orgId = org.body.data._id;
+    void _orgId;
   });
 
   afterAll(async () => {

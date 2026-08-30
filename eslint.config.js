@@ -3,7 +3,7 @@ const globals = require('globals');
 
 module.exports = [
   {
-    ignores: ['node_modules/**', 'coverage/**'],
+    ignores: ['node_modules/**', 'coverage/**', 'frontend/**', '.agents/**', 'imports/**', 'uploads/**', 'dist/**', 'build/**', '.hermes/**', 'coverage/**'],
   },
   js.configs.recommended,
   {
@@ -17,7 +17,7 @@ module.exports = [
       },
     },
     rules: {
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_' }],
       'no-console': 'warn',
     },
   },

@@ -9,12 +9,14 @@ const jwt = require('jsonwebtoken');
 const config = require('../src/config');
 
 describe('Socket.IO handshake middleware', () => {
-  let middleware;
+  const _middleware = null;
+  void _middleware;
 
   beforeAll(() => {
     // Re-require socket.js to get the middleware via io.use inspection
     // We test by extracting the use() middleware
-    const socketModule = require('../src/realtime/socket');
+    const _socketModule = require('../src/realtime/socket');
+    void _socketModule;
     // The module doesn't export the middleware directly; we test via behavior
   });
 

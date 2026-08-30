@@ -12,7 +12,7 @@ const taskController = require('../controllers/task.controller');
 const briefController = require('../controllers/brief.controller');
 const reviewController = require('../controllers/review.controller');
 const chatController = require('../controllers/chat.controller');
-const { authenticate, requireOrg, requirePermission, requireProjectMember } = require('../middleware/auth');
+const { authenticate, requirePermission, requireProjectMember } = require('../middleware/auth');
 const fileStreamController = require('../controllers/fileStream.controller');
 const { validate } = require('../middleware/validate');
 const {

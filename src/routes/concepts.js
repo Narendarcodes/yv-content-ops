@@ -4,7 +4,6 @@
  * real project so an approved concept flows straight into the pipeline.
  */
 const express = require('express');
-const mongoose = require('mongoose');
 // mergeParams: the :organizationId lives on the MOUNT path in app.js, not on
 // this router - without it req.params.organizationId is undefined here.
 const router = express.Router({ mergeParams: true });

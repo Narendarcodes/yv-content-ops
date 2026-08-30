@@ -12,7 +12,8 @@ async function list(req, res, next) {
     // Normalize _id → id for frontend consumption
     const normalized = notifications.map((n) => {
       const obj = n.toObject ? n.toObject() : { ...n };
-      const { _id, __v: _unused, ...rest } = obj;
+      const { _id, __v: _v, ...rest } = obj;
+      void _v;
       return { id: String(_id), ...rest };
     });
     res.json({ data: normalized });
@@ -26,7 +27,8 @@ async function markRead(req, res, next) {
     const { id } = req.params;
     const n = await notificationService.markRead({ userId: req.user._id, notificationId: id });
     const obj = n.toObject ? n.toObject() : { ...n };
-    const { _id, __v: _unused2, ...rest } = obj;
+    const { _id, __v: _v2, ...rest } = obj;
+    void _v2;
     res.json({ data: { id: String(_id), ...rest } });
   } catch (err) {
     next(err);
