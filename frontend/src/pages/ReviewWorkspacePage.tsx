@@ -8,8 +8,6 @@ import { useViewer, can } from '../lib/viewer'
 import { useProject, useReviews, useTeam, useMe } from '../lib/data'
 import { listVersions, versionFileUrl, type ProjectVersion } from '../services/api'
 
-const SAMPLE_VIDEO_URL = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
-
 interface LocalComment {
   id: string
   author: string
@@ -61,14 +59,7 @@ export default function ReviewWorkspacePage() {
           })),
       )
     if (real.length > 0) return real
-    return [{
-      id: 'v1',
-      label: project?.approvedVersion ?? 'v1.0',
-      url: SAMPLE_VIDEO_URL,
-      filename: 'sample-draft.mp4',
-      uploadedAt: project?.updated ?? '',
-      summary: 'No uploaded draft yet — showing sample',
-    }]
+    return []
   })()
 
   const review = {
@@ -87,7 +78,7 @@ export default function ReviewWorkspacePage() {
 
   const videoRef = useRef<HTMLVideoElement>(null)
   const syncedFor = useRef<string>('')
-  const [versionId, setVersionId] = useState(review.versions[0].id)
+  const [versionId, setVersionId] = useState(versionEntries[0]?.id ?? '')
   const [currentTime, setCurrentTime] = useState(0)
   const [comments, setComments] = useState<LocalComment[]>(review.comments)
   const [draft, setDraft] = useState('')
@@ -248,16 +239,34 @@ export default function ReviewWorkspacePage() {
           </div>
 
           <div className="overflow-hidden rounded-[8px] bg-ink">
-            <video
-              key={version.id}
-              ref={videoRef}
-              src={version.url || SAMPLE_VIDEO_URL}
-              controls
-              playsInline
-              preload="metadata"
-              className="aspect-video w-full bg-black"
-              onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
-            />
+            {versionEntries.length === 0 ? (
+              <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 bg-ink p-8 text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white/80">
+                  <Clock size={20} strokeWidth={1.75} aria-hidden="true" />
+                </div>
+                <div>
+                  <p className="font-headline text-sm font-medium text-white">No draft uploaded yet</p>
+                  <p className="mt-1 max-w-sm text-xs leading-relaxed text-white/60">
+                    This project has no video versions. Upload a cut from the project page to enable frame-accurate comments.
+                  </p>
+                </div>
+                <Link to={`/projects/${project.id}`} className="btn-secondary btn-sm mt-2 !bg-white !text-ink hover:!bg-white/90">
+                  Go to project
+                </Link>
+              </div>
+            ) : (
+              <video
+                key={version!.id}
+                ref={videoRef}
+                src={version!.url}
+                controls
+                playsInline
+                preload="metadata"
+                crossOrigin="use-credentials"
+                className="aspect-video w-full bg-black"
+                onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+              />
+            )}
           </div>
 
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
