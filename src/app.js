@@ -23,7 +23,17 @@ listeners.setup();
 
 const app = express();
 
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false, // allow <img> from :3000 when page is on :5173
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        'img-src': ["'self'", 'data:', 'blob:', 'http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173', 'https:'],
+      },
+    },
+  }),
+);
 // CORS: restrict to configured origins in production (CORS_ORIGIN=comma-separated);
 // defaults to reflecting any origin for development convenience.
 // credentials:true is required because the frontend sends requests with
@@ -32,8 +42,15 @@ app.use(helmet());
 app.use(cors({ origin: config.corsOrigin, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
-// Serve uploaded files (profile photos, etc) statically
-app.use('/uploads', express.static(path.resolve(config.storage.localDir)));
+// Serve uploaded files (profile photos, etc) statically — allow cross-origin fetch for <img>
+app.use(
+  '/uploads',
+  (req, res, next) => {
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    next();
+  },
+  express.static(path.resolve(config.storage.localDir)),
+);
 
 // global rate limiting (per IP)
 app.use(
