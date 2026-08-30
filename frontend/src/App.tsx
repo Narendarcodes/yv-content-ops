@@ -8,7 +8,6 @@ import { useAuth } from './lib/auth'
 import DashboardPage from './pages/DashboardPage'
 import MyWorkPage from './pages/MyWorkPage'
 import ReviewPage from './pages/ReviewPage'
-import BoardPage from './pages/BoardPage'
 import ProjectsPage from './pages/ProjectsPage'
 import ProjectDetailPage from './pages/ProjectDetailPage'
 import ReviewWorkspacePage from './pages/ReviewWorkspacePage'
@@ -57,7 +56,7 @@ export default function App() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/my-work" element={<MyWorkPage />} />
         <Route path="/review" element={<ReviewPage />} />
-        <Route path="/board" element={<BoardPage />} />
+        <Route path="/board" element={<Navigate to="/projects" replace />} />
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/projects/:id" element={<ProjectDetailPage />} />
         <Route path="/projects/:id/review" element={<ReviewWorkspacePage />} />

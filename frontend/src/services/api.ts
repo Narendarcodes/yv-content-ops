@@ -709,6 +709,26 @@ export async function listTasks(projectId: string): Promise<TaskItem[]> {
   return normalizeList(items) as TaskItem[]
 }
 
+/** Move a task to a new status (kanban drag-and-drop persistence). */
+export async function setTaskStatus(
+  projectId: string,
+  taskId: string,
+  status: TaskItem['status'],
+): Promise<TaskItem> {
+  const res = await authFetch(`${API_BASE}/projects/${projectId}/tasks/${taskId}/status`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+    credentials: 'include',
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => null)
+    throw new Error(body?.error?.message || 'Failed to move task')
+  }
+  const body = await res.json()
+  return normalize(body.data) as TaskItem
+}
+
 /** ------------------------------------------------------------------- */
 /* Comments / reviews */
 export interface CommentItem {
