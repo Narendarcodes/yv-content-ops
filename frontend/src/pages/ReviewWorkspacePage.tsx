@@ -7,6 +7,7 @@ import { statusLabel, formatTime } from '../lib/format'
 import { useViewer, can } from '../lib/viewer'
 import { useProject, useReviews, useTeam, useMe } from '../lib/data'
 import { listVersions, versionFileUrl, type ProjectVersion } from '../services/api'
+import { pickVersion } from '../lib/reviewVersions'
 
 interface LocalComment {
   id: string
@@ -93,7 +94,8 @@ export default function ReviewWorkspacePage() {
   useEffect(() => {
     if (!id) return
     if (syncedFor.current !== id) {
-      setVersionId(review.versions[0].id)
+      const first = pickVersion(review.versions, versionId)
+      setVersionId(first ? first.id : '')
       setComments(review.comments)
       if (review.comments.length > 0 || allReviews.length > 0) syncedFor.current = id
     }
@@ -110,7 +112,7 @@ export default function ReviewWorkspacePage() {
     )
   }
 
-  const version = review.versions.find((v) => v.id === versionId) ?? review.versions[0]
+  const version = pickVersion(review.versions, versionId) // null when no uploads — page renders empty state
   const openComments = comments.filter((c) => !c.resolved)
   const canComment = can(viewer, 'comment')
   const canApprove = can(viewer, 'approve')
@@ -184,7 +186,9 @@ export default function ReviewWorkspacePage() {
             {approved && <Chip label="Approved" tone="teal" />}
           </div>
           <p className="mt-1 text-sm text-umber">
-            {[version.label, 'uploadedAt' in version && version.uploadedAt ? `uploaded ${version.uploadedAt}` : ''].filter(Boolean).join(' · ') || version.label}
+            {version
+              ? [version.label, 'uploadedAt' in version && version.uploadedAt ? `uploaded ${version.uploadedAt}` : ''].filter(Boolean).join(' · ') || version.label
+              : 'No draft uploaded yet'}
           </p>
         </div>
 
@@ -192,18 +196,18 @@ export default function ReviewWorkspacePage() {
           <button
             className="btn-secondary"
             onClick={() => can(viewer, 'upload') && setRevisionOpen(true)}
-            disabled={!can(viewer, 'upload')}
-            title={!can(viewer, 'upload') ? 'Only editors can request a revision' : undefined}
+            disabled={!can(viewer, 'upload') || !version}
+            title={!can(viewer, 'upload') ? 'Only editors can request a revision' : !version ? 'No draft to revise yet' : undefined}
           >
             Request revision
           </button>
           <button
             className="btn-primary"
             onClick={() => canApprove && setApproved(true)}
-            disabled={!canApprove}
-            title={!canApprove ? 'Only reviewers can approve' : undefined}
+            disabled={!canApprove || !version}
+            title={!canApprove ? 'Only reviewers can approve' : !version ? 'Nothing to approve yet' : undefined}
           >
-            Approve {version.label}
+            Approve {version ? version.label : '—'}
           </button>
         </div>
       </div>
