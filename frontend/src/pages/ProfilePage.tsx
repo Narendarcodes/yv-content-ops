@@ -20,7 +20,7 @@ const roleLabel: Record<string, string> = {
 
 function toAvatarUrl(src: string | null | undefined): string | null {
   if (!src) return null
-  if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('data:')) return src
+  if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('data:') || src.startsWith('blob:')) return src
   const origin = API_BASE.replace(/\/api\/v1\/?$/, '')
   return `${origin}${src.startsWith('/') ? src : `/${src}`}`
 }
@@ -36,6 +36,7 @@ export default function ProfilePage() {
   const [photoError, setPhotoError] = useState<string | null>(null)
   const [pendingPhoto, setPendingPhoto] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [optimisticUrl, setOptimisticUrl] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
   const access = roleOf(viewer)
   const { projects } = useProjects()
@@ -44,6 +45,16 @@ export default function ProfilePage() {
   const { reviews } = useReviews()
 
   useEffect(() => { if (!editing) setName(viewer.name) }, [viewer.name, editing])
+
+  // If the server photo arrives that matches our optimistic one, we can drop the optimistic cache
+  const storedSrc = (viewer as any).photoUrl || (viewer as any).profileImage || null
+  useEffect(() => {
+    if (optimisticUrl && storedSrc) {
+      const expected = optimisticUrl
+      const actual = toAvatarUrl(storedSrc)
+      if (expected === actual) setOptimisticUrl(null)
+    }
+  }, [storedSrc, optimisticUrl])
 
   const activeProjects = projects.filter(
     (p) => p.assignee === (me?.id ?? '') && !['PUBLISHED', 'CLOSED'].includes(p.status),
@@ -57,9 +68,8 @@ export default function ProfilePage() {
     { label: 'Teammates', value: teammateCount },
   ]
 
-  const storedSrc = (viewer as any).photoUrl || (viewer as any).profileImage || null
-  // Preview takes priority when a file is pending — immediate feedback, fixes the "still D" glitch
-  const avatarSrc = previewUrl ?? storedSrc
+  // Preview (blob) > optimistic server URL (right after Save, before viewer sync) > stored server URL
+  const avatarSrc = previewUrl ?? optimisticUrl ?? storedSrc
   const avatarUrl = toAvatarUrl(avatarSrc)
 
   const handlePickPhoto = () => fileRef.current?.click()
@@ -95,9 +105,14 @@ export default function ProfilePage() {
     try {
       const updated = await uploadProfilePhoto(pendingPhoto)
       const nextUrl = (updated as any).photoUrl ?? (updated as any).profileImage ?? null
+      const serverUrl = toAvatarUrl(nextUrl)
+      setOptimisticUrl(serverUrl)
       updateSessionUser({ photoUrl: nextUrl, profileImage: nextUrl } as any)
-      // keep preview until viewer propagates, then clear
       toast('success', 'Profile photo updated')
+      // Keep preview until next render shows optimisticUrl, then clean up blob
+      if (previewUrl) { URL.revokeObjectURL(previewUrl); setPreviewUrl(null) }
+      setPendingPhoto(null)
+      if (fileRef.current) fileRef.current.value = ''
       return true
     } catch (err: any) {
       const msg = String(err?.message || '')
@@ -121,6 +136,7 @@ export default function ProfilePage() {
     setPhotoError(null)
     try {
       await removeProfilePhoto()
+      setOptimisticUrl(null)
       updateSessionUser({ photoUrl: null, profileImage: null } as any)
       toast('success', 'Profile photo removed')
       if (previewUrl) { URL.revokeObjectURL(previewUrl); setPreviewUrl(null) }
@@ -140,6 +156,7 @@ export default function ProfilePage() {
     if (previewUrl) URL.revokeObjectURL(previewUrl)
     setPreviewUrl(null)
     setPendingPhoto(null)
+    setOptimisticUrl(null)
     setEditing(false)
     setSaveError(null)
     setPhotoError(null)
@@ -154,10 +171,7 @@ export default function ProfilePage() {
     if (pendingPhoto) {
       const ok = await handleSavePhoto()
       if (!ok) return // keep editing open to show photoError
-      // photo updated — clear local pending but keep preview until viewer refreshes
-      if (previewUrl) { URL.revokeObjectURL(previewUrl); setPreviewUrl(null) }
-      setPendingPhoto(null)
-      if (fileRef.current) fileRef.current.value = ''
+      // handleSavePhoto already cleared preview/pending and set optimisticUrl
       // if name unchanged, we're done
       if (name.trim() === viewer.name.trim()) {
         setEditing(false)

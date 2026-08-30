@@ -30,6 +30,12 @@ export default function Avatar({
     xl: 'h-20 w-20 text-2xl',
   }
   const [failed, setFailed] = useState(false)
+  // Reset fallback when src changes — fixes the "stuck D until navigate back" bug
+  const [prevSrc, setPrevSrc] = useState(src)
+  if (src !== prevSrc) {
+    setPrevSrc(src)
+    if (failed) setFailed(false)
+  }
   const showImg = !!src && !failed
   if (showImg) {
     return (
